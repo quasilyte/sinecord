@@ -4,3 +4,8 @@
 ##menu.manual : manual
 ##menu.credits : credits
 ##menu.exit : exit
+
+##menu.back : back
+
+##menu.play.missions : missions
+##menu.play.sandbox : sandbox

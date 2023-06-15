@@ -39,7 +39,9 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewCenteredLabel("sinecord", bigFont))
 	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.SeparatorColor))
 
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.play"), func() {}))
+	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.play"), func() {
+		scene.Context().ChangeScene(NewPlayController(c.state))
+	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.profile"), func() {}))
 
@@ -49,6 +51,8 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.credits"), func() {}))
 
+	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
+
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.exit"), func() {
 		os.Exit(0)
 	}))
@@ -56,9 +60,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
 	rowContainer.AddChild(eui.NewCenteredLabel("Ebitengine Game Jam 2023 edition", smallFont))
 
-	uiObject := eui.NewSceneObject(root)
-	scene.AddGraphics(uiObject)
-	scene.AddObject(uiObject)
+	initUI(scene, root)
 }
 
 func (c *MainMenuController) Update(delta float64) {}
