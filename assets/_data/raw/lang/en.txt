@@ -1,0 +1,6 @@
+##menu.play : play
+##menu.settings : settings
+##menu.profile : profile
+##menu.manual : manual
+##menu.credits : credits
+##menu.exit : exit
