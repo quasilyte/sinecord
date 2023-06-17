@@ -55,6 +55,34 @@ func (r *funcRunner) Run(x float64) float64 {
 			r.push(gmath.Clamp(r.pop3()))
 		case opPowFunc:
 			r.push(math.Pow(r.pop2()))
+		case opTanFunc:
+			r.push(math.Tan(r.pop()))
+		case opAtanFunc:
+			r.push(math.Atan(r.pop()))
+		case opAtan2Func:
+			r.push(math.Atan2(r.pop2()))
+		case opAsinFunc:
+			r.push(math.Asin(r.pop()))
+		case opAcosFunc:
+			r.push(math.Acos(r.pop()))
+		case opLogFunc:
+			r.push(math.Log(r.pop()))
+		case opLog2Func:
+			r.push(math.Log2(r.pop()))
+		case opSqrtFunc:
+			r.push(math.Sqrt(r.pop()))
+		case opInversesqrtFunc:
+			r.push(inversesqrt(r.pop()))
+		case opSignFunc:
+			r.push(sign(r.pop()))
+		case opFloorFunc:
+			r.push(math.Floor(r.pop()))
+		case opCeilFunc:
+			r.push(math.Ceil(r.pop()))
+		case opFractFunc:
+			r.push(fract(r.pop()))
+		case opModFunc:
+			r.push(mod(r.pop2()))
 
 		default:
 			panic("unexpected op")
