@@ -39,13 +39,13 @@ func (p *musicPlayer) createPCM() []byte {
 		panic(err)
 	}
 
+	synthesizer.MasterVolume = 0.75
+
 	const stepsPerSecond = 180
 	dt := 1.0 / stepsPerSecond
 	t := 0.0
 	duration := 20.0
 	blockOffset := 0
-
-	// synthesizer.ProcessMidiMessage()
 
 	for i := range p.delays {
 		p.delays[i] = p.instruments[i].period
