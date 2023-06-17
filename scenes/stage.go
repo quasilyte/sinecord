@@ -208,17 +208,17 @@ func (c *StageController) Init(scene *ge.Scene) {
 	outerGrid.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
 	outerGrid.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.stage.run"), func() {
 		c.running = true
-		pcm := c.synth.CreatePCM()
+		pcm, prog := c.synth.CreatePCM()
 		if pcm != nil {
 			if c.player != nil {
 				c.player.Play()
 				c.player.Close()
 			}
-			c.player = audio.NewPlayerFromBytes(scene.Audio().GetContext(), pcm)
+			c.player = scene.Audio().GetContext().NewPlayerFromBytes(pcm)
 		}
 		c.player.Rewind()
 		c.player.Play()
-		c.board.StartProgram(c.synth.CreateProgram())
+		c.board.StartProgram(prog)
 	}))
 
 	{

@@ -71,12 +71,13 @@ func (s *Synthesizer) Update(delta float64) {
 	}
 }
 
-func (s *Synthesizer) CreatePCM() []byte {
+func (s *Synthesizer) CreatePCM() ([]byte, SynthProgram) {
 	if !s.changed {
-		return nil
+		return nil, SynthProgram{}
 	}
 	s.changed = false
-	return s.player.createPCM(s.CreateProgram())
+	prog := s.CreateProgram()
+	return s.player.createPCM(prog), prog
 }
 
 func (s *Synthesizer) CreateProgram() SynthProgram {
