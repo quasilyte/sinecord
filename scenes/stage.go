@@ -33,6 +33,7 @@ type StageController struct {
 	synth  *stage.Synthesizer
 	board  *stage.Board
 
+	prog    stage.SynthProgram
 	samples *stage.SampleSet
 	player  *audio.Player
 
@@ -266,10 +267,11 @@ func (c *StageController) Init(scene *ge.Scene) {
 			pcm := generatePCM(samples.Left, samples.Right)
 			c.player = scene.Audio().GetContext().NewPlayerFromBytes(pcm)
 			c.samples = samples
+			c.prog = prog
 		}
 		c.player.Rewind()
 		c.player.Play()
-		c.board.StartProgram(prog)
+		c.board.StartProgram(c.prog)
 	}))
 
 	{
