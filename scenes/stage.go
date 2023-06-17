@@ -228,7 +228,18 @@ func (c *StageController) Init(scene *ge.Scene) {
 			},
 		}))
 
-		instrumentsGrid.AddChild(eui.NewButton(c.state.UIResources, "100%", nil))
+		volumeLevel := 4
+		c.synth.SetInstrumentVolume(instrumentID, 0.2*float64(volumeLevel)+0.2)
+		instrumentsGrid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
+			Resources:  c.state.UIResources,
+			Input:      c.state.Input,
+			ValueNames: []string{"20%", "40%", "60%", "80%", "100%"},
+			Value:      &volumeLevel,
+			Tooltip:    eui.NewTooltip(c.state.UIResources, "instrument volume level"),
+			OnPressed: func() {
+				c.synth.SetInstrumentVolume(instrumentID, 0.2*float64(volumeLevel)+0.2)
+			},
+		}))
 
 		instrumentEnabled := instrumentID == 0
 		c.synth.SetInstrumentEnabled(instrumentID, instrumentEnabled)

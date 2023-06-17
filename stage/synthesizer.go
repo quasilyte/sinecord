@@ -2,6 +2,7 @@ package stage
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
@@ -103,6 +104,11 @@ func (s *Synthesizer) CreateProgram() SynthProgram {
 func (s *Synthesizer) SetInstrumentEnabled(id int, enabled bool) {
 	s.changed = true
 	s.instruments[id].enabled = enabled
+}
+
+func (s *Synthesizer) SetInstrumentVolume(id int, volume float64) {
+	s.changed = true
+	s.instruments[id].volume = int32(math.Round(127.0 * volume))
 }
 
 func (s *Synthesizer) SetInstrumentPatch(id int, index int) {

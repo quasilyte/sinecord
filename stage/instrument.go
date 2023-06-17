@@ -10,6 +10,7 @@ type instrument struct {
 
 	period  float64
 	enabled bool
+	volume  int32
 }
 
 func (inst *instrument) SetFx(fx string) {
