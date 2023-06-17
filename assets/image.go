@@ -20,6 +20,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageUITooltip:             {Path: "image/ebitenui/tooltip.png"},
 
 		ImagePlotBackground: {Path: "image/plot_background.png"},
+		ImageSignal:         {Path: "image/signal.png"},
 	}
 
 	for id, res := range imageResources {
@@ -42,4 +43,5 @@ const (
 	ImageUITooltip
 
 	ImagePlotBackground
+	ImageSignal
 )

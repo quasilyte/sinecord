@@ -20,3 +20,10 @@ var (
 	Plot3Color = ge.RGB(0xd7c781)
 	Plot4Color = ge.RGB(0xeb1683)
 )
+
+var PlotColorByID = [...]color.RGBA{
+	Plot1Color,
+	Plot2Color,
+	Plot3Color,
+	Plot4Color,
+}

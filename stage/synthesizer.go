@@ -7,6 +7,7 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/sinecord/exprc"
+	"github.com/quasilyte/sinecord/styles"
 	"github.com/quasilyte/sinecord/synthdb"
 )
 
@@ -74,6 +75,22 @@ func (s *Synthesizer) CreatePCM() []byte {
 	}
 	s.changed = false
 	return s.player.createPCM()
+}
+
+func (s *Synthesizer) CreateProgram() SynthProgram {
+	prog := SynthProgram{
+		Instruments: make([]SynthProgramInstrument, 0, 4),
+	}
+	for id, inst := range s.instruments {
+		if !inst.enabled || inst.compiledFx == nil {
+			continue
+		}
+		prog.Instruments = append(prog.Instruments, SynthProgramInstrument{
+			Color: styles.PlotColorByID[id],
+			Func:  inst.compiledFx,
+		})
+	}
+	return prog
 }
 
 func (s *Synthesizer) SetInstrumentEnabled(id int, enabled bool) {

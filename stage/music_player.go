@@ -51,10 +51,7 @@ func (p *musicPlayer) createPCM() []byte {
 		p.delays[i] = p.instruments[i].period
 	}
 
-	// 44100/180 = 245
 	samplesPerDt := int(p.settings.SampleRate) / int(stepsPerSecond)
-
-	// synthesizer.MasterVolume = 0.5
 
 	for t < duration {
 		t += dt
