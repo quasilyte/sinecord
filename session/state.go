@@ -3,12 +3,12 @@ package session
 import (
 	"fmt"
 
-	"github.com/quasilyte/ebitengine-gamejam2023/assets"
-	"github.com/quasilyte/ebitengine-gamejam2023/eui"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/ge/langs"
+	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/eui"
 )
 
 type State struct {

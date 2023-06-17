@@ -3,12 +3,12 @@ package main
 import (
 	"time"
 
-	"github.com/quasilyte/ebitengine-gamejam2023/assets"
-	"github.com/quasilyte/ebitengine-gamejam2023/eui"
-	"github.com/quasilyte/ebitengine-gamejam2023/scenes"
-	"github.com/quasilyte/ebitengine-gamejam2023/session"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
+	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/eui"
+	"github.com/quasilyte/sinecord/scenes"
+	"github.com/quasilyte/sinecord/session"
 )
 
 func main() {

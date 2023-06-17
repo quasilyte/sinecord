@@ -7,12 +7,12 @@ import (
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/quasilyte/ebitengine-gamejam2023/assets"
-	"github.com/quasilyte/ebitengine-gamejam2023/styles"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/styles"
 	"golang.org/x/image/font"
 )
 

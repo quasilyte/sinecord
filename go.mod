@@ -1,16 +1,16 @@
-module github.com/quasilyte/ebitengine-gamejam2023
+module github.com/quasilyte/sinecord
 
-go 1.19
+go 1.20
 
 require (
 	github.com/ebitenui/ebitenui v0.5.4
 	github.com/hajimehoshi/ebiten/v2 v2.5.4
-	github.com/quasilyte/ebitengine-resource v0.5.1-0.20230412072401-66c02806357e
+	github.com/quasilyte/ebitengine-resource v0.5.1-0.20230301215552-afd21c3065ff
 	github.com/quasilyte/ge v0.0.0-20230616113715-4ec04ec505f9
-	github.com/quasilyte/gmath v0.0.0-20221217210116-fba37a2e15c7
+	github.com/quasilyte/gmath v0.0.0-20230428180022-2163470ca0a9
 	github.com/quasilyte/gsignal v0.0.0-20230130114532-ff67b4bb9e15
 	github.com/sinshu/go-meltysynth v0.0.0-20230205031334-05d311382fc4
-	golang.org/x/image v0.7.0
+	golang.org/x/image v0.8.0
 )
 
 require (
@@ -25,5 +25,5 @@ require (
 	golang.org/x/mobile v0.0.0-20230427221453-e8d11dd0ba41 // indirect
 	golang.org/x/sync v0.2.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/text v0.10.0 // indirect
 )

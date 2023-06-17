@@ -2,8 +2,8 @@ package scenes
 
 import (
 	"github.com/ebitenui/ebitenui/widget"
-	"github.com/quasilyte/ebitengine-gamejam2023/eui"
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/sinecord/eui"
 )
 
 func initUI(scene *ge.Scene, root *widget.Container) {

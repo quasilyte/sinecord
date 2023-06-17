@@ -3,11 +3,11 @@ package stage
 import (
 	"fmt"
 
-	"github.com/quasilyte/ebitengine-gamejam2023/exprc"
-	"github.com/quasilyte/ebitengine-gamejam2023/synthdb"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
+	"github.com/quasilyte/sinecord/exprc"
+	"github.com/quasilyte/sinecord/synthdb"
 )
 
 type Synthesizer struct {

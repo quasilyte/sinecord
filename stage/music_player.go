@@ -6,8 +6,8 @@ import (
 
 	"bytes"
 
-	"github.com/quasilyte/ebitengine-gamejam2023/assets"
-	"github.com/quasilyte/ebitengine-gamejam2023/synthdb"
+	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/synthdb"
 	"github.com/sinshu/go-meltysynth/meltysynth"
 )
 

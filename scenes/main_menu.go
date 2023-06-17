@@ -5,12 +5,12 @@ import (
 	"os"
 
 	"github.com/ebitenui/ebitenui/widget"
-	"github.com/quasilyte/ebitengine-gamejam2023/assets"
-	"github.com/quasilyte/ebitengine-gamejam2023/eui"
-	"github.com/quasilyte/ebitengine-gamejam2023/session"
-	"github.com/quasilyte/ebitengine-gamejam2023/styles"
-	"github.com/quasilyte/ebitengine-gamejam2023/synthdb"
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/eui"
+	"github.com/quasilyte/sinecord/session"
+	"github.com/quasilyte/sinecord/styles"
+	"github.com/quasilyte/sinecord/synthdb"
 )
 
 type MainMenuController struct {
