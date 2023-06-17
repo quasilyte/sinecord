@@ -8,6 +8,7 @@ import (
 	"github.com/quasilyte/ebitengine-gamejam2023/scenes"
 	"github.com/quasilyte/ebitengine-gamejam2023/session"
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/ge/input"
 )
 
 func main() {
@@ -22,7 +23,11 @@ func main() {
 	ctx.Loader.OpenAssetFunc = assets.MakeOpenAssetFunc(ctx)
 	assets.RegisterResources(ctx)
 
-	state := &session.State{}
+	keymap := input.Keymap{}
+	state := &session.State{
+		Input: ctx.Input.NewHandler(0, keymap),
+	}
+
 	state.UIResources = eui.PrepareResources(ctx.Loader)
 
 	session.ReloadLanguage(ctx, "en")

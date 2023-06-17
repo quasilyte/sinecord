@@ -37,7 +37,9 @@ func (c *PlayController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewCenteredLabel(title, bigFont))
 	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.SeparatorColor))
 
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.play.missions"), func() {}))
+	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.play.missions"), func() {
+		scene.Context().ChangeScene(NewMissionsController(c.state))
+	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.play.sandbox"), func() {}))
 

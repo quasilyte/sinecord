@@ -1,0 +1,113 @@
+package stage
+
+import (
+	"fmt"
+
+	"github.com/quasilyte/ebitengine-gamejam2023/exprc"
+	"github.com/quasilyte/ebitengine-gamejam2023/synthdb"
+	"github.com/quasilyte/ge"
+	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gsignal"
+)
+
+type Synthesizer struct {
+	scene *ge.Scene
+
+	changed bool
+
+	sf *synthdb.SoundFont
+
+	player *musicPlayer
+
+	recompileDelay float64
+
+	instruments []*instrument
+
+	EventRecompileShaderRequest gsignal.Event[int]
+}
+
+func NewSynthesizer(sf *synthdb.SoundFont) *Synthesizer {
+	instruments := make([]*instrument, 4)
+	for i := range instruments {
+		instruments[i] = &instrument{}
+	}
+	return &Synthesizer{
+		changed:     true,
+		sf:          sf,
+		instruments: instruments,
+		player:      newMusicPlayer(instruments),
+	}
+}
+
+func (s *Synthesizer) Init(scene *ge.Scene) {
+	s.scene = scene
+}
+
+func (s *Synthesizer) IsDisposed() bool { return false }
+
+func (s *Synthesizer) Update(delta float64) {
+	s.recompileDelay = gmath.ClampMin(s.recompileDelay-delta, 0)
+	if s.recompileDelay == 0 {
+		s.recompileDelay = s.scene.Rand().FloatRange(0.5, 0.8)
+		if i := s.needShadersRecompiled(); i != -1 {
+			inst := s.instruments[i]
+			if inst.fx == "" {
+				inst.compiledFx = nil
+				s.EventRecompileShaderRequest.Emit(i)
+				return
+			}
+			fn, err := exprc.Compile(inst.fx)
+			if err != nil {
+				fmt.Printf("exprc: %v\n", err)
+				return
+			}
+			s.changed = true
+			inst.compiledFx = fn
+			s.EventRecompileShaderRequest.Emit(i)
+		}
+	}
+}
+
+func (s *Synthesizer) CreatePCM() []byte {
+	if !s.changed {
+		return nil
+	}
+	s.changed = false
+	return s.player.createPCM()
+}
+
+func (s *Synthesizer) SetInstrumentEnabled(id int, enabled bool) {
+	s.changed = true
+	s.instruments[id].enabled = enabled
+}
+
+func (s *Synthesizer) SetInstrumentPatch(id int, index int) {
+	s.changed = true
+	s.instruments[id].instrumentIndex = s.sf.Instruments[index].PatchNumber
+}
+
+func (s *Synthesizer) SetInstrumentPeriod(id int, period float64) {
+	s.changed = true
+	s.instruments[id].period = period
+}
+
+func (s *Synthesizer) SetInstrumentFunction(id int, fx string) {
+	s.changed = true
+	s.recompileDelay = 0.75
+	s.instruments[id].SetFx(fx)
+}
+
+func (s *Synthesizer) GetInstrumentFunction(id int) string {
+	return s.instruments[id].fx
+}
+
+func (s *Synthesizer) needShadersRecompiled() int {
+	for i, inst := range s.instruments {
+		oldFx := inst.oldFx
+		inst.oldFx = inst.fx
+		if inst.fx != oldFx {
+			return i
+		}
+	}
+	return -1
+}

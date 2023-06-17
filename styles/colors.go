@@ -11,6 +11,12 @@ var (
 
 	NormalTextColor   = ge.RGB(0x9dd793)
 	DisabledTextColor = ge.RGB(0x5a7a91)
+	CaretColor        = SeparatorColor
 
 	SeparatorColor = ge.RGB(0x79badc)
+
+	Plot1Color = ge.RGB(0x9dd692)
+	Plot2Color = ge.RGB(0xad92d6)
+	Plot3Color = ge.RGB(0xd7c781)
+	Plot4Color = ge.RGB(0xeb1683)
 )

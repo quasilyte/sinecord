@@ -7,11 +7,14 @@ import (
 	"github.com/quasilyte/ebitengine-gamejam2023/eui"
 	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/ge/langs"
 )
 
 type State struct {
 	UIResources *eui.Resources
+
+	Input *input.Handler
 }
 
 func ReloadLanguage(ctx *ge.Context, language string) {
