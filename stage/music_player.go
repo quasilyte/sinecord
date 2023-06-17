@@ -49,23 +49,6 @@ func (p *musicPlayer) walkNotes(events []noteActivation, f func(i, num int)) {
 		f(i, num)
 		i += num
 	}
-
-	// for _, e := range events {
-	// 	channel := int32(e.id)
-	// 	inst := p.instruments[e.id]
-	// 	synthesizer.NoteOffAllChannel(channel, false)
-	// 	y := math.Abs(inst.compiledFx(e.t))
-	// 	if y <= 3 || y >= -3 {
-	// 		note := int32(math.Round(y*float64(synthdb.Ocvate4EndCode-synthdb.Octave1StartCode+1)/3)) + synthdb.Octave1StartCode
-	// 		velocity := int32(40)
-	// 		synthesizer.NoteOn(channel, note, int32(velocity))
-	// 	}
-	// 	elapsed := e.t - t
-	// 	t = e.t
-	// 	blockSize := int(math.Round(samplesPerSecond * elapsed))
-	// 	synthesizer.Render(p.left[blockOffset:blockOffset+blockSize], p.right[blockOffset:blockOffset+blockSize])
-	// 	blockOffset += blockSize
-	// }
 }
 
 func (p *musicPlayer) createPCM(prog SynthProgram) []byte {
