@@ -328,7 +328,14 @@ func (c *StageController) Init(scene *ge.Scene) {
 			c.board.StartProgram(c.prog)
 		}))
 
-		stopButton := eui.NewButton(c.state.UIResources, "stop", func() {})
+		stopButton := eui.NewButton(c.state.UIResources, "stop", func() {
+			if !c.running {
+				return
+			}
+			c.running = false
+			c.board.ClearProgram()
+			c.player.Pause()
+		})
 		buttonsGrid.AddChild(stopButton)
 
 		saveButton := eui.NewButton(c.state.UIResources, "save", func() {})
