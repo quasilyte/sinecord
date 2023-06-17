@@ -129,6 +129,30 @@ func (c *StageController) Init(scene *ge.Scene) {
 		patchNames[i] = inst.Name
 	}
 
+	periods := []float64{
+		0.10,
+		0.15,
+		0.20,
+		0.25,
+		0.30,
+
+		0.40,
+		0.50,
+		0.60,
+		0.70,
+		0.80,
+
+		1.00,
+		1.25,
+		1.50,
+		1.75,
+		2.00,
+	}
+	periodLabels := make([]string, len(periods))
+	for i := range periods {
+		periodLabels[i] = fmt.Sprintf("%.2f", periods[i])
+	}
+
 	for i := 0; i < c.config.MaxInstruments; i++ {
 		instrumentID := i
 
@@ -178,16 +202,16 @@ func (c *StageController) Init(scene *ge.Scene) {
 		)
 		instrumentsGrid.AddChild(textTnput)
 
-		stepPeriodLevel := 1
+		stepPeriodLevel := 2
 		c.synth.SetInstrumentPeriod(instrumentID, 0.1*float64(stepPeriodLevel)+0.1)
 		instrumentsGrid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 			Resources:  c.state.UIResources,
 			Input:      c.state.Input,
-			ValueNames: []string{"0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"},
+			ValueNames: periodLabels,
 			Value:      &stepPeriodLevel,
 			Tooltip:    eui.NewTooltip(c.state.UIResources, "step period in seconds"),
 			OnPressed: func() {
-				c.synth.SetInstrumentPeriod(instrumentID, 0.1*float64(stepPeriodLevel)+0.1)
+				c.synth.SetInstrumentPeriod(instrumentID, periods[stepPeriodLevel])
 			},
 		}))
 
