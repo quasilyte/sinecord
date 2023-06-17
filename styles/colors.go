@@ -15,7 +15,7 @@ var (
 
 	SeparatorColor = ge.RGB(0x79badc)
 
-	Plot1Color = ge.RGB(0x9dd692)
+	Plot1Color = ge.RGB(0x5987f2)
 	Plot2Color = ge.RGB(0xad92d6)
 	Plot3Color = ge.RGB(0xd7c781)
 	Plot4Color = ge.RGB(0xeb1683)
