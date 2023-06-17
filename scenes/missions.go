@@ -8,6 +8,7 @@ import (
 	"github.com/quasilyte/sinecord/assets"
 	"github.com/quasilyte/sinecord/eui"
 	"github.com/quasilyte/sinecord/session"
+	"github.com/quasilyte/sinecord/stage"
 	"github.com/quasilyte/sinecord/styles"
 )
 
@@ -55,7 +56,7 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 	buttonsGrid.AddChild(eui.NewCenteredLabel(fmt.Sprintf("%s 1 ", d.Get("menu.play.act")), normalFont))
 	for i := 0; i < 4; i++ {
 		buttonsGrid.AddChild(eui.NewButton(c.state.UIResources, labels[i], func() {
-			scene.Context().ChangeScene(NewStageController(c.state, StageConfig{
+			scene.Context().ChangeScene(NewStageController(c.state, stage.Config{
 				MaxInstruments: 4,
 			}))
 		}))

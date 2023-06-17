@@ -2,6 +2,7 @@ package scenes
 
 import (
 	"fmt"
+	"strings"
 	"time"
 	"unicode"
 	"unicode/utf8"
@@ -20,22 +21,16 @@ import (
 	"github.com/quasilyte/sinecord/synthdb"
 )
 
-type StageConfig struct {
-	MaxInstruments int
-}
-
 type StageController struct {
 	state *session.State
 
-	config StageConfig
+	config stage.Config
 
 	running bool
 
 	canvas *stage.Canvas
 	synth  *stage.Synthesizer
 	board  *stage.Board
-
-	canvasUpdater *canvasUpdater
 
 	player *audio.Player
 
@@ -44,7 +39,7 @@ type StageController struct {
 	canvasImageBg *ebiten.Image
 }
 
-func NewStageController(state *session.State, config StageConfig) *StageController {
+func NewStageController(state *session.State, config stage.Config) *StageController {
 	return &StageController{
 		state:  state,
 		config: config,
@@ -54,9 +49,11 @@ func NewStageController(state *session.State, config StageConfig) *StageControll
 func (c *StageController) Init(scene *ge.Scene) {
 	d := scene.Dict()
 
-	ctx := stage.NewContext()
+	ctx := stage.NewContext(c.config)
 
-	c.canvas = stage.NewCanvas()
+	c.canvasImageBg = scene.LoadImage(assets.ImagePlotBackground).Data
+	c.canvasImage = ebiten.NewImage(c.canvasImageBg.Bounds().Dx(), c.canvasImageBg.Bounds().Dy())
+	c.canvas = stage.NewCanvas(ctx, scene, c.canvasImage)
 
 	c.synth = stage.NewSynthesizer(ctx, synthdb.TimGM6mb)
 	scene.AddObject(c.synth)
@@ -73,14 +70,14 @@ func (c *StageController) Init(scene *ge.Scene) {
 	c.synth.EventRecompileShaderRequest.Connect(nil, func(id int) {
 		fx := c.synth.GetInstrumentFunction(id)
 		if fx == "" {
-			c.canvasUpdater.fnShaders[id] = nil
+			c.canvas.SetShader(id, nil)
 			return
 		}
 		shader, err := stage.CompilePlotShader(id, fx)
 		if err != nil {
 			fmt.Println(err)
 		}
-		c.canvasUpdater.fnShaders[id] = shader
+		c.canvas.SetShader(id, shader)
 	})
 
 	root := widget.NewContainer(
@@ -147,7 +144,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 				),
 			),
 			widget.TextInputOpts.ChangedHandler(func(args *widget.TextInputChangedEventArgs) {
-				c.synth.SetInstrumentFunction(instrumentID, args.InputText)
+				c.synth.SetInstrumentFunction(instrumentID, strings.ToLower(args.InputText))
 			}),
 			widget.TextInputOpts.Validation(func(newInputText string) (bool, *string) {
 				good := true
@@ -229,10 +226,6 @@ func (c *StageController) Init(scene *ge.Scene) {
 		height := 320
 		panel := eui.NewPanel(c.state.UIResources, width, height)
 
-		c.canvasImageBg = scene.LoadImage(assets.ImagePlotBackground).Data
-
-		c.canvasImage = ebiten.NewImage(c.canvasImageBg.Bounds().Dx(), c.canvasImageBg.Bounds().Dy())
-
 		c.canvasWidget = widget.NewGraphic(
 			widget.GraphicOpts.Image(c.canvasImage),
 			widget.GraphicOpts.WidgetOpts(
@@ -248,20 +241,20 @@ func (c *StageController) Init(scene *ge.Scene) {
 		outerGrid.AddChild(panel)
 	}
 
-	c.canvasUpdater = &canvasUpdater{
-		scene:       scene,
-		canvasImage: c.canvasImage,
-		stageCanvas: c.canvas,
-		scratch:     ebiten.NewImage(c.canvasImage.Size()),
-		fnShaders:   make([]*ebiten.Shader, c.config.MaxInstruments),
-	}
-	scene.AddGraphics(c.canvasUpdater)
-
 	initUI(scene, root)
+
+	scene.AddGraphics(c)
+}
+
+func (c *StageController) IsDisposed() bool { return false }
+
+func (c *StageController) Draw(*ebiten.Image) {
+	c.canvas.Draw()
 }
 
 func (c *StageController) Update(delta float64) {
-	c.canvasUpdater.DrawShaders = !c.running
+	c.canvas.Running = c.running
+
 	if c.running {
 		if c.board.ProgramTick(delta) {
 			c.board.ClearProgram()
@@ -269,67 +262,6 @@ func (c *StageController) Update(delta float64) {
 			c.running = false
 		}
 	}
-	c.canvasUpdater.Update(delta)
-}
 
-type canvasUpdater struct {
-	scene       *ge.Scene
-	canvasImage *ebiten.Image
-	stageCanvas *stage.Canvas
-	scratch     *ebiten.Image
-
-	time float64
-
-	fnShaders []*ebiten.Shader
-
-	DrawShaders bool
-}
-
-func (c *canvasUpdater) IsDisposed() bool { return false }
-
-func (c *canvasUpdater) Update(delta float64) {
-	c.time += delta
-}
-
-func (c *canvasUpdater) Draw(*ebiten.Image) {
-	c.canvasImage.Clear()
-
-	plotBackground := c.scene.LoadImage(assets.ImagePlotBackground).Data
-
-	var drawOptions ebiten.DrawImageOptions
-	c.canvasImage.DrawImage(plotBackground, &drawOptions)
-
-	if c.DrawShaders {
-		width := plotBackground.Bounds().Dx()
-		height := plotBackground.Bounds().Dy()
-		for _, shader := range c.fnShaders {
-			c.scratch.Clear()
-			c.scratch.DrawImage(c.canvasImage, &drawOptions)
-
-			var options ebiten.DrawRectShaderOptions
-			if shader == nil {
-				continue
-			}
-			options.Images[0] = c.scratch
-			options.CompositeMode = ebiten.CompositeModeCopy
-			c.canvasImage.DrawRectShader(width, height, shader, &options)
-		}
-	}
-
-	c.stageCanvas.Draw(c.canvasImage)
-
-	// {
-	// 	c.scratch.Clear()
-	// 	c.scratch.DrawImage(c.canvas, &drawOptions)
-
-	// 	var options ebiten.DrawRectShaderOptions
-	// 	options.Uniforms = map[string]any{
-	// 		"Seed": c.scene.Rand().FloatRange(0, 9999999999999),
-	// 		"Tick": c.time,
-	// 	}
-	// 	options.CompositeMode = ebiten.CompositeModeCopy
-	// 	options.Images[0] = c.scratch
-	// 	videoDistortionShader := c.scene.Context().Loader.LoadShader(assets.ShaderVideoDistortion).Data
-	// 	c.canvas.DrawRectShader(width, height, videoDistortionShader, &options)
-	// }
+	c.canvas.Update(delta)
 }
