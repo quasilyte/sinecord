@@ -2,6 +2,7 @@ package scenes
 
 import (
 	"fmt"
+	"math"
 	"strings"
 	"time"
 	"unicode"
@@ -32,7 +33,11 @@ type StageController struct {
 	synth  *stage.Synthesizer
 	board  *stage.Board
 
-	player *audio.Player
+	samples *stage.SampleSet
+	player  *audio.Player
+
+	waveUpdateDelay float64
+	samplesBuf      []float64
 
 	canvasWidget  *widget.Graphic
 	canvasImage   *ebiten.Image
@@ -65,6 +70,15 @@ func (c *StageController) Init(scene *ge.Scene) {
 			X: 4,
 			Y: 46 * 3,
 		},
+	})
+	c.board.EventNote.Connect(c, func(instrumentID int) {
+		// clr := styles.PlotColorByID[instrumentID]
+		// c.canvas.WaveColor.R = (float32(clr.R) / 255.0)
+		// c.canvas.WaveColor.G = (float32(clr.G) / 255.0)
+		// c.canvas.WaveColor.B = (float32(clr.B) / 255.0)
+		// c.canvas.WaveColor.R *= (float32(clr.R) / 255.0) + 1
+		// c.canvas.WaveColor.G *= (float32(clr.G) / 255.0) + 1
+		// c.canvas.WaveColor.B *= (float32(clr.B) / 255.0) + 1
 	})
 
 	c.synth.EventRecompileShaderRequest.Connect(nil, func(id int) {
@@ -208,13 +222,15 @@ func (c *StageController) Init(scene *ge.Scene) {
 	outerGrid.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
 	outerGrid.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.stage.run"), func() {
 		c.running = true
-		pcm, prog := c.synth.CreatePCM()
-		if pcm != nil {
+		samples, prog := c.synth.CreatePCM()
+		if samples != nil {
 			if c.player != nil {
 				c.player.Play()
 				c.player.Close()
 			}
+			pcm := generatePCM(samples.Left, samples.Right)
 			c.player = scene.Audio().GetContext().NewPlayerFromBytes(pcm)
+			c.samples = samples
 		}
 		c.player.Rewind()
 		c.player.Play()
@@ -256,12 +272,42 @@ func (c *StageController) Update(delta float64) {
 	c.canvas.Running = c.running
 
 	if c.running {
+		c.waveUpdateDelay = gmath.ClampMin(c.waveUpdateDelay-delta, 0)
+		if c.waveUpdateDelay == 0 {
+			c.waveUpdateDelay = 0.1
+			c.canvas.RenderWave(c.waveSamples())
+		}
+
 		if c.board.ProgramTick(delta) {
 			c.board.ClearProgram()
-			fmt.Println("finished")
 			c.running = false
 		}
 	}
 
 	c.canvas.Update(delta)
+}
+
+func (c *StageController) waveSamples() []float64 {
+	c.samplesBuf = c.samplesBuf[:0]
+
+	sampleRate := float64(c.samples.PerSecond)
+	numSamples := len(c.samples.Left)
+
+	currentSecond := c.player.Current().Seconds()
+	currentSample := int(math.Round(currentSecond * sampleRate))
+	samplesPerHalf := c.samples.PerSecond / 60
+
+	fromSample := currentSample - samplesPerHalf
+	toSample := currentSample + samplesPerHalf
+
+	if fromSample < 0 || toSample >= numSamples {
+		return nil
+	}
+
+	for i := fromSample; i < toSample; i++ {
+		v := float64(c.samples.Left[i] + c.samples.Right[i])
+		c.samplesBuf = append(c.samplesBuf, v)
+	}
+
+	return c.samplesBuf
 }

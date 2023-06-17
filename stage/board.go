@@ -3,6 +3,7 @@ package stage
 import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/sinecord/assets"
 	"github.com/quasilyte/sinecord/styles"
 )
@@ -22,6 +23,8 @@ type Board struct {
 	runner   programRunner
 
 	signals []*signalNode
+
+	EventNote gsignal.Event[int]
 }
 
 type BoardConfig struct {
@@ -75,6 +78,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 		effect := newEffectNode(b.canvas, pos, assets.ImageCircleExplosion, styles.PlotColorByID[e.id])
 		b.scene.AddObject(effect)
 		effect.anim.SetAnimationSpan(b.prog.Instruments[e.index].Period)
+		b.EventNote.Emit(e.id)
 	}
 
 	x := b.t

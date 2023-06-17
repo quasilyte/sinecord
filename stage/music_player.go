@@ -1,15 +1,18 @@
 package stage
 
 import (
-	"encoding/binary"
 	"math"
-
-	"bytes"
 
 	"github.com/quasilyte/sinecord/assets"
 	"github.com/quasilyte/sinecord/synthdb"
 	"github.com/sinshu/go-meltysynth/meltysynth"
 )
+
+type SampleSet struct {
+	PerSecond int
+	Left      []float32
+	Right     []float32
+}
 
 type musicPlayer struct {
 	ctx         *Context
@@ -51,7 +54,7 @@ func (p *musicPlayer) walkNotes(events []noteActivation, f func(i, num int)) {
 	}
 }
 
-func (p *musicPlayer) createPCM(prog SynthProgram) []byte {
+func (p *musicPlayer) createPCM(prog SynthProgram) *SampleSet {
 	synthesizer, err := meltysynth.NewSynthesizer(assets.SoundFontTimGM6mb, p.settings)
 	if err != nil {
 		panic(err)
@@ -95,53 +98,9 @@ func (p *musicPlayer) createPCM(prog SynthProgram) []byte {
 
 	synthesizer.Render(p.left[blockOffset:], p.right[blockOffset:])
 
-	return generatePCM(p.left, p.right)
-}
-
-func generatePCM(left, right []float32) []byte {
-	length := len(left)
-
-	a := float32(32768.0)
-
-	data := make([]int16, 2*length)
-
-	for i := 0; i < length; i++ {
-		data[2*i] = int16(a * left[i])
-		data[2*i+1] = int16(a * right[i])
+	return &SampleSet{
+		PerSecond: int(p.settings.SampleRate),
+		Left:      p.left,
+		Right:     p.right,
 	}
-
-	var buf bytes.Buffer
-	buf.Grow(len(data) * 2)
-
-	binary.Write(&buf, binary.LittleEndian, data)
-	return buf.Bytes()
-
-	// length := len(left)
-	// var max float64
-
-	// for i := 0; i < length; i++ {
-	// 	absLeft := math.Abs(float64(left[i]))
-	// 	absRight := math.Abs(float64(right[i]))
-	// 	if max < absLeft {
-	// 		max = absLeft
-	// 	}
-	// 	if max < absRight {
-	// 		max = absRight
-	// 	}
-	// }
-
-	// a := 32768 * float32(0.99/max)
-
-	// data := make([]int16, 2*length)
-
-	// for i := 0; i < length; i++ {
-	// 	data[2*i] = int16(a * left[i])
-	// 	data[2*i+1] = int16(a * right[i])
-	// }
-
-	// var buf bytes.Buffer
-	// buf.Grow(len(data) * 2)
-
-	// binary.Write(&buf, binary.LittleEndian, data)
-	// return buf.Bytes()
 }

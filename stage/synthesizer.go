@@ -71,7 +71,7 @@ func (s *Synthesizer) Update(delta float64) {
 	}
 }
 
-func (s *Synthesizer) CreatePCM() ([]byte, SynthProgram) {
+func (s *Synthesizer) CreatePCM() (*SampleSet, SynthProgram) {
 	if !s.changed {
 		return nil, SynthProgram{}
 	}

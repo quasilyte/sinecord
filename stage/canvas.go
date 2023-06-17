@@ -1,7 +1,11 @@
 package stage
 
 import (
+	"image"
+	"image/color"
+
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/sinecord/assets"
 )
@@ -15,6 +19,7 @@ type Canvas struct {
 
 	canvasImage *ebiten.Image
 	scratch     *ebiten.Image
+	waves       *ebiten.Image
 
 	fnShaders []*ebiten.Shader
 
@@ -26,6 +31,7 @@ func NewCanvas(ctx *Context, scene *ge.Scene, img *ebiten.Image) *Canvas {
 		scene:       scene,
 		canvasImage: img,
 		scratch:     ebiten.NewImage(img.Size()),
+		waves:       ebiten.NewImage(img.Size()),
 		sprites:     make([]*ge.Sprite, 0, 16),
 		fnShaders:   make([]*ebiten.Shader, ctx.config.MaxInstruments),
 	}
@@ -33,6 +39,53 @@ func NewCanvas(ctx *Context, scene *ge.Scene, img *ebiten.Image) *Canvas {
 
 func (c *Canvas) SetShader(id int, shader *ebiten.Shader) {
 	c.fnShaders[id] = shader
+}
+
+func (c *Canvas) RenderWave(data []float64) {
+	c.waves.Clear()
+	if data == nil {
+		return
+	}
+
+	offsetX := 4
+	width := c.canvasImage.Bounds().Dx()
+	widthAvailable := width - offsetX
+	samplesPerPixel := len(data) / widthAvailable
+	var p vector.Path
+	for x := offsetX; x < width; x++ {
+		sampleIndex := x * samplesPerPixel
+		if sampleIndex > len(data) {
+			break
+		}
+		y := ((6 * data[sampleIndex] * 3.0) * 46.0) + (46 * 3)
+		p.LineTo(float32(x), float32(y))
+	}
+	var strokeOptions vector.StrokeOptions
+	strokeOptions.Width = 2
+	vs, is := p.AppendVerticesAndIndicesForStroke(nil, nil, &strokeOptions)
+	for i := range vs {
+		vs[i].SrcX = 1
+		vs[i].SrcY = 1
+		vs[i].ColorR = 0.616
+		vs[i].ColorG = 0.843
+		vs[i].ColorB = 0.576
+		vs[i].ColorA = 1
+	}
+	op := &ebiten.DrawTrianglesOptions{AntiAlias: true}
+	c.waves.DrawTriangles(vs, is, whiteSubImage, op)
+
+	// offsetX := 4
+	// width := c.canvasImage.Bounds().Dx()
+	// widthAvailable := width - offsetX
+	// samplesPerPixel := len(data) / widthAvailable
+	// for x := offsetX; x < width; x++ {
+	// 	sampleIndex := x * samplesPerPixel
+	// 	if sampleIndex > len(data) {
+	// 		break
+	// 	}
+	// 	y := int(math.Round(((2 * data[sampleIndex] * 3.0) * 46.0)) + (46 * 3))
+	// 	c.waves.Set(x, y, color.RGBA{R: 255, A: 255})
+	// }
 }
 
 func (c *Canvas) AddSprite(s *ge.Sprite) {
@@ -70,6 +123,10 @@ func (c *Canvas) Draw() {
 		}
 	}
 
+	if c.Running {
+		c.canvasImage.DrawImage(c.waves, &drawOptions)
+	}
+
 	c.drawSprites()
 }
 
@@ -83,4 +140,13 @@ func (c *Canvas) drawSprites() {
 		liveSprites = append(liveSprites, s)
 	}
 	c.sprites = liveSprites
+}
+
+var (
+	whiteImage    = ebiten.NewImage(3, 3)
+	whiteSubImage = whiteImage.SubImage(image.Rect(1, 1, 2, 2)).(*ebiten.Image)
+)
+
+func init() {
+	whiteImage.Fill(color.White)
 }
