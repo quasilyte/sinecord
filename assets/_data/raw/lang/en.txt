@@ -9,3 +9,7 @@
 
 ##menu.play.missions : missions
 ##menu.play.sandbox : sandbox
+
+##menu.play.act : act
+
+##menu.stage.run : play

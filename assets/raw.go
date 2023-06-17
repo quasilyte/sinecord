@@ -9,8 +9,8 @@ import (
 
 func registerRawResources(ctx *ge.Context) {
 	rawResources := map[resource.RawID]resource.RawInfo{
-		RawSoundfontBassSynth: {Path: "raw/bass_synth_classic.sf2"},
-		RawEnDictBase:         {Path: "raw/lang/en.txt"},
+		RawSoundFontTimGM6mb: {Path: "raw/TimGM6mb.sf2"},
+		RawEnDictBase:        {Path: "raw/lang/en.txt"},
 	}
 
 	for id, res := range rawResources {
@@ -24,5 +24,5 @@ const (
 
 	RawEnDictBase
 
-	RawSoundfontBassSynth
+	RawSoundFontTimGM6mb
 )

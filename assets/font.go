@@ -9,9 +9,10 @@ import (
 
 func registerFontResources(ctx *ge.Context) {
 	fontResources := map[resource.FontID]resource.FontInfo{
-		FontArcadeSmall:  {Path: "font/arcade.otf", Size: 14},
-		FontArcadeNormal: {Path: "font/arcade.otf", Size: 20},
-		FontArcadeBig:    {Path: "font/arcade.otf", Size: 30},
+		FontMonospaceNormal: {Path: "font/mono.ttf", Size: 18},
+		FontArcadeSmall:     {Path: "font/arcade.otf", Size: 14},
+		FontArcadeNormal:    {Path: "font/arcade.otf", Size: 20},
+		FontArcadeBig:       {Path: "font/arcade.otf", Size: 30},
 	}
 
 	for id, res := range fontResources {
@@ -23,6 +24,7 @@ func registerFontResources(ctx *ge.Context) {
 const (
 	FontNone resource.FontID = iota
 
+	FontMonospaceNormal
 	FontArcadeSmall
 	FontArcadeNormal
 	FontArcadeBig
