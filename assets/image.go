@@ -9,6 +9,7 @@ import (
 
 func registerImageResources(ctx *ge.Context) {
 	imageResources := map[resource.ImageID]resource.ImageInfo{
+		ImageUIButtonDisabled:      {Path: "image/ebitenui/button-disabled.png"},
 		ImageUIButtonIdle:          {Path: "image/ebitenui/button-idle.png"},
 		ImageUIButtonHover:         {Path: "image/ebitenui/button-hover.png"},
 		ImageUIButtonPressed:       {Path: "image/ebitenui/button-pressed.png"},
@@ -34,6 +35,7 @@ func registerImageResources(ctx *ge.Context) {
 const (
 	ImageNone resource.ImageID = iota
 
+	ImageUIButtonDisabled
 	ImageUIButtonIdle
 	ImageUIButtonHover
 	ImageUIButtonPressed

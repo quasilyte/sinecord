@@ -58,6 +58,7 @@ func PrepareResources(loader *resource.Loader) *Resources {
 	monoMediumFont := loader.LoadFont(assets.FontMonospaceNormal).Face
 
 	{
+		disabled := nineSliceImage(loader.LoadImage(assets.ImageUIButtonDisabled).Data, 12, 0)
 		idle := nineSliceImage(loader.LoadImage(assets.ImageUIButtonIdle).Data, 12, 0)
 		hover := nineSliceImage(loader.LoadImage(assets.ImageUIButtonHover).Data, 12, 0)
 		pressed := nineSliceImage(loader.LoadImage(assets.ImageUIButtonPressed).Data, 12, 0)
@@ -74,9 +75,10 @@ func PrepareResources(loader *resource.Loader) *Resources {
 		}
 		result.button = &buttonResource{
 			Image: &widget.ButtonImage{
-				Idle:    idle,
-				Hover:   hover,
-				Pressed: pressed,
+				Idle:     idle,
+				Hover:    hover,
+				Pressed:  pressed,
+				Disabled: disabled,
 			},
 			Padding:    buttonPadding,
 			TextColors: buttonColors,
@@ -278,6 +280,8 @@ type SelectButtonConfig struct {
 	ValueNames     []string
 	DisabledValues []int
 
+	MinWidth int
+
 	Tooltip *widget.Container
 
 	OnPressed func()
@@ -307,6 +311,9 @@ func NewSelectButton(config SelectButtonConfig) *widget.Button {
 			widget.ToolTipOpts.Delay(time.Second),
 		)
 		buttonOptions = append(buttonOptions, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.ToolTip(tt)))
+	}
+	if config.MinWidth != 0 {
+		buttonOptions = append(buttonOptions, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(config.MinWidth, 0)))
 	}
 	button := newSelectButton(config.Resources, makeLabel(), buttonOptions...)
 
@@ -436,6 +443,28 @@ func NewTextInput(res *Resources, opts ...widget.TextInputOpt) *widget.TextInput
 	options = append(options, opts...)
 	t := widget.NewTextInput(options...)
 	return t
+}
+
+func NewPanelWithPadding(res *Resources, minWidth, minHeight int, padding widget.Insets) *widget.Container {
+	return widget.NewContainer(
+		widget.ContainerOpts.BackgroundImage(res.panel.Image),
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout(
+			widget.AnchorLayoutOpts.Padding(padding),
+		)),
+		// widget.ContainerOpts.Layout(widget.NewRowLayout(
+		// 	widget.RowLayoutOpts.Direction(widget.DirectionVertical),
+		// 	widget.RowLayoutOpts.Spacing(4),
+		// 	widget.RowLayoutOpts.Padding(res.panel.Padding),
+		// )),
+		widget.ContainerOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				StretchHorizontal:  true,
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			}),
+			widget.WidgetOpts.MinSize(minWidth, minHeight),
+		),
+	)
 }
 
 func NewPanel(res *Resources, minWidth, minHeight int) *widget.Container {

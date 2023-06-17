@@ -61,6 +61,8 @@ func (c *StageController) Init(scene *ge.Scene) {
 	c.canvasImage = ebiten.NewImage(c.canvasImageBg.Bounds().Dx(), c.canvasImageBg.Bounds().Dy())
 	c.canvas = stage.NewCanvas(ctx, scene, c.canvasImage)
 
+	smallFont := scene.Context().Loader.LoadFont(assets.FontArcadeSmall).Face
+
 	c.synth = stage.NewSynthesizer(ctx, synthdb.TimGM6mb)
 	scene.AddObject(c.synth)
 
@@ -174,7 +176,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 
 		textTnput := eui.NewTextInput(c.state.UIResources,
 			widget.TextInputOpts.WidgetOpts(
-				widget.WidgetOpts.MinSize(640, 0),
+				widget.WidgetOpts.MinSize(760, 0),
 				widget.WidgetOpts.ToolTip(
 					widget.NewToolTip(
 						widget.ToolTipOpts.Content(eui.NewTooltip(c.state.UIResources, "f(x)")),
@@ -223,6 +225,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			Input:      c.state.Input,
 			ValueNames: patchNames,
 			Value:      &patchIndex,
+			MinWidth:   320,
 			Tooltip:    eui.NewTooltip(c.state.UIResources, "instrument style"),
 			OnPressed: func() {
 				c.synth.SetInstrumentPatch(instrumentID, patchIndex)
@@ -255,29 +258,89 @@ func (c *StageController) Init(scene *ge.Scene) {
 		}))
 	}
 
-	outerGrid.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
-	outerGrid.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.stage.run"), func() {
-		c.running = true
-		samples, prog := c.synth.CreatePCM()
-		if samples != nil {
-			if c.player != nil {
-				c.player.Play()
-				c.player.Close()
-			}
-			pcm := generatePCM(samples.Left, samples.Right)
-			c.player = scene.Audio().GetContext().NewPlayerFromBytes(pcm)
-			c.samples = samples
-			c.prog = prog
-		}
-		c.player.Rewind()
-		c.player.Play()
-		c.board.StartProgram(c.prog)
-	}))
+	statusLabelContainer := widget.NewContainer(
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout(
+			widget.AnchorLayoutOpts.Padding(widget.Insets{Top: 8}),
+		)),
+	)
+	statusLabel := widget.NewText(
+		widget.TextOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+			}),
+		),
+		widget.TextOpts.Position(widget.TextPositionCenter, widget.TextPositionCenter),
+		widget.TextOpts.Text("status: ready", smallFont, styles.NormalTextColor),
+	)
+	statusLabelContainer.AddChild(statusLabel)
+	outerGrid.AddChild(statusLabelContainer)
 
 	{
-		width := 1536
-		height := 320
-		panel := eui.NewPanel(c.state.UIResources, width, height)
+		playerGridContainer := widget.NewContainer(
+			widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
+		)
+
+		panel := eui.NewPanelWithPadding(c.state.UIResources, 0, 0, widget.Insets{
+			Left:   24,
+			Right:  24,
+			Top:    24,
+			Bottom: 24,
+		})
+
+		playerGrid := widget.NewContainer(
+			widget.ContainerOpts.WidgetOpts(
+				widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+					HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				}),
+			),
+			widget.ContainerOpts.Layout(widget.NewGridLayout(
+				widget.GridLayoutOpts.Columns(2),
+				widget.GridLayoutOpts.Padding(widget.NewInsetsSimple(8)),
+				widget.GridLayoutOpts.Spacing(4, 8),
+			)))
+
+		buttonsGrid := widget.NewContainer(
+			widget.ContainerOpts.WidgetOpts(
+				widget.WidgetOpts.MinSize(256, 0),
+			),
+			widget.ContainerOpts.Layout(widget.NewGridLayout(
+				widget.GridLayoutOpts.Columns(1),
+				widget.GridLayoutOpts.Stretch([]bool{true}, nil),
+				widget.GridLayoutOpts.Padding(widget.NewInsetsSimple(8)),
+				widget.GridLayoutOpts.Spacing(4, 8),
+			)))
+
+		buttonsGrid.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.stage.run"), func() {
+			c.running = true
+			samples, prog := c.synth.CreatePCM()
+			if samples != nil {
+				if c.player != nil {
+					c.player.Play()
+					c.player.Close()
+				}
+				pcm := generatePCM(samples.Left, samples.Right)
+				c.player = scene.Audio().GetContext().NewPlayerFromBytes(pcm)
+				c.samples = samples
+				c.prog = prog
+			}
+			c.player.Rewind()
+			c.player.Play()
+			c.board.StartProgram(c.prog)
+		}))
+
+		stopButton := eui.NewButton(c.state.UIResources, "stop", func() {})
+		buttonsGrid.AddChild(stopButton)
+
+		saveButton := eui.NewButton(c.state.UIResources, "save", func() {})
+		saveButton.GetWidget().Disabled = true
+		buttonsGrid.AddChild(saveButton)
+
+		loadButton := eui.NewButton(c.state.UIResources, "load", func() {})
+		loadButton.GetWidget().Disabled = true
+		buttonsGrid.AddChild(loadButton)
+
+		exitButton := eui.NewButton(c.state.UIResources, "exit", func() {})
+		buttonsGrid.AddChild(exitButton)
 
 		c.canvasWidget = widget.NewGraphic(
 			widget.GraphicOpts.Image(c.canvasImage),
@@ -288,10 +351,14 @@ func (c *StageController) Init(scene *ge.Scene) {
 				}),
 			),
 		)
-
 		panel.AddChild(c.canvasWidget)
 
-		outerGrid.AddChild(panel)
+		playerGrid.AddChild(buttonsGrid)
+		playerGrid.AddChild(panel)
+
+		playerGridContainer.AddChild(playerGrid)
+
+		outerGrid.AddChild(playerGridContainer)
 	}
 
 	initUI(scene, root)
