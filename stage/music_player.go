@@ -12,6 +12,7 @@ import (
 )
 
 type musicPlayer struct {
+	ctx         *Context
 	instruments []*instrument
 	delays      []float64
 	settings    *meltysynth.SynthesizerSettings
@@ -20,8 +21,9 @@ type musicPlayer struct {
 	right       []float32
 }
 
-func newMusicPlayer(instruments []*instrument) *musicPlayer {
+func newMusicPlayer(ctx *Context, instruments []*instrument) *musicPlayer {
 	p := &musicPlayer{
+		ctx:         ctx,
 		instruments: instruments,
 		delays:      make([]float64, len(instruments)),
 	}
@@ -33,64 +35,82 @@ func newMusicPlayer(instruments []*instrument) *musicPlayer {
 	return p
 }
 
-func (p *musicPlayer) createPCM() []byte {
+func (p *musicPlayer) walkNotes(events []noteActivation, f func(i, num int)) {
+	i := 0
+	for i < len(events) {
+		num := 1
+		t := events[i].t
+		for j := i + 1; j < len(events); j++ {
+			if events[j].t != t {
+				break
+			}
+			num++
+		}
+		f(i, num)
+		i += num
+	}
+
+	// for _, e := range events {
+	// 	channel := int32(e.id)
+	// 	inst := p.instruments[e.id]
+	// 	synthesizer.NoteOffAllChannel(channel, false)
+	// 	y := math.Abs(inst.compiledFx(e.t))
+	// 	if y <= 3 || y >= -3 {
+	// 		note := int32(math.Round(y*float64(synthdb.Ocvate4EndCode-synthdb.Octave1StartCode+1)/3)) + synthdb.Octave1StartCode
+	// 		velocity := int32(40)
+	// 		synthesizer.NoteOn(channel, note, int32(velocity))
+	// 	}
+	// 	elapsed := e.t - t
+	// 	t = e.t
+	// 	blockSize := int(math.Round(samplesPerSecond * elapsed))
+	// 	synthesizer.Render(p.left[blockOffset:blockOffset+blockSize], p.right[blockOffset:blockOffset+blockSize])
+	// 	blockOffset += blockSize
+	// }
+}
+
+func (p *musicPlayer) createPCM(prog SynthProgram) []byte {
 	synthesizer, err := meltysynth.NewSynthesizer(assets.SoundFontTimGM6mb, p.settings)
 	if err != nil {
 		panic(err)
 	}
 
-	synthesizer.MasterVolume = 0.75
-
-	const stepsPerSecond = 180
-	dt := 1.0 / stepsPerSecond
-	t := 0.0
-	duration := 20.0
-	blockOffset := 0
-
-	for i := range p.delays {
-		p.delays[i] = p.instruments[i].period
+	for channel, inst := range p.instruments {
+		synthesizer.ProcessMidiMessage(int32(channel), 0xC0, int32(inst.instrumentIndex), 0)
 	}
 
-	samplesPerDt := int(p.settings.SampleRate) / int(stepsPerSecond)
+	synthesizer.MasterVolume = 0.75
 
-	for t < duration {
-		t += dt
+	samplesPerSecond := float64(p.settings.SampleRate)
+	t := 0.0
+	blockOffset := 0
 
-		for i, inst := range p.instruments {
-			channel := int32(i)
-			if !inst.enabled || inst.compiledFx == nil {
-				continue
-			}
-			delay := p.delays[i]
-			if delay > dt {
-				p.delays[i] -= dt
-				continue
-			}
-			// synthesizer.ProcessMidiMessage(0, 0xB0, 0x27, 0x3FFF)
-			y := math.Abs(inst.compiledFx(t))
-			// 48 notes
-			// From 60 to 107
-			// value range is 0 to 3
+	events := p.ctx.runner.RunProgram(prog)
+	p.walkNotes(events, func(i, num int) {
+		eventTime := events[i].t
+
+		elapsed := eventTime - t
+		t = eventTime
+		blockSize := int(samplesPerSecond * elapsed)
+		synthesizer.Render(p.left[blockOffset:blockOffset+blockSize], p.right[blockOffset:blockOffset+blockSize])
+		blockOffset += blockSize
+
+		for j := 0; j < num; j++ {
+			e := events[i+j]
+			inst := p.instruments[e.id]
+			channel := int32(e.id)
 			synthesizer.NoteOffAllChannel(channel, false)
+			y := math.Abs(inst.compiledFx(e.t))
 			if y > 3 || y < -3 {
 				continue
 			}
 			note := int32(math.Round(y*float64(synthdb.Ocvate4EndCode-synthdb.Octave1StartCode+1)/3)) + synthdb.Octave1StartCode
-
-			// volume := int32(0)
-			// if y <= 3 && y >= -3 {
-			// 	volume = int32(math.Round(y * (127.0 / 3)))
-			// }
-			// synthesizer.ProcessMidiMessage(0, 0xB0, 0x07, volume)
-			synthesizer.ProcessMidiMessage(channel, 0xC0, int32(inst.instrumentIndex), 0) // guitar
-			p.delays[i] = inst.period - (dt - delay)
 			velocity := int32(40)
 			synthesizer.NoteOn(channel, note, int32(velocity))
 		}
 
-		synthesizer.Render(p.left[blockOffset:blockOffset+samplesPerDt], p.right[blockOffset:blockOffset+samplesPerDt])
-		blockOffset += samplesPerDt
-	}
+	})
+
+	synthesizer.Render(p.left[blockOffset:], p.right[blockOffset:])
 
 	return generatePCM(p.left, p.right)
 }

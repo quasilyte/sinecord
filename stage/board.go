@@ -1,20 +1,11 @@
 package stage
 
 import (
-	"image/color"
-
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/styles"
 )
-
-type SynthProgram struct {
-	Instruments []SynthProgramInstrument
-}
-
-type SynthProgramInstrument struct {
-	Color color.RGBA
-	Func  func(x float64) float64
-}
 
 type Board struct {
 	scene  *ge.Scene
@@ -23,9 +14,12 @@ type Board struct {
 	plotScale  float64
 	plotOffset gmath.Vec
 
-	length float64
-	t      float64
-	prog   SynthProgram
+	finished bool
+	length   float64
+	t        float64
+	prog     SynthProgram
+	events   []noteActivation
+	runner   programRunner
 
 	signals []*signalNode
 }
@@ -57,10 +51,30 @@ func (b *Board) ClearProgram() {
 }
 
 func (b *Board) ProgramTick(delta float64) bool {
-	finished := false
+	if b.finished {
+		panic("running a finished program")
+	}
+
 	if b.t+delta >= b.length {
 		delta = b.length - b.t
-		finished = true
+		b.finished = true
+	}
+
+	for len(b.events) != 0 {
+		e := b.events[0]
+		if e.t > b.t {
+			break
+		}
+		b.events = b.events[1:]
+		y := b.prog.Instruments[e.index].Func(e.t)
+		pos := gmath.Vec{
+			X: e.t * b.plotScale,
+			Y: -(y * b.plotScale),
+		}
+		pos = pos.Add(b.plotOffset)
+		effect := newEffectNode(b.canvas, pos, assets.ImageCircleExplosion, styles.PlotColorByID[e.id])
+		b.scene.AddObject(effect)
+		effect.anim.SetAnimationSpan(b.prog.Instruments[e.index].Period)
 	}
 
 	x := b.t
@@ -75,14 +89,15 @@ func (b *Board) ProgramTick(delta float64) bool {
 	}
 	b.t += delta
 
-	return finished
+	return b.finished
 }
 
 func (b *Board) initProgram(prog SynthProgram) {
 	b.prog = prog
+	b.events = b.runner.RunProgram(prog)
 
 	for _, inst := range prog.Instruments {
-		sig := newSignalNode(b.canvas, inst.Color)
+		sig := newSignalNode(b.canvas, styles.PlotColorByID[inst.ID])
 		b.scene.AddObject(sig)
 		b.signals = append(b.signals, sig)
 	}
@@ -94,5 +109,6 @@ func (b *Board) reset() {
 	}
 	b.signals = b.signals[:0]
 
+	b.finished = false
 	b.t = 0
 }

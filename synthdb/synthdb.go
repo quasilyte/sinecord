@@ -27,6 +27,10 @@ var TimGM6mb = &SoundFont{
 	Instruments: []*Instrument{
 		{Name: "Synth Bass 1", Index: 88},
 		{Name: "Synth Bass 2", Index: 87},
+		{Name: "Synth Drum", Index: 18},
+		{Name: "Taiko Drum", Index: 20},
+		{Name: "Steel Drum", Index: 22},
+		{Name: "Tom Drum", Index: 19},
 		{Name: "Distortion Guitar", Index: 96},
 	},
 }

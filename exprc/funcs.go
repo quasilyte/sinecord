@@ -13,6 +13,10 @@ var builtinFuncMap = map[string]builtinFunction{
 	"cos":        {numArgs: 1, op: opCosFunc},
 	"step":       {numArgs: 2, op: opStepFunc},
 	"smoothstep": {numArgs: 3, op: opSmootstepFunc},
+	"min":        {numArgs: 2, op: opMinFunc},
+	"max":        {numArgs: 2, op: opMaxFunc},
+	"clamp":      {numArgs: 3, op: opClampFunc},
+	"pow":        {numArgs: 2, op: opPowFunc},
 }
 
 func step(edge, x float64) float64 {
@@ -20,6 +24,20 @@ func step(edge, x float64) float64 {
 		return 0
 	}
 	return 1
+}
+
+func min(a, b float64) float64 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b float64) float64 {
+	if a > b {
+		return a
+	}
+	return b
 }
 
 func smoothstep(edge0, edge1, x float64) float64 {

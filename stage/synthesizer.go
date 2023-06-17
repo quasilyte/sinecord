@@ -7,12 +7,13 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/sinecord/exprc"
-	"github.com/quasilyte/sinecord/styles"
 	"github.com/quasilyte/sinecord/synthdb"
 )
 
 type Synthesizer struct {
 	scene *ge.Scene
+
+	ctx *Context
 
 	changed bool
 
@@ -27,16 +28,17 @@ type Synthesizer struct {
 	EventRecompileShaderRequest gsignal.Event[int]
 }
 
-func NewSynthesizer(sf *synthdb.SoundFont) *Synthesizer {
+func NewSynthesizer(ctx *Context, sf *synthdb.SoundFont) *Synthesizer {
 	instruments := make([]*instrument, 4)
 	for i := range instruments {
 		instruments[i] = &instrument{}
 	}
 	return &Synthesizer{
+		ctx:         ctx,
 		changed:     true,
 		sf:          sf,
 		instruments: instruments,
-		player:      newMusicPlayer(instruments),
+		player:      newMusicPlayer(ctx, instruments),
 	}
 }
 
@@ -74,20 +76,24 @@ func (s *Synthesizer) CreatePCM() []byte {
 		return nil
 	}
 	s.changed = false
-	return s.player.createPCM()
+	return s.player.createPCM(s.CreateProgram())
 }
 
 func (s *Synthesizer) CreateProgram() SynthProgram {
 	prog := SynthProgram{
+		Length:      20,
 		Instruments: make([]SynthProgramInstrument, 0, 4),
 	}
 	for id, inst := range s.instruments {
 		if !inst.enabled || inst.compiledFx == nil {
 			continue
 		}
+		index := len(prog.Instruments)
 		prog.Instruments = append(prog.Instruments, SynthProgramInstrument{
-			Color: styles.PlotColorByID[id],
-			Func:  inst.compiledFx,
+			ID:     id,
+			Index:  index,
+			Func:   inst.compiledFx,
+			Period: inst.period,
 		})
 	}
 	return prog

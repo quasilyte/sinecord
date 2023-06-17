@@ -26,6 +26,10 @@ const (
 	opCosFunc
 	opStepFunc
 	opSmootstepFunc
+	opMinFunc
+	opMaxFunc
+	opClampFunc
+	opPowFunc
 
 	opAdd
 	opMul

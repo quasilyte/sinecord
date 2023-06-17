@@ -1,6 +1,10 @@
 package exprc
 
-import "math"
+import (
+	"math"
+
+	"github.com/quasilyte/gmath"
+)
 
 type funcRunner struct {
 	stack     []float64
@@ -43,6 +47,14 @@ func (r *funcRunner) Run(x float64) float64 {
 			r.push(step(r.pop2()))
 		case opSmootstepFunc:
 			r.push(smoothstep(r.pop3()))
+		case opMinFunc:
+			r.push(min(r.pop2()))
+		case opMaxFunc:
+			r.push(max(r.pop2()))
+		case opClampFunc:
+			r.push(gmath.Clamp(r.pop3()))
+		case opPowFunc:
+			r.push(math.Pow(r.pop2()))
 
 		default:
 			panic("unexpected op")

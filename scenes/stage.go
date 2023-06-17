@@ -54,9 +54,11 @@ func NewStageController(state *session.State, config StageConfig) *StageControll
 func (c *StageController) Init(scene *ge.Scene) {
 	d := scene.Dict()
 
+	ctx := stage.NewContext()
+
 	c.canvas = stage.NewCanvas()
 
-	c.synth = stage.NewSynthesizer(synthdb.TimGM6mb)
+	c.synth = stage.NewSynthesizer(ctx, synthdb.TimGM6mb)
 	scene.AddObject(c.synth)
 
 	c.board = stage.NewBoard(scene, stage.BoardConfig{
@@ -259,6 +261,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 }
 
 func (c *StageController) Update(delta float64) {
+	c.canvasUpdater.DrawShaders = !c.running
 	if c.running {
 		if c.board.ProgramTick(delta) {
 			c.board.ClearProgram()
@@ -278,6 +281,8 @@ type canvasUpdater struct {
 	time float64
 
 	fnShaders []*ebiten.Shader
+
+	DrawShaders bool
 }
 
 func (c *canvasUpdater) IsDisposed() bool { return false }
@@ -294,19 +299,21 @@ func (c *canvasUpdater) Draw(*ebiten.Image) {
 	var drawOptions ebiten.DrawImageOptions
 	c.canvasImage.DrawImage(plotBackground, &drawOptions)
 
-	width := plotBackground.Bounds().Dx()
-	height := plotBackground.Bounds().Dy()
-	for _, shader := range c.fnShaders {
-		c.scratch.Clear()
-		c.scratch.DrawImage(c.canvasImage, &drawOptions)
+	if c.DrawShaders {
+		width := plotBackground.Bounds().Dx()
+		height := plotBackground.Bounds().Dy()
+		for _, shader := range c.fnShaders {
+			c.scratch.Clear()
+			c.scratch.DrawImage(c.canvasImage, &drawOptions)
 
-		var options ebiten.DrawRectShaderOptions
-		if shader == nil {
-			continue
+			var options ebiten.DrawRectShaderOptions
+			if shader == nil {
+				continue
+			}
+			options.Images[0] = c.scratch
+			options.CompositeMode = ebiten.CompositeModeCopy
+			c.canvasImage.DrawRectShader(width, height, shader, &options)
 		}
-		options.Images[0] = c.scratch
-		options.CompositeMode = ebiten.CompositeModeCopy
-		c.canvasImage.DrawRectShader(width, height, shader, &options)
 	}
 
 	c.stageCanvas.Draw(c.canvasImage)
