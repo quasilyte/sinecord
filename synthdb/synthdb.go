@@ -15,59 +15,67 @@ type SoundFont struct {
 }
 
 type Instrument struct {
+	Kind InstrumentKind
+
 	Name string
 
 	Index       int
 	PatchNumber int
 }
 
+type InstrumentKind int
+
+const (
+	BassInstrument InstrumentKind = iota
+	DrumInstrument
+	KeyboardInstrument
+	BrassInstrument
+	StringInstrument
+	OtherInstrument
+)
+
 var TimGM6mb = &SoundFont{
 	Name: "TimGM6mb",
 
 	Instruments: []*Instrument{
-		{Name: "Synth Bass 1", Index: 88},
-		{Name: "Synth Bass 2", Index: 87},
-		{Name: "Slap Bass 1", Index: 90},
-		{Name: "Slap Bass 2", Index: 89},
+		{Kind: BassInstrument, Name: "Synth Bass 1", Index: 88},
+		{Kind: BassInstrument, Name: "Synth Bass 2", Index: 87},
+		{Kind: BassInstrument, Name: "Slap Bass 1", Index: 90},
+		{Kind: BassInstrument, Name: "Slap Bass 2", Index: 89},
+		{Kind: BassInstrument, Name: "Bass & Lead", Index: 49},
+		{Kind: BassInstrument, Name: "Distortion Guitar", Index: 96},
+		{Kind: BassInstrument, Name: "5th Saw Wave", Index: 50},
 
-		{Name: "Synth Brass 1", Index: 70},
-		{Name: "Synth Brass 2", Index: 69},
-		{Name: "Brass", Index: 71},
+		{Kind: KeyboardInstrument, Name: "Piano 1", Index: 126},
+		{Kind: KeyboardInstrument, Name: "Piano 2", Index: 125},
+		{Kind: KeyboardInstrument, Name: "Piano 3", Index: 124},
+		{Kind: KeyboardInstrument, Name: "Honky Tonk", Index: 123},
+		{Kind: KeyboardInstrument, Name: "Clavinet", Index: 119},
+		{Kind: KeyboardInstrument, Name: "Harpsichord", Index: 120},
 
-		{Name: "Piano 1", Index: 126},
-		{Name: "Piano 2", Index: 125},
-		{Name: "Piano 3", Index: 124},
-		{Name: "Honky Tonk", Index: 123},
+		{Kind: BrassInstrument, Name: "Synth Brass 1", Index: 70},
+		{Kind: BrassInstrument, Name: "Synth Brass 2", Index: 69},
+		{Kind: BrassInstrument, Name: "Brass", Index: 71},
+		{Kind: BrassInstrument, Name: "Bassoon", Index: 65},
+		{Kind: BrassInstrument, Name: "French Horns", Index: 68},
+		{Kind: BrassInstrument, Name: "Tuba", Index: 73},
 
-		{Name: "Tinker Bell", Index: 24},
+		{Kind: StringInstrument, Name: "Charang", Index: 52},
+		{Kind: StringInstrument, Name: "Banjo", Index: 31},
+		{Kind: StringInstrument, Name: "Koto", Index: 29},
+		{Kind: StringInstrument, Name: "Synth Strings", Index: 79},
+		{Kind: StringInstrument, Name: "Dulcimer", Index: 111},
+		{Kind: StringInstrument, Name: "Guitar Harmonics", Index: 95},
 
-		{Name: "Clavinet", Index: 119},
-		{Name: "Bass & Lead", Index: 49},
-		{Name: "5th Saw Wave", Index: 50},
-		{Name: "Charang", Index: 52},
-		{Name: "Distortion Guitar", Index: 96},
+		{Kind: DrumInstrument, Name: "Timpani", Index: 80},
+		{Kind: DrumInstrument, Name: "Synth Drum", Index: 18},
+		{Kind: DrumInstrument, Name: "Taiko Drum", Index: 20},
+		{Kind: DrumInstrument, Name: "Steel Drum", Index: 22},
+		{Kind: DrumInstrument, Name: "Tom Drum", Index: 19},
 
-		{Name: "Bassoon", Index: 65},
-		{Name: "French Horns", Index: 68},
-		{Name: "Tuba", Index: 73},
-
-		{Name: "Banjo", Index: 31},
-		{Name: "Koto", Index: 29},
-		{Name: "Synth Strings", Index: 79},
-
-		{Name: "Dulcimer", Index: 111},
-
-		{Name: "Guitar Harmonics", Index: 95},
-		{Name: "Harpsichord", Index: 120},
-
-		{Name: "Voice Oohs", Index: 78},
-		{Name: "Choir Aahs", Index: 131},
-
-		{Name: "Timpani", Index: 80},
-		{Name: "Synth Drum", Index: 18},
-		{Name: "Taiko Drum", Index: 20},
-		{Name: "Steel Drum", Index: 22},
-		{Name: "Tom Drum", Index: 19},
+		{Kind: OtherInstrument, Name: "Tinker Bell", Index: 24},
+		{Kind: OtherInstrument, Name: "Voice Oohs", Index: 78},
+		{Kind: OtherInstrument, Name: "Choir Aahs", Index: 131},
 	},
 }
 
