@@ -21,19 +21,23 @@ type Canvas struct {
 	scratch     *ebiten.Image
 	waves       *ebiten.Image
 
-	fnShaders []*ebiten.Shader
+	scratchVertices []ebiten.Vertex
+	scratchIndices  []uint16
+	fnShaders       []*ebiten.Shader
 
 	Running bool
 }
 
 func NewCanvas(ctx *Context, scene *ge.Scene, img *ebiten.Image) *Canvas {
 	return &Canvas{
-		scene:       scene,
-		canvasImage: img,
-		scratch:     ebiten.NewImage(img.Size()),
-		waves:       ebiten.NewImage(img.Size()),
-		sprites:     make([]*ge.Sprite, 0, 16),
-		fnShaders:   make([]*ebiten.Shader, ctx.config.MaxInstruments),
+		scene:           scene,
+		canvasImage:     img,
+		scratch:         ebiten.NewImage(img.Size()),
+		waves:           ebiten.NewImage(img.Size()),
+		scratchVertices: make([]ebiten.Vertex, 6000),
+		scratchIndices:  make([]uint16, 0, 8000),
+		sprites:         make([]*ge.Sprite, 0, 16),
+		fnShaders:       make([]*ebiten.Shader, ctx.config.MaxInstruments),
 	}
 }
 
@@ -66,7 +70,9 @@ func (c *Canvas) RenderWave(data []float64) {
 	}
 	var strokeOptions vector.StrokeOptions
 	strokeOptions.Width = 2
-	vs, is := p.AppendVerticesAndIndicesForStroke(nil, nil, &strokeOptions)
+	c.scratchVertices, c.scratchIndices = p.AppendVerticesAndIndicesForStroke(c.scratchVertices[:0], c.scratchIndices[:0], &strokeOptions)
+	vs := c.scratchVertices
+	is := c.scratchIndices
 	for i := range vs {
 		vs[i].SrcX = 1
 		vs[i].SrcY = 1
