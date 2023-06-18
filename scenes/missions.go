@@ -57,7 +57,7 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 	labels := []string{"I", "II", "III", "IV"}
 	buttonsGrid.AddChild(eui.NewCenteredLabel(fmt.Sprintf("%s 1 ", d.Get("menu.play.act")), normalFont))
 	for i := 0; i < 4; i++ {
-		buttonsGrid.AddChild(eui.NewButton(c.state.UIResources, labels[i], func() {
+		b := eui.NewButton(c.state.UIResources, labels[i], func() {
 			scene.Context().ChangeScene(NewStageController(c.state, stage.Config{
 				MaxInstruments: 4,
 				Targets: []stage.Target{
@@ -78,12 +78,24 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 					},
 				},
 			}))
-		}))
+		})
+		buttonsGrid.AddChild(b)
+		if i != 0 {
+			b.GetWidget().Disabled = true
+		}
 	}
+
 	buttonsGrid.AddChild(eui.NewCenteredLabel(fmt.Sprintf("%s 2 ", d.Get("menu.play.act")), normalFont))
 	for i := 0; i < 4; i++ {
-		buttonsGrid.AddChild(eui.NewButton(c.state.UIResources, labels[i], func() {
-		}))
+		b := eui.NewButton(c.state.UIResources, labels[i], func() {})
+		buttonsGrid.AddChild(b)
+		b.GetWidget().Disabled = true
+	}
+	buttonsGrid.AddChild(eui.NewCenteredLabel(fmt.Sprintf("%s 3 ", d.Get("menu.play.act")), normalFont))
+	for i := 0; i < 4; i++ {
+		b := eui.NewButton(c.state.UIResources, labels[i], func() {})
+		buttonsGrid.AddChild(b)
+		b.GetWidget().Disabled = true
 	}
 
 	panel.AddChild(buttonsGrid)

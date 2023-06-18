@@ -12,6 +12,11 @@ ux:
 formulas:
 - predefined constants like pi?
 
+missions:
+- pre-mission screen
+- victory condition
+- load targets from a map/level file
+
 puzzle elements:
 - higher period - bigger explosion, but lower attack rate
 - some targets have func-based immunities
