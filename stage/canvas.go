@@ -82,14 +82,14 @@ func (c *Canvas) DrawInstrumentIcon(dst *ebiten.Image, kind synthdb.InstrumentKi
 	width := dst.Bounds().Dx()
 	var colorScale ge.ColorScale
 	colorScale.SetColor(clr)
-	c.drawShape(dst, shape, float32(width/2), float32(width/2), float32(width/2), 0, colorScale)
+	c.drawFilledShape(dst, shape, float32(width/2), float32(width/2), float32(width/2), 0, colorScale)
 }
 
 func (c *Canvas) translate(p pos32, x, y float32) (float32, float32) {
 	return x + p.x, y + p.y
 }
 
-func (c *Canvas) drawShape(dst *ebiten.Image, shape waveShape, x, y, r float32, angle gmath.Rad, clr ge.ColorScale) {
+func (c *Canvas) createShapePath(shape waveShape, x, y, r float32, angle gmath.Rad) vector.Path {
 	var p vector.Path
 	switch shape {
 	case waveCircle:
@@ -129,7 +129,8 @@ func (c *Canvas) drawShape(dst *ebiten.Image, shape waveShape, x, y, r float32, 
 		p.Close()
 	case waveCross:
 		r2 := r / 2
-		p.MoveTo(c.translate(rotate(-r, -r2, angle), x, y))
+		p.MoveTo(c.translate(rotate(-r2, -r2, angle), x, y))
+		p.LineTo(c.translate(rotate(-r, -r2, angle), x, y))
 		p.LineTo(c.translate(rotate(-r, r2, angle), x, y))
 		p.LineTo(c.translate(rotate(-r2, r2, angle), x, y))
 		p.LineTo(c.translate(rotate(-r2, r, angle), x, y))
@@ -140,9 +141,18 @@ func (c *Canvas) drawShape(dst *ebiten.Image, shape waveShape, x, y, r float32, 
 		p.LineTo(c.translate(rotate(r2, -r2, angle), x, y))
 		p.LineTo(c.translate(rotate(r2, -r, angle), x, y))
 		p.LineTo(c.translate(rotate(-r2, -r, angle), x, y))
-		p.LineTo(c.translate(rotate(-r2, -r2, angle), x, y))
 		p.Close()
 	}
+	return p
+}
+
+func (c *Canvas) drawFilledShape(dst *ebiten.Image, shape waveShape, x, y, r float32, angle gmath.Rad, clr ge.ColorScale) {
+	p := c.createShapePath(shape, x, y, r, angle)
+	c.DrawPathFilled(dst, p, 1, clr)
+}
+
+func (c *Canvas) drawShape(dst *ebiten.Image, shape waveShape, x, y, r float32, angle gmath.Rad, clr ge.ColorScale) {
+	p := c.createShapePath(shape, x, y, r, angle)
 	c.DrawPath(dst, p, 1, clr)
 }
 
@@ -150,6 +160,24 @@ func (c *Canvas) DrawPath(dst *ebiten.Image, p vector.Path, width float32, clr g
 	var strokeOptions vector.StrokeOptions
 	strokeOptions.Width = width
 	c.scratchVertices, c.scratchIndices = p.AppendVerticesAndIndicesForStroke(c.scratchVertices[:0], c.scratchIndices[:0], &strokeOptions)
+	vs := c.scratchVertices
+	is := c.scratchIndices
+	for i := range vs {
+		vs[i].SrcX = 1
+		vs[i].SrcY = 1
+		vs[i].ColorR = clr.R
+		vs[i].ColorG = clr.G
+		vs[i].ColorB = clr.B
+		vs[i].ColorA = clr.A
+	}
+	op := ebiten.DrawTrianglesOptions{
+		AntiAlias: true,
+	}
+	dst.DrawTriangles(vs, is, whiteSubImage, &op)
+}
+
+func (c *Canvas) DrawPathFilled(dst *ebiten.Image, p vector.Path, width float32, clr ge.ColorScale) {
+	c.scratchVertices, c.scratchIndices = p.AppendVerticesAndIndicesForFilling(c.scratchVertices[:0], c.scratchIndices[:0])
 	vs := c.scratchVertices
 	is := c.scratchIndices
 	for i := range vs {
