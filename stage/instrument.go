@@ -1,5 +1,7 @@
 package stage
 
+import "github.com/quasilyte/sinecord/synthdb"
+
 type instrument struct {
 	fx    string
 	oldFx string
@@ -11,6 +13,7 @@ type instrument struct {
 	period  float64
 	enabled bool
 	volume  int32
+	kind    synthdb.InstrumentKind
 }
 
 func (inst *instrument) SetFx(fx string) {

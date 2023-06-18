@@ -8,6 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/sinecord/synthdb"
 )
 
 type waveShape int
@@ -16,8 +17,27 @@ const (
 	waveCircle waveShape = iota
 	waveSquare
 	waveTriangle
+	waveOctagon
 	waveStar
+	waveCross
 )
+
+func instrumentWaveShape(kind synthdb.InstrumentKind) waveShape {
+	switch kind {
+	case synthdb.BassInstrument:
+		return waveStar
+	case synthdb.KeyboardInstrument:
+		return waveSquare
+	case synthdb.BrassInstrument:
+		return waveTriangle
+	case synthdb.StringInstrument:
+		return waveCross
+	case synthdb.DrumInstrument:
+		return waveCircle
+	default:
+		return waveOctagon
+	}
+}
 
 type waveNode struct {
 	canvas *Canvas
@@ -79,6 +99,18 @@ func (n *waveNode) Draw(screen *ebiten.Image) {
 		p.LineTo(n.translate(rotate(0, r, angle)))
 		p.LineTo(n.translate(rotate(r, -r, angle)))
 		p.Close()
+	case waveOctagon:
+		angle := gmath.Rad(1.5 * (n.t / n.duration))
+		r2 := r / 2
+		p.MoveTo(n.translate(rotate(-r, -r2, angle)))
+		p.LineTo(n.translate(rotate(-r, r2, angle)))
+		p.LineTo(n.translate(rotate(-r2, r, angle)))
+		p.LineTo(n.translate(rotate(r2, r, angle)))
+		p.LineTo(n.translate(rotate(r, r2, angle)))
+		p.LineTo(n.translate(rotate(r, -r2, angle)))
+		p.LineTo(n.translate(rotate(r2, -r, angle)))
+		p.LineTo(n.translate(rotate(-r2, -r, angle)))
+		p.Close()
 	case waveStar:
 		angle := gmath.Rad(1.5 * (n.t / n.duration))
 		r3 := r / 3
@@ -90,6 +122,22 @@ func (n *waveNode) Draw(screen *ebiten.Image) {
 		p.LineTo(n.translate(rotate(r, 0, angle)))
 		p.LineTo(n.translate(rotate(r3, -r3, angle)))
 		p.LineTo(n.translate(rotate(0, -r, angle)))
+		p.Close()
+	case waveCross:
+		angle := gmath.Rad(1.5 * (n.t / n.duration))
+		r2 := r / 2
+		p.MoveTo(n.translate(rotate(-r, -r2, angle)))
+		p.LineTo(n.translate(rotate(-r, r2, angle)))
+		p.LineTo(n.translate(rotate(-r2, r2, angle)))
+		p.LineTo(n.translate(rotate(-r2, r, angle)))
+		p.LineTo(n.translate(rotate(r2, r, angle)))
+		p.LineTo(n.translate(rotate(r2, r2, angle)))
+		p.LineTo(n.translate(rotate(r, r2, angle)))
+		p.LineTo(n.translate(rotate(r, -r2, angle)))
+		p.LineTo(n.translate(rotate(r2, -r2, angle)))
+		p.LineTo(n.translate(rotate(r2, -r, angle)))
+		p.LineTo(n.translate(rotate(-r2, -r, angle)))
+		p.LineTo(n.translate(rotate(-r2, -r2, angle)))
 		p.Close()
 	}
 	n.canvas.DrawPath(screen, p, 1, n.color)

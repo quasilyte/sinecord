@@ -100,6 +100,7 @@ func (s *Synthesizer) CreateProgram() SynthProgram {
 			Index:  index,
 			Func:   inst.compiledFx,
 			Period: inst.period,
+			Kind:   inst.kind,
 		})
 	}
 	return prog
@@ -117,7 +118,9 @@ func (s *Synthesizer) SetInstrumentVolume(id int, volume float64) {
 
 func (s *Synthesizer) SetInstrumentPatch(id int, index int) {
 	s.changed = true
-	s.instruments[id].instrumentIndex = s.sf.Instruments[index].PatchNumber
+	inst := s.instruments[id]
+	inst.instrumentIndex = s.sf.Instruments[index].PatchNumber
+	inst.kind = s.sf.Instruments[index].Kind
 }
 
 func (s *Synthesizer) SetInstrumentPeriod(id int, period float64) {

@@ -84,7 +84,9 @@ func (b *Board) ProgramTick(delta float64) bool {
 			Y: -(y * plotScale),
 		}
 		pos = pos.Add(plotOffset)
-		effect := newWaveNode(b.canvas, waveStar, pos, styles.PlotColorByID[e.id], b.prog.Instruments[e.index].Period)
+		inst := b.prog.Instruments[e.index]
+		shape := instrumentWaveShape(inst.Kind)
+		effect := newWaveNode(b.canvas, shape, pos, styles.PlotColorByID[e.id], inst.Period)
 		b.effects = append(b.effects, effect)
 		b.canvas.AddGraphics(effect)
 		b.EventNote.Emit(e.id)
