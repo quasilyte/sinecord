@@ -14,5 +14,4 @@ formulas:
 
 puzzle elements:
 - higher period - bigger explosion, but lower attack rate
-- some levels forbid certain functions
 - some targets have func-based immunities
