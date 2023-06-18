@@ -240,7 +240,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 		}))
 
 		volumeLevel := 4
-		c.synth.SetInstrumentVolume(instrumentID, 0.2*float64(volumeLevel)+0.2)
+		c.synth.SetInstrumentVolume(instrumentID, volumeLevels[volumeLevel])
 		instrumentsGrid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 			Resources:  c.state.UIResources,
 			Input:      c.state.Input,
