@@ -23,8 +23,6 @@ func registerImageResources(ctx *ge.Context) {
 		ImagePlotBackground: {Path: "image/plot_background.png"},
 		ImagePlayBackground: {Path: "image/play_background.png"},
 		ImageSignal:         {Path: "image/signal.png"},
-
-		ImageCircleExplosion: {Path: "image/effect/circle_explosion.png", FrameWidth: 64},
 	}
 
 	for id, res := range imageResources {
@@ -50,5 +48,4 @@ const (
 	ImagePlotBackground
 	ImagePlayBackground
 	ImageSignal
-	ImageCircleExplosion
 )

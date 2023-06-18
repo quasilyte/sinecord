@@ -70,6 +70,11 @@ func (c *StageController) Init(scene *ge.Scene) {
 	d := scene.Dict()
 
 	ctx := stage.NewContext(c.config)
+	ctx.PlotScale = 46
+	ctx.PlotOffset = gmath.Vec{
+		X: 4,
+		Y: 46 * 3,
+	}
 
 	c.canvasImageBg = scene.LoadImage(assets.ImagePlotBackground).Data
 	c.canvasImage = ebiten.NewImage(c.canvasImageBg.Bounds().Dx(), c.canvasImageBg.Bounds().Dy())
@@ -81,12 +86,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 	scene.AddObject(c.synth)
 
 	c.board = stage.NewBoard(scene, stage.BoardConfig{
-		Canvas:    c.canvas,
-		PlotScale: 46,
-		PlotOffset: gmath.Vec{
-			X: 4,
-			Y: 46 * 3,
-		},
+		Canvas: c.canvas,
 	})
 	c.board.EventNote.Connect(c, func(instrumentID int) {
 		// clr := styles.PlotColorByID[instrumentID]
@@ -159,12 +159,14 @@ func (c *StageController) Init(scene *ge.Scene) {
 		0.20,
 		0.25,
 		0.30,
+		0.35,
 
 		0.40,
 		0.50,
 		0.60,
 		0.70,
 		0.80,
+		0.90,
 
 		1.00,
 		1.25,
@@ -197,7 +199,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 
 		textTnput := eui.NewTextInput(c.state.UIResources,
 			widget.TextInputOpts.WidgetOpts(
-				widget.WidgetOpts.MinSize(760, 0),
+				widget.WidgetOpts.MinSize(880, 0),
 				widget.WidgetOpts.ToolTip(
 					widget.NewToolTip(
 						widget.ToolTipOpts.Content(eui.NewTooltip(c.state.UIResources, "f(x)")),
@@ -210,7 +212,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			}),
 			widget.TextInputOpts.Validation(func(newInputText string) (bool, *string) {
 				good := true
-				if len(newInputText) > 50 {
+				if len(newInputText) > 60 {
 					good = false
 				}
 				if good {

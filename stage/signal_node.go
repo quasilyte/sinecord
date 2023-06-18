@@ -31,7 +31,7 @@ func (n *signalNode) Init(scene *ge.Scene) {
 	cs.SetColor(n.clr)
 	n.sprite.SetColorScale(cs)
 	n.sprite.Pos.Base = &n.pos
-	n.canvas.AddSprite(n.sprite)
+	n.canvas.AddGraphics(n.sprite)
 }
 
 func (n *signalNode) IsDisposed() bool {

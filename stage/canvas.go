@@ -15,7 +15,7 @@ type Canvas struct {
 
 	scene *ge.Scene
 
-	sprites []*ge.Sprite
+	objects []ge.SceneGraphics
 
 	canvasImage *ebiten.Image
 	scratch     *ebiten.Image
@@ -25,18 +25,21 @@ type Canvas struct {
 	scratchIndices  []uint16
 	fnShaders       []*ebiten.Shader
 
+	ctx *Context
+
 	Running bool
 }
 
 func NewCanvas(ctx *Context, scene *ge.Scene, img *ebiten.Image) *Canvas {
 	return &Canvas{
+		ctx:             ctx,
 		scene:           scene,
 		canvasImage:     img,
 		scratch:         ebiten.NewImage(img.Size()),
 		waves:           ebiten.NewImage(img.Size()),
 		scratchVertices: make([]ebiten.Vertex, 6000),
 		scratchIndices:  make([]uint16, 0, 8000),
-		sprites:         make([]*ge.Sprite, 0, 16),
+		objects:         make([]ge.SceneGraphics, 0, 32),
 		fnShaders:       make([]*ebiten.Shader, ctx.config.MaxInstruments),
 	}
 }
@@ -68,10 +71,10 @@ func (c *Canvas) RenderWave(data []float64) {
 		y := ((5 * data[sampleIndex] * 3.0) * 46.0) + (46 * 3)
 		p.LineTo(float32(x), float32(y))
 	}
-	c.drawPath(c.waves, p, 2, ge.ColorScale{R: 0.616, G: 0.843, B: 0.576, A: 1})
+	c.DrawPath(c.waves, p, 2, ge.ColorScale{R: 0.616, G: 0.843, B: 0.576, A: 1})
 }
 
-func (c *Canvas) drawPath(dst *ebiten.Image, p vector.Path, width float32, clr ge.ColorScale) {
+func (c *Canvas) DrawPath(dst *ebiten.Image, p vector.Path, width float32, clr ge.ColorScale) {
 	var strokeOptions vector.StrokeOptions
 	strokeOptions.Width = width
 	c.scratchVertices, c.scratchIndices = p.AppendVerticesAndIndicesForStroke(c.scratchVertices[:0], c.scratchIndices[:0], &strokeOptions)
@@ -91,8 +94,8 @@ func (c *Canvas) drawPath(dst *ebiten.Image, p vector.Path, width float32, clr g
 	dst.DrawTriangles(vs, is, whiteSubImage, &op)
 }
 
-func (c *Canvas) AddSprite(s *ge.Sprite) {
-	c.sprites = append(c.sprites, s)
+func (c *Canvas) AddGraphics(o ge.SceneGraphics) {
+	c.objects = append(c.objects, o)
 }
 
 func (c *Canvas) Update(delta float64) {
@@ -135,19 +138,19 @@ func (c *Canvas) Draw() {
 		c.canvasImage.DrawImage(c.waves, &drawOptions)
 	}
 
-	c.drawSprites()
+	c.drawObjects()
 }
 
-func (c *Canvas) drawSprites() {
-	liveSprites := c.sprites[:0]
-	for _, s := range c.sprites {
-		if s.IsDisposed() {
+func (c *Canvas) drawObjects() {
+	liveObjects := c.objects[:0]
+	for _, o := range c.objects {
+		if o.IsDisposed() {
 			continue
 		}
-		s.Draw(c.canvasImage)
-		liveSprites = append(liveSprites, s)
+		o.Draw(c.canvasImage)
+		liveObjects = append(liveObjects, o)
 	}
-	c.sprites = liveSprites
+	c.objects = liveObjects
 }
 
 var (
