@@ -61,7 +61,7 @@ func (c *Canvas) RenderWave(data []float64) {
 		if sampleIndex > len(data) {
 			break
 		}
-		y := ((6 * data[sampleIndex] * 3.0) * 46.0) + (46 * 3)
+		y := ((5 * data[sampleIndex] * 3.0) * 46.0) + (46 * 3)
 		p.LineTo(float32(x), float32(y))
 	}
 	var strokeOptions vector.StrokeOptions

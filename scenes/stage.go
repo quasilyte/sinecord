@@ -14,8 +14,10 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/sinecord/assets"
 	"github.com/quasilyte/sinecord/eui"
+	"github.com/quasilyte/sinecord/gtask"
 	"github.com/quasilyte/sinecord/session"
 	"github.com/quasilyte/sinecord/stage"
 	"github.com/quasilyte/sinecord/styles"
@@ -24,6 +26,7 @@ import (
 
 type StageController struct {
 	state *session.State
+	scene *ge.Scene
 
 	config stage.Config
 
@@ -51,6 +54,7 @@ type stageMode int
 const (
 	stageReady stageMode = iota
 	stagePlaying
+	stageEncoding
 )
 
 func NewStageController(state *session.State, config stage.Config) *StageController {
@@ -61,6 +65,8 @@ func NewStageController(state *session.State, config stage.Config) *StageControl
 }
 
 func (c *StageController) Init(scene *ge.Scene) {
+	c.scene = scene
+
 	d := scene.Dict()
 
 	ctx := stage.NewContext(c.config)
@@ -326,24 +332,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 				widget.GridLayoutOpts.Spacing(4, 8),
 			)))
 
-		buttonsGrid.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.stage.run"), func() {
-			c.setMode(stagePlaying)
-			samples, prog := c.synth.CreatePCM()
-			if samples != nil {
-				if c.player != nil {
-					c.player.Play()
-					c.player.Close()
-				}
-				pcm := generatePCM(samples.Left, samples.Right)
-				c.player = scene.Audio().GetContext().NewPlayerFromBytes(pcm)
-				c.samples = samples
-				c.prog = prog
-			}
-			c.player.Rewind()
-			c.player.Play()
-			c.board.StartProgram(c.prog)
-			c.canvas.Reset()
-		}))
+		buttonsGrid.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.stage.run"), c.onPlayPressed))
 
 		stopButton := eui.NewButton(c.state.UIResources, "stop", func() {
 			if c.currentMode != stagePlaying {
@@ -440,6 +429,53 @@ func (c *StageController) waveSamples() []float64 {
 	return c.samplesBuf
 }
 
+func (c *StageController) onPlayPressed() {
+	switch c.currentMode {
+	case stageReady, stagePlaying:
+		// OK
+	default:
+		return
+	}
+
+	// Don't spawn a task if we don't need to.
+	if !c.synth.HasChanges() {
+		c.runPlayer()
+		return
+	}
+
+	c.setMode(stageEncoding)
+
+	encodeTask := gtask.StartTask(func(ctx *gtask.TaskContext) {
+		ctx.Progress.Total = 1.0
+		samples, prog := c.synth.CreatePCM(&ctx.Progress.Current)
+		if samples != nil {
+			if c.player != nil {
+				c.player.Play()
+				c.player.Close()
+			}
+			pcm := generatePCM(samples.Left, samples.Right)
+			c.player = c.scene.Audio().GetContext().NewPlayerFromBytes(pcm)
+			c.samples = samples
+			c.prog = prog
+		}
+	})
+	encodeTask.EventProgress.Connect(nil, func(p gtask.TaskProgress) {
+		c.statusLabel.Label = fmt.Sprintf("status: encoding (%d%%)", int(100*p.Current))
+	})
+	encodeTask.EventCompleted.Connect(nil, func(gsignal.Void) {
+		c.runPlayer()
+	})
+	c.scene.AddObject(encodeTask)
+}
+
+func (c *StageController) runPlayer() {
+	c.player.Rewind()
+	c.player.Play()
+	c.board.StartProgram(c.prog)
+	c.canvas.Reset()
+	c.setMode(stagePlaying)
+}
+
 func (c *StageController) setMode(m stageMode) {
 	if c.currentMode == m {
 		return
@@ -451,6 +487,8 @@ func (c *StageController) setMode(m stageMode) {
 		modeText = "ready"
 	case stagePlaying:
 		modeText = "playing"
+	case stageEncoding:
+		modeText = "encoding"
 	default:
 		modeText = "unknown"
 	}

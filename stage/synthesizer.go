@@ -72,13 +72,17 @@ func (s *Synthesizer) Update(delta float64) {
 	}
 }
 
-func (s *Synthesizer) CreatePCM() (*SampleSet, SynthProgram) {
+func (s *Synthesizer) HasChanges() bool {
+	return s.changed
+}
+
+func (s *Synthesizer) CreatePCM(progress *float64) (*SampleSet, SynthProgram) {
 	if !s.changed {
 		return nil, SynthProgram{}
 	}
 	s.changed = false
 	prog := s.CreateProgram()
-	return s.player.createPCM(prog), prog
+	return s.player.createPCM(prog, progress), prog
 }
 
 func (s *Synthesizer) CreateProgram() SynthProgram {

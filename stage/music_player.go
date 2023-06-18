@@ -54,7 +54,7 @@ func (p *musicPlayer) walkNotes(events []noteActivation, f func(i, num int)) {
 	}
 }
 
-func (p *musicPlayer) createPCM(prog SynthProgram) *SampleSet {
+func (p *musicPlayer) createPCM(prog SynthProgram, progress *float64) *SampleSet {
 	synthesizer, err := meltysynth.NewSynthesizer(assets.SoundFontTimGM6mb, p.settings)
 	if err != nil {
 		panic(err)
@@ -72,7 +72,13 @@ func (p *musicPlayer) createPCM(prog SynthProgram) *SampleSet {
 	blockOffset := 0
 
 	events := p.ctx.runner.RunProgram(prog)
+	processedEvents := 0
 	p.walkNotes(events, func(i, num int) {
+		if processedEvents != 0 {
+			*progress = float64(processedEvents) / float64(len(events))
+		}
+		processedEvents += num
+
 		eventTime := events[i].t
 
 		elapsed := eventTime - t
@@ -94,7 +100,6 @@ func (p *musicPlayer) createPCM(prog SynthProgram) *SampleSet {
 			velocity := int32(40)
 			synthesizer.NoteOn(channel, note, int32(velocity))
 		}
-
 	})
 
 	synthesizer.Render(p.left[blockOffset:], p.right[blockOffset:])
