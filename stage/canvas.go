@@ -68,21 +68,27 @@ func (c *Canvas) RenderWave(data []float64) {
 		y := ((5 * data[sampleIndex] * 3.0) * 46.0) + (46 * 3)
 		p.LineTo(float32(x), float32(y))
 	}
+	c.drawPath(c.waves, p, 2, ge.ColorScale{R: 0.616, G: 0.843, B: 0.576, A: 1})
+}
+
+func (c *Canvas) drawPath(dst *ebiten.Image, p vector.Path, width float32, clr ge.ColorScale) {
 	var strokeOptions vector.StrokeOptions
-	strokeOptions.Width = 2
+	strokeOptions.Width = width
 	c.scratchVertices, c.scratchIndices = p.AppendVerticesAndIndicesForStroke(c.scratchVertices[:0], c.scratchIndices[:0], &strokeOptions)
 	vs := c.scratchVertices
 	is := c.scratchIndices
 	for i := range vs {
 		vs[i].SrcX = 1
 		vs[i].SrcY = 1
-		vs[i].ColorR = 0.616
-		vs[i].ColorG = 0.843
-		vs[i].ColorB = 0.576
-		vs[i].ColorA = 1
+		vs[i].ColorR = clr.R
+		vs[i].ColorG = clr.G
+		vs[i].ColorB = clr.B
+		vs[i].ColorA = clr.A
 	}
-	op := &ebiten.DrawTrianglesOptions{AntiAlias: true}
-	c.waves.DrawTriangles(vs, is, whiteSubImage, op)
+	op := ebiten.DrawTrianglesOptions{
+		AntiAlias: true,
+	}
+	dst.DrawTriangles(vs, is, whiteSubImage, &op)
 }
 
 func (c *Canvas) AddSprite(s *ge.Sprite) {
