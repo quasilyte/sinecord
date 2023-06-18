@@ -219,6 +219,8 @@ type BoolSelectButtonConfig struct {
 	Label      string
 	ValueNames []string
 
+	MinWidth int
+
 	Tooltip *widget.Container
 
 	OnPressed func()
@@ -249,6 +251,9 @@ func NewBoolSelectButton(config BoolSelectButtonConfig) *widget.Button {
 			widget.ToolTipOpts.Delay(time.Second),
 		)
 		buttonOptions = append(buttonOptions, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.ToolTip(tt)))
+	}
+	if config.MinWidth != 0 {
+		buttonOptions = append(buttonOptions, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(config.MinWidth, 0)))
 	}
 	button := newSelectButton(config.Resources, makeLabel(), buttonOptions...)
 

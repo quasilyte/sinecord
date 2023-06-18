@@ -270,6 +270,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			Resources:  c.state.UIResources,
 			Input:      c.state.Input,
 			ValueNames: []string{"20%", "40%", "60%", "80%", "100%"},
+			MinWidth:   120,
 			Value:      &volumeLevel,
 			Tooltip:    eui.NewTooltip(c.state.UIResources, "instrument volume level"),
 			OnPressed: func() {
@@ -282,6 +283,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 		instrumentsGrid.AddChild(eui.NewBoolSelectButton(eui.BoolSelectButtonConfig{
 			Resources:  c.state.UIResources,
 			ValueNames: []string{"off", "on"},
+			MinWidth:   120,
 			Value:      &instrumentEnabled,
 			Tooltip:    eui.NewTooltip(c.state.UIResources, "enable or disable this instrument"),
 			OnPressed: func() {
