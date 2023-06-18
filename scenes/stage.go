@@ -27,8 +27,6 @@ type StageController struct {
 
 	config stage.Config
 
-	running bool
-
 	canvas *stage.Canvas
 	synth  *stage.Synthesizer
 	board  *stage.Board
@@ -43,7 +41,17 @@ type StageController struct {
 	canvasWidget  *widget.Graphic
 	canvasImage   *ebiten.Image
 	canvasImageBg *ebiten.Image
+
+	currentMode stageMode
+	statusLabel *widget.Text
 }
+
+type stageMode int
+
+const (
+	stageReady stageMode = iota
+	stagePlaying
+)
 
 func NewStageController(state *session.State, config stage.Config) *StageController {
 	return &StageController{
@@ -281,6 +289,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 	)
 	statusLabelContainer.AddChild(statusLabel)
 	outerGrid.AddChild(statusLabelContainer)
+	c.statusLabel = statusLabel
 
 	{
 		playerGridContainer := widget.NewContainer(
@@ -318,7 +327,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			)))
 
 		buttonsGrid.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.stage.run"), func() {
-			c.running = true
+			c.setMode(stagePlaying)
 			samples, prog := c.synth.CreatePCM()
 			if samples != nil {
 				if c.player != nil {
@@ -333,13 +342,14 @@ func (c *StageController) Init(scene *ge.Scene) {
 			c.player.Rewind()
 			c.player.Play()
 			c.board.StartProgram(c.prog)
+			c.canvas.Reset()
 		}))
 
 		stopButton := eui.NewButton(c.state.UIResources, "stop", func() {
-			if !c.running {
+			if c.currentMode != stagePlaying {
 				return
 			}
-			c.running = false
+			c.setMode(stageReady)
 			c.board.ClearProgram()
 			c.player.Pause()
 		})
@@ -387,9 +397,9 @@ func (c *StageController) Draw(*ebiten.Image) {
 }
 
 func (c *StageController) Update(delta float64) {
-	c.canvas.Running = c.running
+	c.canvas.Running = c.currentMode == stagePlaying
 
-	if c.running {
+	if c.currentMode == stagePlaying {
 		c.waveUpdateDelay = gmath.ClampMin(c.waveUpdateDelay-delta, 0)
 		if c.waveUpdateDelay == 0 {
 			c.waveUpdateDelay = 0.1
@@ -398,7 +408,7 @@ func (c *StageController) Update(delta float64) {
 
 		if c.board.ProgramTick(delta) {
 			c.board.ClearProgram()
-			c.running = false
+			c.setMode(stageReady)
 		}
 	}
 
@@ -428,4 +438,21 @@ func (c *StageController) waveSamples() []float64 {
 	}
 
 	return c.samplesBuf
+}
+
+func (c *StageController) setMode(m stageMode) {
+	if c.currentMode == m {
+		return
+	}
+	c.currentMode = m
+	var modeText string
+	switch m {
+	case stageReady:
+		modeText = "ready"
+	case stagePlaying:
+		modeText = "playing"
+	default:
+		modeText = "unknown"
+	}
+	c.statusLabel.Label = "status: " + modeText
 }

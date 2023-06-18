@@ -21,6 +21,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageUITooltip:             {Path: "image/ebitenui/tooltip.png"},
 
 		ImagePlotBackground: {Path: "image/plot_background.png"},
+		ImagePlayBackground: {Path: "image/play_background.png"},
 		ImageSignal:         {Path: "image/signal.png"},
 
 		ImageCircleExplosion: {Path: "image/effect/circle_explosion.png", FrameWidth: 64},
@@ -47,6 +48,7 @@ const (
 	ImageUITooltip
 
 	ImagePlotBackground
+	ImagePlayBackground
 	ImageSignal
 	ImageCircleExplosion
 )

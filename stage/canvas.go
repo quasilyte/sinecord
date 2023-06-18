@@ -41,6 +41,10 @@ func (c *Canvas) SetShader(id int, shader *ebiten.Shader) {
 	c.fnShaders[id] = shader
 }
 
+func (c *Canvas) Reset() {
+	c.waves.Clear()
+}
+
 func (c *Canvas) RenderWave(data []float64) {
 	c.waves.Clear()
 	if data == nil {
@@ -73,19 +77,6 @@ func (c *Canvas) RenderWave(data []float64) {
 	}
 	op := &ebiten.DrawTrianglesOptions{AntiAlias: true}
 	c.waves.DrawTriangles(vs, is, whiteSubImage, op)
-
-	// offsetX := 4
-	// width := c.canvasImage.Bounds().Dx()
-	// widthAvailable := width - offsetX
-	// samplesPerPixel := len(data) / widthAvailable
-	// for x := offsetX; x < width; x++ {
-	// 	sampleIndex := x * samplesPerPixel
-	// 	if sampleIndex > len(data) {
-	// 		break
-	// 	}
-	// 	y := int(math.Round(((2 * data[sampleIndex] * 3.0) * 46.0)) + (46 * 3))
-	// 	c.waves.Set(x, y, color.RGBA{R: 255, A: 255})
-	// }
 }
 
 func (c *Canvas) AddSprite(s *ge.Sprite) {
@@ -101,14 +92,19 @@ func (c *Canvas) IsDisposed() bool { return false }
 func (c *Canvas) Draw() {
 	c.canvasImage.Clear()
 
-	plotBackground := c.scene.LoadImage(assets.ImagePlotBackground).Data
+	var bg *ebiten.Image
+	if c.Running {
+		bg = c.scene.LoadImage(assets.ImagePlayBackground).Data
+	} else {
+		bg = c.scene.LoadImage(assets.ImagePlotBackground).Data
+	}
 
 	var drawOptions ebiten.DrawImageOptions
-	c.canvasImage.DrawImage(plotBackground, &drawOptions)
+	c.canvasImage.DrawImage(bg, &drawOptions)
 
 	if !c.Running {
-		width := plotBackground.Bounds().Dx()
-		height := plotBackground.Bounds().Dy()
+		width := bg.Bounds().Dx()
+		height := bg.Bounds().Dy()
 		for _, shader := range c.fnShaders {
 			c.scratch.Clear()
 			c.scratch.DrawImage(c.canvasImage, &drawOptions)
