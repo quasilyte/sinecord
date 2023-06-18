@@ -210,7 +210,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			}),
 			widget.TextInputOpts.Validation(func(newInputText string) (bool, *string) {
 				good := true
-				if len(newInputText) > 48 {
+				if len(newInputText) > 50 {
 					good = false
 				}
 				if good {

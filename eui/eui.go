@@ -105,8 +105,8 @@ func PrepareResources(loader *resource.Loader) *Resources {
 			Padding: widget.Insets{
 				Left:   14,
 				Right:  14,
-				Top:    16,
-				Bottom: 18,
+				Top:    20,
+				Bottom: 20,
 			},
 			FontFace: monoMediumFont,
 			TextColors: &widget.TextInputColor{
