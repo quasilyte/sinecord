@@ -5,7 +5,6 @@ import (
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/sinecord/synthdb"
@@ -81,74 +80,70 @@ func (n *waveNode) Update(delta float64) {
 }
 
 func (n *waveNode) Draw(screen *ebiten.Image) {
-	var p vector.Path
-	r := float32(n.r)
-	switch n.shape {
-	case waveCircle:
-		p.Arc(n.x, n.y, r, 0, 2*math.Pi, vector.Clockwise)
-	case waveSquare:
-		angle := gmath.Rad(1.5 * (n.t / n.duration))
-		p.MoveTo(n.translate(rotate(-r, -r, angle)))
-		p.LineTo(n.translate(rotate(-r, +r, angle)))
-		p.LineTo(n.translate(rotate(+r, +r, angle)))
-		p.LineTo(n.translate(rotate(+r, -r, angle)))
-		p.Close()
-	case waveTriangle:
-		angle := gmath.Rad(1.5 * (n.t / n.duration))
-		p.MoveTo(n.translate(rotate(-r, -r, angle)))
-		p.LineTo(n.translate(rotate(0, r, angle)))
-		p.LineTo(n.translate(rotate(r, -r, angle)))
-		p.Close()
-	case waveOctagon:
-		angle := gmath.Rad(1.5 * (n.t / n.duration))
-		r2 := r / 2
-		p.MoveTo(n.translate(rotate(-r, -r2, angle)))
-		p.LineTo(n.translate(rotate(-r, r2, angle)))
-		p.LineTo(n.translate(rotate(-r2, r, angle)))
-		p.LineTo(n.translate(rotate(r2, r, angle)))
-		p.LineTo(n.translate(rotate(r, r2, angle)))
-		p.LineTo(n.translate(rotate(r, -r2, angle)))
-		p.LineTo(n.translate(rotate(r2, -r, angle)))
-		p.LineTo(n.translate(rotate(-r2, -r, angle)))
-		p.Close()
-	case waveStar:
-		angle := gmath.Rad(1.5 * (n.t / n.duration))
-		r3 := r / 3
-		p.MoveTo(n.translate(rotate(-r3, -r3, angle)))
-		p.LineTo(n.translate(rotate(-r, 0, angle)))
-		p.LineTo(n.translate(rotate(-r3, r3, angle)))
-		p.LineTo(n.translate(rotate(0, r, angle)))
-		p.LineTo(n.translate(rotate(r3, r3, angle)))
-		p.LineTo(n.translate(rotate(r, 0, angle)))
-		p.LineTo(n.translate(rotate(r3, -r3, angle)))
-		p.LineTo(n.translate(rotate(0, -r, angle)))
-		p.Close()
-	case waveCross:
-		angle := gmath.Rad(1.5 * (n.t / n.duration))
-		r2 := r / 2
-		p.MoveTo(n.translate(rotate(-r, -r2, angle)))
-		p.LineTo(n.translate(rotate(-r, r2, angle)))
-		p.LineTo(n.translate(rotate(-r2, r2, angle)))
-		p.LineTo(n.translate(rotate(-r2, r, angle)))
-		p.LineTo(n.translate(rotate(r2, r, angle)))
-		p.LineTo(n.translate(rotate(r2, r2, angle)))
-		p.LineTo(n.translate(rotate(r, r2, angle)))
-		p.LineTo(n.translate(rotate(r, -r2, angle)))
-		p.LineTo(n.translate(rotate(r2, -r2, angle)))
-		p.LineTo(n.translate(rotate(r2, -r, angle)))
-		p.LineTo(n.translate(rotate(-r2, -r, angle)))
-		p.LineTo(n.translate(rotate(-r2, -r2, angle)))
-		p.Close()
+	var angle gmath.Rad
+	if n.shape != waveCircle {
+		angle = gmath.Rad(1.5 * (n.t / n.duration))
 	}
-	n.canvas.DrawPath(screen, p, 1, n.color)
-}
+	r := float32(n.r)
+	n.canvas.drawShape(screen, n.shape, n.x, n.y, r, angle, n.color)
 
-func (n *waveNode) translate(x, y float32) (float32, float32) {
-	return x + n.x, y + n.y
-}
-
-func rotate(x, y float32, angle gmath.Rad) (float32, float32) {
-	sine := float32(angle.Sin())
-	cosi := float32(angle.Cos())
-	return x*cosi - y*sine, x*sine + y*cosi
+	// var p vector.Path
+	// switch n.shape {
+	// case waveCircle:
+	// 	p.Arc(n.x, n.y, r, 0, 2*math.Pi, vector.Clockwise)
+	// case waveSquare:
+	// 	angle := gmath.Rad(1.5 * (n.t / n.duration))
+	// 	p.MoveTo(n.translate(rotate(-r, -r, angle)))
+	// 	p.LineTo(n.translate(rotate(-r, +r, angle)))
+	// 	p.LineTo(n.translate(rotate(+r, +r, angle)))
+	// 	p.LineTo(n.translate(rotate(+r, -r, angle)))
+	// 	p.Close()
+	// case waveTriangle:
+	// 	angle := gmath.Rad(1.5 * (n.t / n.duration))
+	// 	p.MoveTo(n.translate(rotate(-r, -r, angle)))
+	// 	p.LineTo(n.translate(rotate(0, r, angle)))
+	// 	p.LineTo(n.translate(rotate(r, -r, angle)))
+	// 	p.Close()
+	// case waveOctagon:
+	// 	angle := gmath.Rad(1.5 * (n.t / n.duration))
+	// 	r2 := r / 2
+	// 	p.MoveTo(n.translate(rotate(-r, -r2, angle)))
+	// 	p.LineTo(n.translate(rotate(-r, r2, angle)))
+	// 	p.LineTo(n.translate(rotate(-r2, r, angle)))
+	// 	p.LineTo(n.translate(rotate(r2, r, angle)))
+	// 	p.LineTo(n.translate(rotate(r, r2, angle)))
+	// 	p.LineTo(n.translate(rotate(r, -r2, angle)))
+	// 	p.LineTo(n.translate(rotate(r2, -r, angle)))
+	// 	p.LineTo(n.translate(rotate(-r2, -r, angle)))
+	// 	p.Close()
+	// case waveStar:
+	// 	angle := gmath.Rad(1.5 * (n.t / n.duration))
+	// 	r3 := r / 3
+	// 	p.MoveTo(n.translate(rotate(-r3, -r3, angle)))
+	// 	p.LineTo(n.translate(rotate(-r, 0, angle)))
+	// 	p.LineTo(n.translate(rotate(-r3, r3, angle)))
+	// 	p.LineTo(n.translate(rotate(0, r, angle)))
+	// 	p.LineTo(n.translate(rotate(r3, r3, angle)))
+	// 	p.LineTo(n.translate(rotate(r, 0, angle)))
+	// 	p.LineTo(n.translate(rotate(r3, -r3, angle)))
+	// 	p.LineTo(n.translate(rotate(0, -r, angle)))
+	// 	p.Close()
+	// case waveCross:
+	// 	angle := gmath.Rad(1.5 * (n.t / n.duration))
+	// 	r2 := r / 2
+	// 	p.MoveTo(n.translate(rotate(-r, -r2, angle)))
+	// 	p.LineTo(n.translate(rotate(-r, r2, angle)))
+	// 	p.LineTo(n.translate(rotate(-r2, r2, angle)))
+	// 	p.LineTo(n.translate(rotate(-r2, r, angle)))
+	// 	p.LineTo(n.translate(rotate(r2, r, angle)))
+	// 	p.LineTo(n.translate(rotate(r2, r2, angle)))
+	// 	p.LineTo(n.translate(rotate(r, r2, angle)))
+	// 	p.LineTo(n.translate(rotate(r, -r2, angle)))
+	// 	p.LineTo(n.translate(rotate(r2, -r2, angle)))
+	// 	p.LineTo(n.translate(rotate(r2, -r, angle)))
+	// 	p.LineTo(n.translate(rotate(-r2, -r, angle)))
+	// 	p.LineTo(n.translate(rotate(-r2, -r2, angle)))
+	// 	p.Close()
+	// }
+	// n.canvas.DrawPath(screen, p, 1, n.color)
 }

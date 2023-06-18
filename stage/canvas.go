@@ -3,11 +3,14 @@ package stage
 import (
 	"image"
 	"image/color"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/synthdb"
 )
 
 type Canvas struct {
@@ -72,6 +75,75 @@ func (c *Canvas) RenderWave(data []float64) {
 		p.LineTo(float32(x), float32(y))
 	}
 	c.DrawPath(c.waves, p, 2, ge.ColorScale{R: 0.616, G: 0.843, B: 0.576, A: 1})
+}
+
+func (c *Canvas) DrawInstrumentIcon(dst *ebiten.Image, kind synthdb.InstrumentKind, clr color.RGBA) {
+	shape := instrumentWaveShape(kind)
+	width := dst.Bounds().Dx()
+	var colorScale ge.ColorScale
+	colorScale.SetColor(clr)
+	c.drawShape(dst, shape, float32(width/2), float32(width/2), float32(width/2), 0, colorScale)
+}
+
+func (c *Canvas) translate(p pos32, x, y float32) (float32, float32) {
+	return x + p.x, y + p.y
+}
+
+func (c *Canvas) drawShape(dst *ebiten.Image, shape waveShape, x, y, r float32, angle gmath.Rad, clr ge.ColorScale) {
+	var p vector.Path
+	switch shape {
+	case waveCircle:
+		p.Arc(x, y, r, 0, 2*math.Pi, vector.Clockwise)
+	case waveSquare:
+		p.MoveTo(c.translate(rotate(-r, -r, angle), x, y))
+		p.LineTo(c.translate(rotate(-r, +r, angle), x, y))
+		p.LineTo(c.translate(rotate(+r, +r, angle), x, y))
+		p.LineTo(c.translate(rotate(+r, -r, angle), x, y))
+		p.Close()
+	case waveTriangle:
+		p.MoveTo(c.translate(rotate(-r, -r, angle), x, y))
+		p.LineTo(c.translate(rotate(0, r, angle), x, y))
+		p.LineTo(c.translate(rotate(r, -r, angle), x, y))
+		p.Close()
+	case waveOctagon:
+		r2 := r / 2
+		p.MoveTo(c.translate(rotate(-r, -r2, angle), x, y))
+		p.LineTo(c.translate(rotate(-r, r2, angle), x, y))
+		p.LineTo(c.translate(rotate(-r2, r, angle), x, y))
+		p.LineTo(c.translate(rotate(r2, r, angle), x, y))
+		p.LineTo(c.translate(rotate(r, r2, angle), x, y))
+		p.LineTo(c.translate(rotate(r, -r2, angle), x, y))
+		p.LineTo(c.translate(rotate(r2, -r, angle), x, y))
+		p.LineTo(c.translate(rotate(-r2, -r, angle), x, y))
+		p.Close()
+	case waveStar:
+		r3 := r / 3
+		p.MoveTo(c.translate(rotate(-r3, -r3, angle), x, y))
+		p.LineTo(c.translate(rotate(-r, 0, angle), x, y))
+		p.LineTo(c.translate(rotate(-r3, r3, angle), x, y))
+		p.LineTo(c.translate(rotate(0, r, angle), x, y))
+		p.LineTo(c.translate(rotate(r3, r3, angle), x, y))
+		p.LineTo(c.translate(rotate(r, 0, angle), x, y))
+		p.LineTo(c.translate(rotate(r3, -r3, angle), x, y))
+		p.LineTo(c.translate(rotate(0, -r, angle), x, y))
+		p.Close()
+	case waveCross:
+		r2 := r / 2
+		p.MoveTo(c.translate(rotate(-r, -r2, angle), x, y))
+		p.LineTo(c.translate(rotate(-r, r2, angle), x, y))
+		p.LineTo(c.translate(rotate(-r2, r2, angle), x, y))
+		p.LineTo(c.translate(rotate(-r2, r, angle), x, y))
+		p.LineTo(c.translate(rotate(r2, r, angle), x, y))
+		p.LineTo(c.translate(rotate(r2, r2, angle), x, y))
+		p.LineTo(c.translate(rotate(r, r2, angle), x, y))
+		p.LineTo(c.translate(rotate(r, -r2, angle), x, y))
+		p.LineTo(c.translate(rotate(r2, -r2, angle), x, y))
+		p.LineTo(c.translate(rotate(r2, -r, angle), x, y))
+		p.LineTo(c.translate(rotate(-r2, -r, angle), x, y))
+		p.LineTo(c.translate(rotate(-r2, -r2, angle), x, y))
+		p.Close()
+	}
+	c.DrawPath(dst, p, 1, clr)
 }
 
 func (c *Canvas) DrawPath(dst *ebiten.Image, p vector.Path, width float32, clr ge.ColorScale) {

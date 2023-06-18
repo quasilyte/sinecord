@@ -11,7 +11,6 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
@@ -41,6 +40,9 @@ type StageController struct {
 	waveUpdateDelay float64
 	samplesBuf      []float64
 
+	instrumentIconWidgets []*widget.Graphic
+	instrumentIcons       []*ebiten.Image
+
 	canvasWidget  *widget.Graphic
 	canvasImage   *ebiten.Image
 	canvasImageBg *ebiten.Image
@@ -68,6 +70,11 @@ func (c *StageController) Init(scene *ge.Scene) {
 	c.scene = scene
 
 	d := scene.Dict()
+
+	c.instrumentIcons = make([]*ebiten.Image, c.config.MaxInstruments)
+	for i := range c.instrumentIcons {
+		c.instrumentIcons[i] = ebiten.NewImage(22, 22)
+	}
 
 	ctx := stage.NewContext(c.config)
 	ctx.PlotScale = 46
@@ -183,10 +190,9 @@ func (c *StageController) Init(scene *ge.Scene) {
 		instrumentID := i
 
 		colorPanel := eui.NewPanel(c.state.UIResources, 0, 0)
-		colorIcon := ebiten.NewImage(20, 20)
-		ebitenutil.DrawRect(colorIcon, 0, 0, 20, 20, styles.PlotColorByID[i])
+		c.canvas.DrawInstrumentIcon(c.instrumentIcons[instrumentID], synthdb.BassInstrument, styles.PlotColorByID[instrumentID])
 		colorRect := widget.NewGraphic(
-			widget.GraphicOpts.Image(colorIcon),
+			widget.GraphicOpts.Image(c.instrumentIcons[instrumentID]),
 			widget.GraphicOpts.WidgetOpts(
 				widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
 					HorizontalPosition: widget.AnchorLayoutPositionCenter,
@@ -252,6 +258,9 @@ func (c *StageController) Init(scene *ge.Scene) {
 			Tooltip:    eui.NewTooltip(c.state.UIResources, "instrument style"),
 			OnPressed: func() {
 				c.synth.SetInstrumentPatch(instrumentID, patchIndex)
+				kind := synthdb.TimGM6mb.Instruments[patchIndex].Kind
+				c.instrumentIcons[instrumentID].Clear()
+				c.canvas.DrawInstrumentIcon(c.instrumentIcons[instrumentID], kind, styles.PlotColorByID[instrumentID])
 			},
 		}))
 
