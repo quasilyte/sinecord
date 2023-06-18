@@ -105,16 +105,14 @@ func (c *Canvas) createShapePath(shape waveShape, x, y, r float32, angle gmath.R
 		p.LineTo(c.translate(rotate(0, r, angle), x, y))
 		p.LineTo(c.translate(rotate(r, -r, angle), x, y))
 		p.Close()
-	case waveOctagon:
+	case waveHexagon:
 		r2 := r / 2
-		p.MoveTo(c.translate(rotate(-r, -r2, angle), x, y))
-		p.LineTo(c.translate(rotate(-r, r2, angle), x, y))
+		p.MoveTo(c.translate(rotate(-r2, -r, angle), x, y))
+		p.LineTo(c.translate(rotate(-r, 0, angle), x, y))
 		p.LineTo(c.translate(rotate(-r2, r, angle), x, y))
 		p.LineTo(c.translate(rotate(r2, r, angle), x, y))
-		p.LineTo(c.translate(rotate(r, r2, angle), x, y))
-		p.LineTo(c.translate(rotate(r, -r2, angle), x, y))
+		p.LineTo(c.translate(rotate(r, 0, angle), x, y))
 		p.LineTo(c.translate(rotate(r2, -r, angle), x, y))
-		p.LineTo(c.translate(rotate(-r2, -r, angle), x, y))
 		p.Close()
 	case waveStar:
 		r3 := r / 3
