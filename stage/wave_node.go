@@ -7,6 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/sinecord/synthdb"
 )
 
@@ -49,6 +50,8 @@ type waveNode struct {
 	r        float64
 	duration float64
 
+	EventFinished gsignal.Event[float64]
+
 	disposed bool
 }
 
@@ -68,13 +71,16 @@ func newWaveNode(canvas *Canvas, shape waveShape, pos gmath.Vec, clr color.RGBA,
 
 func (n *waveNode) IsDisposed() bool { return n.disposed }
 
-func (n *waveNode) Dispose() { n.disposed = true }
+func (n *waveNode) Dispose() {
+	n.disposed = true
+}
 
 func (n *waveNode) Update(delta float64) {
-	n.t += delta
-	n.r = math.Sqrt(n.t) * n.canvas.ctx.PlotScale
-	if n.t >= n.duration {
+	n.t = gmath.ClampMax(n.t+delta, n.duration)
+	n.r = math.Sqrt(n.t*0.9) * n.canvas.ctx.PlotScale
+	if n.t == n.duration {
 		n.Dispose()
+		n.EventFinished.Emit(n.r)
 		return
 	}
 }

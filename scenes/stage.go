@@ -92,9 +92,11 @@ func (c *StageController) Init(scene *ge.Scene) {
 	c.synth = stage.NewSynthesizer(ctx, synthdb.TimGM6mb)
 	scene.AddObject(c.synth)
 
-	c.board = stage.NewBoard(scene, stage.BoardConfig{
-		Canvas: c.canvas,
+	c.board = stage.NewBoard(stage.BoardConfig{
+		Canvas:  c.canvas,
+		Targets: c.config.Targets,
 	})
+	c.board.Init(scene)
 	c.board.EventNote.Connect(c, func(instrumentID int) {
 		// clr := styles.PlotColorByID[instrumentID]
 		// c.canvas.WaveColor.R = (float32(clr.R) / 255.0)

@@ -9,6 +9,10 @@ type pos32 struct {
 	y float32
 }
 
+func toPos32(p gmath.Vec) pos32 {
+	return pos32{x: float32(p.X), y: float32(p.Y)}
+}
+
 func rotate(x, y float32, angle gmath.Rad) pos32 {
 	sine := float32(angle.Sin())
 	cosi := float32(angle.Cos())

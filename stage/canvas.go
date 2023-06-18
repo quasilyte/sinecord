@@ -251,6 +251,18 @@ func (c *Canvas) drawObjects() {
 	c.objects = liveObjects
 }
 
+func (c *Canvas) scaleXY(x, y float64) gmath.Vec {
+	return c.scalePos(gmath.Vec{X: x, Y: y})
+}
+
+func (c *Canvas) scalePos(pos gmath.Vec) gmath.Vec {
+	pos = gmath.Vec{
+		X: pos.X * c.ctx.PlotScale,
+		Y: -(pos.Y * c.ctx.PlotScale),
+	}
+	return pos.Add(c.ctx.PlotOffset)
+}
+
 var (
 	whiteImage    = ebiten.NewImage(3, 3)
 	whiteSubImage = whiteImage.SubImage(image.Rect(1, 1, 2, 2)).(*ebiten.Image)

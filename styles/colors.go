@@ -9,6 +9,8 @@ import (
 var (
 	TransparentColor = color.RGBA{}
 
+	TargetColor = ge.RGB(0x9dd793)
+
 	NormalTextColor   = ge.RGB(0x9dd793)
 	DisabledTextColor = ge.RGB(0x5a7a91)
 	CaretColor        = SeparatorColor

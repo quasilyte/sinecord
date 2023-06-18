@@ -4,6 +4,8 @@ import "github.com/quasilyte/gmath"
 
 type Config struct {
 	MaxInstruments int
+
+	Targets []Target
 }
 
 type Context struct {
