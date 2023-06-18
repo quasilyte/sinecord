@@ -132,6 +132,13 @@ func (c *StageController) Init(scene *ge.Scene) {
 		patchNames[i] = inst.Name
 	}
 
+	volumeLevels := []float64{
+		0.4,
+		0.6,
+		0.8,
+		0.9,
+		1.0,
+	}
 	periods := []float64{
 		0.10,
 		0.15,
@@ -241,7 +248,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			Value:      &volumeLevel,
 			Tooltip:    eui.NewTooltip(c.state.UIResources, "instrument volume level"),
 			OnPressed: func() {
-				c.synth.SetInstrumentVolume(instrumentID, 0.2*float64(volumeLevel)+0.2)
+				c.synth.SetInstrumentVolume(instrumentID, volumeLevels[volumeLevel])
 			},
 		}))
 
