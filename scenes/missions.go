@@ -67,12 +67,12 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 						Size:       stage.SmallTarget,
 					},
 					{
-						Instrument: synthdb.BassInstrument,
+						Instrument: synthdb.BrassInstrument,
 						Pos:        gmath.Vec{X: 2, Y: 0.5},
-						Size:       stage.SmallTarget,
+						Size:       stage.NormalTarget,
 					},
 					{
-						Instrument: synthdb.BassInstrument,
+						Instrument: synthdb.DrumInstrument,
 						Pos:        gmath.Vec{X: 4, Y: 1},
 						Size:       stage.SmallTarget,
 					},

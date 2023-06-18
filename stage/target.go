@@ -9,6 +9,8 @@ type TargetSize int
 
 const (
 	SmallTarget TargetSize = iota
+	NormalTarget
+	BigTarget
 )
 
 type Target struct {

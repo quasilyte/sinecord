@@ -21,7 +21,13 @@ func newTargetNode(b *Board, t Target) *targetNode {
 	var size float64
 	switch t.Size {
 	case SmallTarget:
-		size = 28.0
+		size = 20
+	case NormalTarget:
+		size = 32
+	case BigTarget:
+		size = 54
+	default:
+		panic("unexpected target size")
 	}
 
 	var colorScale ge.ColorScale
