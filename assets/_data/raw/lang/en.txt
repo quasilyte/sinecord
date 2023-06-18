@@ -10,6 +10,14 @@
 ##menu.play.missions : missions
 ##menu.play.sandbox : sandbox
 
+##menu.play.missions.desc
+are you up for a challenge?
+destroy targets using your wits, math and music!
+
+##menu.play.sandbox.desc
+feeling artistic tonight?
+compose the math music without limitations!
+
 ##menu.play.act : act
 
 ##menu.stage.run : play
