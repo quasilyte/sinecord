@@ -18,7 +18,7 @@ type Board struct {
 	events   []noteActivation
 	runner   programRunner
 
-	effects []*circleWaveNode
+	effects []*waveNode
 
 	signals []*signalNode
 
@@ -84,7 +84,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 			Y: -(y * plotScale),
 		}
 		pos = pos.Add(plotOffset)
-		effect := newCircleWaveNode(b.canvas, pos, styles.PlotColorByID[e.id], b.prog.Instruments[e.index].Period)
+		effect := newWaveNode(b.canvas, waveStar, pos, styles.PlotColorByID[e.id], b.prog.Instruments[e.index].Period)
 		b.effects = append(b.effects, effect)
 		b.canvas.AddGraphics(effect)
 		b.EventNote.Emit(e.id)
