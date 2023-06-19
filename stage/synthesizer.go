@@ -96,17 +96,28 @@ func (s *Synthesizer) CreatePCM(progress *float64) (*SampleSet, SynthProgram) {
 		return nil, SynthProgram{}
 	}
 	s.changed = false
-	prog := s.CreateProgram()
+	prog := s.CreateProgram(-1)
 	return s.player.createPCM(prog, progress), prog
 }
 
-func (s *Synthesizer) CreateProgram() SynthProgram {
+func (s *Synthesizer) CreateProgram(instrumentSelector int) SynthProgram {
+	numInstruments := s.ctx.config.MaxInstruments
+	if instrumentSelector != -1 {
+		numInstruments = 1
+	}
 	prog := SynthProgram{
 		Length:      20,
-		Instruments: make([]SynthProgramInstrument, 0, s.ctx.config.MaxInstruments),
+		Instruments: make([]SynthProgramInstrument, 0, numInstruments),
 	}
+
 	for id, inst := range s.instruments {
-		if !inst.enabled || inst.compiledFx == nil {
+		var selected bool
+		if instrumentSelector != -1 {
+			selected = id == instrumentSelector
+		} else {
+			selected = inst.enabled && inst.compiledFx != nil
+		}
+		if !selected {
 			continue
 		}
 		index := len(prog.Instruments)
@@ -118,6 +129,7 @@ func (s *Synthesizer) CreateProgram() SynthProgram {
 			Kind:   inst.kind,
 		})
 	}
+
 	return prog
 }
 
@@ -148,8 +160,7 @@ func (s *Synthesizer) SetInstrumentPeriod(id int, periodFunc string) error {
 	}
 	s.changed = true
 	inst := s.instruments[id]
-	inst.periodFunc = periodFunc
-	inst.period = gmath.Clamp(compiled(1), 0.1, 2*math.Pi)
+	inst.SetPeriod(periodFunc, gmath.Clamp(compiled(1), 0.1, 2*math.Pi))
 	return nil
 }
 
@@ -163,11 +174,33 @@ func (s *Synthesizer) GetInstrumentFunction(id int) func(float64) float64 {
 	return s.instruments[id].compiledFx
 }
 
+func (s *Synthesizer) GetInstrumentPeriodPoints(id int) []gmath.Vec {
+	prog := s.CreateProgram(id)
+	events := s.ctx.runner.RunProgram(prog)
+	inst := s.instruments[id]
+	countApprox := int(math.Ceil(20.0/inst.period) + 1)
+	points := make([]gmath.Vec, 0, countApprox)
+	for _, e := range events {
+		if e.id != id {
+			continue
+		}
+		x := e.t
+		y := inst.compiledFx(x)
+		points = append(points, gmath.Vec{X: x, Y: y})
+	}
+	return points
+}
+
 func (s *Synthesizer) needsPlotRedraw() int {
 	for i, inst := range s.instruments {
 		oldFx := inst.oldFx
 		inst.oldFx = inst.fx
 		if inst.fx != oldFx {
+			return i
+		}
+		oldPeriod := inst.oldPeriod
+		inst.oldPeriod = inst.period
+		if inst.period != oldPeriod {
 			return i
 		}
 	}

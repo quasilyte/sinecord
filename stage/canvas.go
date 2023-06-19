@@ -28,6 +28,7 @@ type Canvas struct {
 	scratchVertices []ebiten.Vertex
 	scratchIndices  []uint16
 	plots           []*ebiten.Image
+	periods         []*ebiten.Image
 
 	ctx *Context
 
@@ -45,14 +46,18 @@ func NewCanvas(ctx *Context, scene *ge.Scene, img *ebiten.Image) *Canvas {
 		scratchIndices:  make([]uint16, 0, 8000),
 		objects:         make([]ge.SceneGraphics, 0, 32),
 		plots:           make([]*ebiten.Image, ctx.config.MaxInstruments),
+		periods:         make([]*ebiten.Image, ctx.config.MaxInstruments),
 	}
 	for i := range canvas.plots {
 		canvas.plots[i] = ebiten.NewImage(img.Size())
 	}
+	for i := range canvas.periods {
+		canvas.periods[i] = ebiten.NewImage(img.Size())
+	}
 	return canvas
 }
 
-func (c *Canvas) RedrawPlot(id int, f func(x float64) float64) {
+func (c *Canvas) RedrawPlot(id int, f func(x float64) float64, points []gmath.Vec) {
 	img := c.plots[id]
 	img.Clear()
 
@@ -85,6 +90,28 @@ func (c *Canvas) RedrawPlot(id int, f func(x float64) float64) {
 			c.DrawPath(img, p, 2, clr)
 		}
 		x += smallDx
+	}
+
+	img = c.periods[id]
+	img.Clear()
+	periodColor := styles.PlotColorByID[id]
+	periodColor.A /= 2
+	for _, p := range points {
+		scaled := c.scalePos(p)
+		{
+			x1 := float32(scaled.X)
+			y1 := float32(scaled.Y) - 6
+			x2 := x1
+			y2 := float32(scaled.Y) + 6
+			vector.StrokeLine(img, x1, y1, x2, y2, 2, periodColor, true)
+		}
+		{
+			x1 := float32(scaled.X) - 6
+			y1 := float32(scaled.Y)
+			x2 := float32(scaled.X) + 6
+			y2 := y1
+			vector.StrokeLine(img, x1, y1, x2, y2, 2, periodColor, true)
+		}
 	}
 }
 
@@ -264,9 +291,9 @@ func (c *Canvas) Draw() {
 		drawPlotOptions.ColorM.Scale(1, 1, 1, 0.2)
 	}
 	for _, p := range c.plots {
-		if p == nil {
-			continue
-		}
+		c.canvasImage.DrawImage(p, &drawPlotOptions)
+	}
+	for _, p := range c.periods {
 		c.canvasImage.DrawImage(p, &drawPlotOptions)
 	}
 

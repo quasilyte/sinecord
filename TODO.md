@@ -9,9 +9,6 @@ instruments:
 ux:
 - show formula compile errors
 
-formulas:
-- predefined constants like pi?
-
 missions:
 - pre-mission screen
 - victory condition

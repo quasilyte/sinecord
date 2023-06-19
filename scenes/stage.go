@@ -113,7 +113,8 @@ func (c *StageController) Init(scene *ge.Scene) {
 			c.canvas.ClearPlot(id)
 			return
 		}
-		c.canvas.RedrawPlot(id, f)
+		points := c.synth.GetInstrumentPeriodPoints(id)
+		c.canvas.RedrawPlot(id, f, points)
 	})
 
 	root := widget.NewContainer(
@@ -233,7 +234,10 @@ func (c *StageController) Init(scene *ge.Scene) {
 			TooltipLabel:  d.Get("stage.period.tooltip"),
 			MaxTextLength: 12,
 			OnChange: func(s string) {
-				c.synth.SetInstrumentPeriod(instrumentID, strings.ToLower(s))
+				err := c.synth.SetInstrumentPeriod(instrumentID, strings.ToLower(s))
+				if err != nil {
+					fmt.Printf("compile period: %v\n", err)
+				}
 			},
 		})
 		if loadedInstrument != nil {

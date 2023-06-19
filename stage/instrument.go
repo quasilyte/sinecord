@@ -14,10 +14,17 @@ type instrument struct {
 	patchNumber     int32
 
 	period       float64
+	oldPeriod    float64
 	enabled      bool
 	mappedVolume int32
 	volume       float64
 	kind         synthdb.InstrumentKind
+}
+
+func (inst *instrument) SetPeriod(src string, period float64) {
+	inst.oldPeriod = inst.period
+	inst.period = period
+	inst.periodFunc = src
 }
 
 func (inst *instrument) SetFx(fx string) {
