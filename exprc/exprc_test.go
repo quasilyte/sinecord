@@ -39,6 +39,27 @@ func TestSimple(t *testing.T) {
 				{arg: -1.6, result: -1.6},
 			},
 		},
+		{
+			src: "pi",
+			runs: []functionRun{
+				{arg: 0, result: math.Pi},
+				{arg: 1, result: math.Pi},
+			},
+		},
+		{
+			src: "phi",
+			runs: []functionRun{
+				{arg: 0, result: math.Phi},
+				{arg: 1, result: math.Phi},
+			},
+		},
+		{
+			src: "e",
+			runs: []functionRun{
+				{arg: 0, result: math.E},
+				{arg: 1, result: math.E},
+			},
+		},
 
 		// Binary expressions.
 		{
@@ -81,6 +102,13 @@ func TestSimple(t *testing.T) {
 			runs: []functionRun{
 				{arg: 1, result: 1.0 / 3.0},
 				{arg: 4, result: 4.0 / 3.0},
+			},
+		},
+		{
+			src: "pi / 2",
+			runs: []functionRun{
+				{arg: 0, result: math.Pi / 2},
+				{arg: 1, result: math.Pi / 2},
 			},
 		},
 

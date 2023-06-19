@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"math"
 	"strconv"
 )
 
@@ -128,6 +129,12 @@ func (c *compiler) compileIdent(e *ast.Ident) {
 	switch e.Name {
 	case "x":
 		c.emit0(opArg)
+	case "pi":
+		c.emit1(opFloatConst, c.internConst(math.Pi))
+	case "phi":
+		c.emit1(opFloatConst, c.internConst(math.Phi))
+	case "e":
+		c.emit1(opFloatConst, c.internConst(math.E))
 	default:
 		c.throwf("unknown variable %q", e.Name)
 	}
