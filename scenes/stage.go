@@ -202,19 +202,21 @@ func (c *StageController) Init(scene *ge.Scene) {
 			}
 		}
 
-		colorPanel := eui.NewPanel(c.state.UIResources, 0, 0)
 		c.canvas.DrawInstrumentIcon(c.instrumentIcons[instrumentID], synthdb.BassInstrument, styles.PlotColorByID[instrumentID])
-		colorRect := widget.NewGraphic(
-			widget.GraphicOpts.Image(c.instrumentIcons[instrumentID]),
-			widget.GraphicOpts.WidgetOpts(
-				widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
-					HorizontalPosition: widget.AnchorLayoutPositionCenter,
-					VerticalPosition:   widget.AnchorLayoutPositionCenter,
-				}),
-			),
-		)
-		colorPanel.AddChild(colorRect)
-		instrumentsGrid.AddChild(colorPanel)
+		var plotToggle eui.ImageButton
+		plotToggle = eui.NewImageButton(c.state.UIResources, c.instrumentIcons[instrumentID], eui.ButtonConfig{
+			OnClick: func() {
+				hide := plotToggle.GraphicWidget.Image != nil
+				c.canvas.SetPlotHidden(instrumentID, hide)
+				if hide {
+					plotToggle.GraphicWidget.Image = nil
+				} else {
+					plotToggle.GraphicWidget.Image = c.instrumentIcons[instrumentID]
+				}
+			},
+			Tooltip: eui.NewTooltip(c.state.UIResources, "show/hide the instrument f(x) plot"),
+		})
+		instrumentsGrid.AddChild(plotToggle.Widget)
 
 		formulaInput := eui.NewFunctionInput(c.state.UIResources, eui.FunctionInputConfig{
 			MinWidth:      880,

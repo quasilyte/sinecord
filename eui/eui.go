@@ -176,6 +176,27 @@ func NewRowLayoutContainerWithMinWidth(minWidth, spacing int, rowscale []bool) *
 	)
 }
 
+type ImageButton struct {
+	GraphicWidget *widget.Graphic
+	Widget        widget.PreferredSizeLocateableWidget
+}
+
+func NewImageButton(res *Resources, img *ebiten.Image, config ButtonConfig) ImageButton {
+	result := ImageButton{}
+	result.GraphicWidget = widget.NewGraphic(
+		widget.GraphicOpts.Image(img),
+	)
+
+	container := widget.NewContainer(
+		widget.ContainerOpts.Layout(widget.NewStackedLayout()),
+	)
+	b := NewButtonWithConfig(res, config)
+	container.AddChild(b)
+	container.AddChild(result.GraphicWidget)
+	result.Widget = container
+	return result
+}
+
 type ButtonConfig struct {
 	Text          string
 	TextAlignLeft bool

@@ -29,6 +29,7 @@ type Canvas struct {
 	scratchIndices  []uint16
 	plots           []*ebiten.Image
 	periods         []*ebiten.Image
+	plotsHidden     []bool
 
 	ctx *Context
 
@@ -47,6 +48,7 @@ func NewCanvas(ctx *Context, scene *ge.Scene, img *ebiten.Image) *Canvas {
 		objects:         make([]ge.SceneGraphics, 0, 32),
 		plots:           make([]*ebiten.Image, ctx.config.MaxInstruments),
 		periods:         make([]*ebiten.Image, ctx.config.MaxInstruments),
+		plotsHidden:     make([]bool, ctx.config.MaxInstruments),
 	}
 	for i := range canvas.plots {
 		canvas.plots[i] = ebiten.NewImage(img.Size())
@@ -146,6 +148,10 @@ func (c *Canvas) RenderWave(data []float64) {
 	cs.SetColor(styles.SoundWaveColor)
 	cs.A = 0.8
 	c.DrawPath(c.waves, p, 2, cs)
+}
+
+func (c *Canvas) SetPlotHidden(id int, hidden bool) {
+	c.plotsHidden[id] = hidden
 }
 
 func (c *Canvas) DrawInstrumentIcon(dst *ebiten.Image, kind synthdb.InstrumentKind, clr color.RGBA) {
@@ -290,10 +296,16 @@ func (c *Canvas) Draw() {
 	if c.Running {
 		drawPlotOptions.ColorM.Scale(1, 1, 1, 0.2)
 	}
-	for _, p := range c.plots {
+	for i, p := range c.plots {
+		if c.plotsHidden[i] {
+			continue
+		}
 		c.canvasImage.DrawImage(p, &drawPlotOptions)
 	}
-	for _, p := range c.periods {
+	for i, p := range c.periods {
+		if c.plotsHidden[i] {
+			continue
+		}
 		c.canvasImage.DrawImage(p, &drawPlotOptions)
 	}
 
