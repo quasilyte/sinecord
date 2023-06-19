@@ -109,17 +109,13 @@ func (c *StageController) Init(scene *ge.Scene) {
 		// c.canvas.WaveColor.B *= (float32(clr.B) / 255.0) + 1
 	})
 
-	c.synth.EventRecompileShaderRequest.Connect(nil, func(id int) {
-		fx := c.synth.GetInstrumentFunction(id)
-		if fx == "" {
-			c.canvas.SetShader(id, nil)
+	c.synth.EventRedrawPlotRequest.Connect(nil, func(id int) {
+		f := c.synth.GetInstrumentFunction(id)
+		if f == nil {
+			c.canvas.ClearPlot(id)
 			return
 		}
-		shader, err := stage.CompilePlotShader(id, fx)
-		if err != nil {
-			fmt.Println(err)
-		}
-		c.canvas.SetShader(id, shader)
+		c.canvas.RedrawPlot(id, f)
 	})
 
 	root := widget.NewContainer(

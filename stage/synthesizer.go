@@ -27,7 +27,7 @@ type Synthesizer struct {
 
 	instruments []*instrument
 
-	EventRecompileShaderRequest gsignal.Event[int]
+	EventRedrawPlotRequest gsignal.Event[int]
 }
 
 func NewSynthesizer(ctx *Context, sf *synthdb.SoundFont) *Synthesizer {
@@ -54,11 +54,11 @@ func (s *Synthesizer) Update(delta float64) {
 	s.recompileDelay = gmath.ClampMin(s.recompileDelay-delta, 0)
 	if s.recompileDelay == 0 {
 		s.recompileDelay = s.scene.Rand().FloatRange(0.5, 0.8)
-		if i := s.needShadersRecompiled(); i != -1 {
+		if i := s.needsPlotRedraw(); i != -1 {
 			inst := s.instruments[i]
 			if inst.fx == "" {
 				inst.compiledFx = nil
-				s.EventRecompileShaderRequest.Emit(i)
+				s.EventRedrawPlotRequest.Emit(i)
 				return
 			}
 			fn, err := exprc.Compile(inst.fx)
@@ -68,7 +68,7 @@ func (s *Synthesizer) Update(delta float64) {
 			}
 			s.changed = true
 			inst.compiledFx = fn
-			s.EventRecompileShaderRequest.Emit(i)
+			s.EventRedrawPlotRequest.Emit(i)
 		}
 	}
 }
@@ -152,11 +152,11 @@ func (s *Synthesizer) SetInstrumentFunction(id int, fx string) {
 	s.instruments[id].SetFx(fx)
 }
 
-func (s *Synthesizer) GetInstrumentFunction(id int) string {
-	return s.instruments[id].fx
+func (s *Synthesizer) GetInstrumentFunction(id int) func(float64) float64 {
+	return s.instruments[id].compiledFx
 }
 
-func (s *Synthesizer) needShadersRecompiled() int {
+func (s *Synthesizer) needsPlotRedraw() int {
 	for i, inst := range s.instruments {
 		oldFx := inst.oldFx
 		inst.oldFx = inst.fx

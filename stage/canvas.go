@@ -10,6 +10,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/styles"
 	"github.com/quasilyte/sinecord/synthdb"
 )
 
@@ -26,7 +27,7 @@ type Canvas struct {
 
 	scratchVertices []ebiten.Vertex
 	scratchIndices  []uint16
-	fnShaders       []*ebiten.Shader
+	plots           []*ebiten.Image
 
 	ctx *Context
 
@@ -34,7 +35,7 @@ type Canvas struct {
 }
 
 func NewCanvas(ctx *Context, scene *ge.Scene, img *ebiten.Image) *Canvas {
-	return &Canvas{
+	canvas := &Canvas{
 		ctx:             ctx,
 		scene:           scene,
 		canvasImage:     img,
@@ -43,12 +44,52 @@ func NewCanvas(ctx *Context, scene *ge.Scene, img *ebiten.Image) *Canvas {
 		scratchVertices: make([]ebiten.Vertex, 6000),
 		scratchIndices:  make([]uint16, 0, 8000),
 		objects:         make([]ge.SceneGraphics, 0, 32),
-		fnShaders:       make([]*ebiten.Shader, ctx.config.MaxInstruments),
+		plots:           make([]*ebiten.Image, ctx.config.MaxInstruments),
+	}
+	for i := range canvas.plots {
+		canvas.plots[i] = ebiten.NewImage(img.Size())
+	}
+	return canvas
+}
+
+func (c *Canvas) RedrawPlot(id int, f func(x float64) float64) {
+	img := c.plots[id]
+	img.Clear()
+
+	height := float64(img.Bounds().Dy())
+	var clr ge.ColorScale
+	clr.SetColor(styles.PlotColorByID[id])
+
+	dx := 1.0 / 30.0
+	smallDx := 1.0 / 60.0
+	tinyDx := 1.0 / 180.0
+	x := 0.0
+	for x < 20 {
+		y := f(x)
+		scaled := c.scaleXY(x, y)
+		if scaled.Y >= 0 && scaled.Y <= height {
+			var p vector.Path
+			for x < 20 {
+				y := f(x)
+				scaled := c.scaleXY(x, y)
+				if scaled.Y < 0 || scaled.Y > height {
+					break
+				}
+				p.LineTo(float32(scaled.X), float32(scaled.Y))
+				if math.Abs(f(x+dx)-y) > 0.2 {
+					x += tinyDx
+				} else {
+					x += dx
+				}
+			}
+			c.DrawPath(img, p, 2, clr)
+		}
+		x += smallDx
 	}
 }
 
-func (c *Canvas) SetShader(id int, shader *ebiten.Shader) {
-	c.fnShaders[id] = shader
+func (c *Canvas) ClearPlot(id int) {
+	c.plots[id].Clear()
 }
 
 func (c *Canvas) Reset() {
@@ -71,7 +112,7 @@ func (c *Canvas) RenderWave(data []float64) {
 		if sampleIndex > len(data) {
 			break
 		}
-		y := ((5 * data[sampleIndex] * 3.0) * 46.0) + (46 * 3)
+		y := ((4.5 * data[sampleIndex] * 3.0) * 46.0) + (46 * 3)
 		p.LineTo(float32(x), float32(y))
 	}
 	c.DrawPath(c.waves, p, 2, ge.ColorScale{R: 0.616, G: 0.843, B: 0.576, A: 1})
@@ -216,21 +257,29 @@ func (c *Canvas) Draw() {
 	c.canvasImage.DrawImage(bg, &drawOptions)
 
 	if !c.Running {
-		width := bg.Bounds().Dx()
-		height := bg.Bounds().Dy()
-		for _, shader := range c.fnShaders {
-			c.scratch.Clear()
-			c.scratch.DrawImage(c.canvasImage, &drawOptions)
-
-			var options ebiten.DrawRectShaderOptions
-			if shader == nil {
+		for _, p := range c.plots {
+			if p == nil {
 				continue
 			}
-			options.Images[0] = c.scratch
-			options.CompositeMode = ebiten.CompositeModeCopy
-			c.canvasImage.DrawRectShader(width, height, shader, &options)
+			c.canvasImage.DrawImage(p, &drawOptions)
 		}
 	}
+
+	// if !c.Running {
+	// 	width := bg.Bounds().Dx()
+	// 	height := bg.Bounds().Dy()
+	// 	for _, shader := range c.fnShaders {
+	// 		c.scratch.Clear()
+	// 		c.scratch.DrawImage(c.canvasImage, &drawOptions)
+	// 		var options ebiten.DrawRectShaderOptions
+	// 		if shader == nil {
+	// 			continue
+	// 		}
+	// 		options.Images[0] = c.scratch
+	// 		options.CompositeMode = ebiten.CompositeModeCopy
+	// 		c.canvasImage.DrawRectShader(width, height, shader, &options)
+	// 	}
+	// }
 
 	if c.Running {
 		c.canvasImage.DrawImage(c.waves, &drawOptions)
