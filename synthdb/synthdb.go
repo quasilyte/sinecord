@@ -45,13 +45,17 @@ var TimGM6mb = &SoundFont{
 		{Kind: BassInstrument, Name: "Bass & Lead", Index: 49},
 		{Kind: BassInstrument, Name: "Distortion Guitar", Index: 96},
 		{Kind: BassInstrument, Name: "5th Saw Wave", Index: 50},
+		{Kind: BassInstrument, Name: "Saw Wave", Index: 55},
+		{Kind: BassInstrument, Name: "Square Wave", Index: 56},
 
 		{Kind: KeyboardInstrument, Name: "Piano 1", Index: 126},
 		{Kind: KeyboardInstrument, Name: "Piano 2", Index: 125},
 		{Kind: KeyboardInstrument, Name: "Piano 3", Index: 124},
+		{Kind: KeyboardInstrument, Name: "Piano 4", Index: 8},
 		{Kind: KeyboardInstrument, Name: "Honky Tonk", Index: 123},
 		{Kind: KeyboardInstrument, Name: "Clavinet", Index: 119},
 		{Kind: KeyboardInstrument, Name: "Harpsichord", Index: 120},
+		{Kind: KeyboardInstrument, Name: "Polysynth", Index: 46},
 
 		{Kind: BrassInstrument, Name: "Synth Brass 1", Index: 70},
 		{Kind: BrassInstrument, Name: "Synth Brass 2", Index: 69},
@@ -59,6 +63,8 @@ var TimGM6mb = &SoundFont{
 		{Kind: BrassInstrument, Name: "Bassoon", Index: 65},
 		{Kind: BrassInstrument, Name: "French Horns", Index: 68},
 		{Kind: BrassInstrument, Name: "Tuba", Index: 73},
+		{Kind: BrassInstrument, Name: "Bagpipe", Index: 27},
+		{Kind: BrassInstrument, Name: "Mute Trumpet", Index: 72},
 
 		{Kind: StringInstrument, Name: "Charang", Index: 52},
 		{Kind: StringInstrument, Name: "Banjo", Index: 31},
@@ -66,6 +72,9 @@ var TimGM6mb = &SoundFont{
 		{Kind: StringInstrument, Name: "Synth Strings", Index: 79},
 		{Kind: StringInstrument, Name: "Dulcimer", Index: 111},
 		{Kind: StringInstrument, Name: "Guitar Harmonics", Index: 95},
+		{Kind: StringInstrument, Name: "Electronic", Index: 5},
+		{Kind: StringInstrument, Name: "Clean Guitar", Index: 99},
+		{Kind: StringInstrument, Name: "Nylon Guitar", Index: 102},
 
 		{Kind: DrumInstrument, Name: "Timpani", Index: 80},
 		{Kind: DrumInstrument, Name: "Synth Drum", Index: 18},
@@ -76,6 +85,7 @@ var TimGM6mb = &SoundFont{
 		{Kind: OtherInstrument, Name: "Tinker Bell", Index: 24},
 		{Kind: OtherInstrument, Name: "Voice Oohs", Index: 78},
 		{Kind: OtherInstrument, Name: "Choir Aahs", Index: 131},
+		{Kind: OtherInstrument, Name: "Soundtrack", Index: 39},
 	},
 }
 
