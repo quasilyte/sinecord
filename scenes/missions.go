@@ -57,7 +57,7 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 	for i := 0; i < 4; i++ {
 		b := eui.NewButton(c.state.UIResources, labels[i], func() {
 			scene.Context().ChangeScene(NewStageController(c.state, stage.Config{
-				MaxInstruments: 4,
+				MaxInstruments: 5,
 				Targets:        []stage.Target{
 					// {
 					// 	Instrument: synthdb.BassInstrument,

@@ -115,7 +115,9 @@ func (c *Canvas) RenderWave(data []float64) {
 		y := ((4.5 * data[sampleIndex] * 3.0) * 46.0) + (46 * 3)
 		p.LineTo(float32(x), float32(y))
 	}
-	c.DrawPath(c.waves, p, 2, ge.ColorScale{R: 0.616, G: 0.843, B: 0.576, A: 1})
+	var cs ge.ColorScale
+	cs.SetColor(styles.SoundWaveColor)
+	c.DrawPath(c.waves, p, 2, cs)
 }
 
 func (c *Canvas) DrawInstrumentIcon(dst *ebiten.Image, kind synthdb.InstrumentKind, clr color.RGBA) {

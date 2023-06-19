@@ -31,7 +31,7 @@ type Synthesizer struct {
 }
 
 func NewSynthesizer(ctx *Context, sf *synthdb.SoundFont) *Synthesizer {
-	instruments := make([]*instrument, 4)
+	instruments := make([]*instrument, ctx.config.MaxInstruments)
 	for i := range instruments {
 		instruments[i] = &instrument{}
 	}
