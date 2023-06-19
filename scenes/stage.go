@@ -367,15 +367,15 @@ func (c *StageController) Init(scene *ge.Scene) {
 
 		saveButton := eui.NewButton(c.state.UIResources, "save", func() {
 			back := NewStageController(c.state, c.config)
-			t := c.synth.ExportTrack()
-			back.track = t
-			c.changeScene(NewSaverController(c.state, t, back))
+			back.track = c.synth.ExportTrack()
+			c.changeScene(NewSaverController(c.state, back.track, back))
 		})
 		buttonsGrid.AddChild(saveButton)
 
 		loadButton := eui.NewButton(c.state.UIResources, "load", func() {
 			back := NewStageController(c.state, c.config)
 			loader := NewLoaderController(c.state, back)
+			back.track = c.synth.ExportTrack()
 			loader.EventLoaded.Connect(nil, func(track gamedata.Track) {
 				back.track = track
 			})
