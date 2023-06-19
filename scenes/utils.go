@@ -3,6 +3,8 @@ package scenes
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
+	"time"
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ge"
@@ -32,4 +34,12 @@ func generatePCM(left, right []float32) []byte {
 
 	binary.Write(&buf, binary.LittleEndian, data)
 	return buf.Bytes()
+}
+
+func formatDateISO8601(d time.Time, withTime bool) string {
+	s := fmt.Sprintf("%04d-%02d-%02d", d.Year(), d.Month(), d.Day())
+	if withTime {
+		s += fmt.Sprintf(" %02d:%02d", d.Hour(), d.Minute())
+	}
+	return s
 }

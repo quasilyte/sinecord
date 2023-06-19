@@ -9,11 +9,13 @@ type instrument struct {
 	compiledFx func(x float64) float64
 
 	instrumentIndex int
+	patchNumber     int32
 
-	period  float64
-	enabled bool
-	volume  int32
-	kind    synthdb.InstrumentKind
+	period       float64
+	enabled      bool
+	mappedVolume int32
+	volume       float64
+	kind         synthdb.InstrumentKind
 }
 
 func (inst *instrument) SetFx(fx string) {

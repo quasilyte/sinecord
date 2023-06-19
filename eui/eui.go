@@ -175,25 +175,41 @@ func NewRowLayoutContainerWithMinWidth(minWidth, spacing int, rowscale []bool) *
 }
 
 type ButtonConfig struct {
-	Text       string
-	OnClick    func()
-	Tooltip    *widget.Container
-	LayoutData any
+	Text          string
+	TextAlignLeft bool
+	OnClick       func()
+	Tooltip       *widget.Container
+	LayoutData    any
+	MinWidth      int
+	Font          font.Face
 }
 
 func NewButtonWithConfig(res *Resources, config ButtonConfig) *widget.Button {
+	ff := config.Font
+	if ff == nil {
+		ff = res.button.FontFace
+	}
 	options := []widget.ButtonOpt{
 		widget.ButtonOpts.Image(res.button.Image),
-		widget.ButtonOpts.Text(config.Text, res.button.FontFace, res.button.TextColors),
-		widget.ButtonOpts.TextPadding(res.button.Padding),
 		widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
 			if config.OnClick != nil {
 				config.OnClick()
 			}
 		}),
 	}
+	if config.TextAlignLeft {
+		options = append(options,
+			widget.ButtonOpts.TextSimpleLeft(config.Text, ff, res.button.TextColors, res.button.Padding))
+	} else {
+		options = append(options,
+			widget.ButtonOpts.Text(config.Text, ff, res.button.TextColors),
+			widget.ButtonOpts.TextPadding(res.button.Padding))
+	}
 	if config.LayoutData != nil {
 		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.LayoutData(config.LayoutData)))
+	}
+	if config.MinWidth != 0 {
+		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(config.MinWidth, 0)))
 	}
 	if config.Tooltip != nil {
 		tt := widget.NewToolTip(

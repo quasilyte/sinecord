@@ -61,8 +61,8 @@ func (p *musicPlayer) createPCM(prog SynthProgram, progress *float64) *SampleSet
 	}
 
 	for channel, inst := range p.instruments {
-		synthesizer.ProcessMidiMessage(int32(channel), 0xC0, int32(inst.instrumentIndex), 0)
-		synthesizer.ProcessMidiMessage(int32(channel), 0xB0, 0x07, inst.volume)
+		synthesizer.ProcessMidiMessage(int32(channel), 0xC0, inst.patchNumber, 0)
+		synthesizer.ProcessMidiMessage(int32(channel), 0xB0, 0x07, inst.mappedVolume)
 	}
 
 	synthesizer.MasterVolume = 0.75

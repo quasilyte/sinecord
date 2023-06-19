@@ -1,11 +1,16 @@
 package stage
 
-import "github.com/quasilyte/gmath"
+import (
+	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/sinecord/gamedata"
+)
 
 type Config struct {
 	MaxInstruments int
 
 	Targets []Target
+
+	Track gamedata.Track
 }
 
 type Context struct {

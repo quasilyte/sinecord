@@ -8,6 +8,7 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/sinecord/exprc"
+	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/synthdb"
 )
 
@@ -76,6 +77,20 @@ func (s *Synthesizer) HasChanges() bool {
 	return s.changed
 }
 
+func (s *Synthesizer) ExportTrack() gamedata.Track {
+	var t gamedata.Track
+	for _, inst := range s.instruments {
+		t.Instruments = append(t.Instruments, gamedata.InstrumentSettings{
+			Function:       inst.fx,
+			Period:         inst.period,
+			Volume:         inst.volume,
+			InstrumentName: synthdb.TimGM6mb.Instruments[inst.instrumentIndex].Name,
+			Enabled:        inst.enabled,
+		})
+	}
+	return t
+}
+
 func (s *Synthesizer) CreatePCM(progress *float64) (*SampleSet, SynthProgram) {
 	if !s.changed {
 		return nil, SynthProgram{}
@@ -113,13 +128,16 @@ func (s *Synthesizer) SetInstrumentEnabled(id int, enabled bool) {
 
 func (s *Synthesizer) SetInstrumentVolume(id int, volume float64) {
 	s.changed = true
-	s.instruments[id].volume = int32(math.Round(127.0 * volume))
+	inst := s.instruments[id]
+	inst.volume = volume
+	inst.mappedVolume = int32(math.Round(127.0 * volume))
 }
 
 func (s *Synthesizer) SetInstrumentPatch(id int, index int) {
 	s.changed = true
 	inst := s.instruments[id]
-	inst.instrumentIndex = s.sf.Instruments[index].PatchNumber
+	inst.patchNumber = int32(s.sf.Instruments[index].PatchNumber)
+	inst.instrumentIndex = index
 	inst.kind = s.sf.Instruments[index].Kind
 }
 

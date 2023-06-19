@@ -5,6 +5,9 @@
 ##menu.credits : credits
 ##menu.exit : exit
 
+##menu.save_track : save track
+##menu.load_track : load track
+
 ##menu.back : back
 
 ##menu.play.missions : missions

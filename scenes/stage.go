@@ -12,10 +12,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/sinecord/assets"
 	"github.com/quasilyte/sinecord/eui"
+	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/gtask"
 	"github.com/quasilyte/sinecord/session"
 	"github.com/quasilyte/sinecord/stage"
@@ -28,6 +30,7 @@ type StageController struct {
 	scene *ge.Scene
 
 	config stage.Config
+	track  gamedata.Track
 
 	canvas *stage.Canvas
 	synth  *stage.Synthesizer
@@ -40,8 +43,7 @@ type StageController struct {
 	waveUpdateDelay float64
 	samplesBuf      []float64
 
-	instrumentIconWidgets []*widget.Graphic
-	instrumentIcons       []*ebiten.Image
+	instrumentIcons []*ebiten.Image
 
 	canvasWidget  *widget.Graphic
 	canvasImage   *ebiten.Image
@@ -191,6 +193,13 @@ func (c *StageController) Init(scene *ge.Scene) {
 	for i := 0; i < c.config.MaxInstruments; i++ {
 		instrumentID := i
 
+		var loadedInstrument *gamedata.InstrumentSettings
+		if !c.track.IsEmpty() && len(c.track.Instruments) > instrumentID {
+			if c.track.Instruments[instrumentID].Function != "" {
+				loadedInstrument = &c.track.Instruments[instrumentID]
+			}
+		}
+
 		colorPanel := eui.NewPanel(c.state.UIResources, 0, 0)
 		c.canvas.DrawInstrumentIcon(c.instrumentIcons[instrumentID], synthdb.BassInstrument, styles.PlotColorByID[instrumentID])
 		colorRect := widget.NewGraphic(
@@ -235,9 +244,15 @@ func (c *StageController) Init(scene *ge.Scene) {
 			}),
 		)
 		instrumentsGrid.AddChild(textTnput)
+		if loadedInstrument != nil {
+			textTnput.InputText = loadedInstrument.Function
+		}
 
-		stepPeriodLevel := 2
-		c.synth.SetInstrumentPeriod(instrumentID, 0.1*float64(stepPeriodLevel)+0.1)
+		stepPeriodLevel := 4
+		if loadedInstrument != nil {
+			stepPeriodLevel = xslices.Index(periods, loadedInstrument.Period)
+		}
+		c.synth.SetInstrumentPeriod(instrumentID, periods[stepPeriodLevel])
 		instrumentsGrid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 			Resources:  c.state.UIResources,
 			Input:      c.state.Input,
@@ -250,7 +265,12 @@ func (c *StageController) Init(scene *ge.Scene) {
 		}))
 
 		patchIndex := 0
-		c.synth.SetInstrumentPatch(instrumentID, patchIndex)
+		if loadedInstrument != nil {
+			patchIndex = xslices.IndexWhere(synthdb.TimGM6mb.Instruments, func(inst *synthdb.Instrument) bool {
+				return inst.Name == loadedInstrument.InstrumentName
+			})
+		}
+		c.selectInstrument(instrumentID, patchIndex)
 		instrumentsGrid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 			Resources:  c.state.UIResources,
 			Input:      c.state.Input,
@@ -259,14 +279,14 @@ func (c *StageController) Init(scene *ge.Scene) {
 			MinWidth:   320,
 			Tooltip:    eui.NewTooltip(c.state.UIResources, "instrument style"),
 			OnPressed: func() {
-				c.synth.SetInstrumentPatch(instrumentID, patchIndex)
-				kind := synthdb.TimGM6mb.Instruments[patchIndex].Kind
-				c.instrumentIcons[instrumentID].Clear()
-				c.canvas.DrawInstrumentIcon(c.instrumentIcons[instrumentID], kind, styles.PlotColorByID[instrumentID])
+				c.selectInstrument(instrumentID, patchIndex)
 			},
 		}))
 
 		volumeLevel := 4
+		if loadedInstrument != nil {
+			volumeLevel = xslices.Index(volumeLevels, loadedInstrument.Volume)
+		}
 		c.synth.SetInstrumentVolume(instrumentID, volumeLevels[volumeLevel])
 		instrumentsGrid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 			Resources:  c.state.UIResources,
@@ -280,7 +300,8 @@ func (c *StageController) Init(scene *ge.Scene) {
 			},
 		}))
 
-		instrumentEnabled := instrumentID == 0
+		instrumentEnabled := (instrumentID == 0 && loadedInstrument == nil) ||
+			(loadedInstrument != nil && loadedInstrument.Enabled)
 		c.synth.SetInstrumentEnabled(instrumentID, instrumentEnabled)
 		instrumentsGrid.AddChild(eui.NewBoolSelectButton(eui.BoolSelectButtonConfig{
 			Resources:  c.state.UIResources,
@@ -359,12 +380,22 @@ func (c *StageController) Init(scene *ge.Scene) {
 		})
 		buttonsGrid.AddChild(stopButton)
 
-		saveButton := eui.NewButton(c.state.UIResources, "save", func() {})
-		saveButton.GetWidget().Disabled = true
+		saveButton := eui.NewButton(c.state.UIResources, "save", func() {
+			back := NewStageController(c.state, c.config)
+			t := c.synth.ExportTrack()
+			back.track = t
+			c.changeScene(NewSaverController(c.state, t, back))
+		})
 		buttonsGrid.AddChild(saveButton)
 
-		loadButton := eui.NewButton(c.state.UIResources, "load", func() {})
-		loadButton.GetWidget().Disabled = true
+		loadButton := eui.NewButton(c.state.UIResources, "load", func() {
+			back := NewStageController(c.state, c.config)
+			loader := NewLoaderController(c.state, back)
+			loader.EventLoaded.Connect(nil, func(track gamedata.Track) {
+				back.track = track
+			})
+			c.changeScene(loader)
+		})
 		buttonsGrid.AddChild(loadButton)
 
 		exitButton := eui.NewButton(c.state.UIResources, "exit", func() {})
@@ -392,6 +423,13 @@ func (c *StageController) Init(scene *ge.Scene) {
 	initUI(scene, root)
 
 	scene.AddGraphics(c)
+}
+
+func (c *StageController) selectInstrument(instrumentID int, patchIndex int) {
+	c.synth.SetInstrumentPatch(instrumentID, patchIndex)
+	kind := synthdb.TimGM6mb.Instruments[patchIndex].Kind
+	c.instrumentIcons[instrumentID].Clear()
+	c.canvas.DrawInstrumentIcon(c.instrumentIcons[instrumentID], kind, styles.PlotColorByID[instrumentID])
 }
 
 func (c *StageController) IsDisposed() bool { return false }
@@ -489,6 +527,13 @@ func (c *StageController) runPlayer() {
 	c.board.StartProgram(c.prog)
 	c.canvas.Reset()
 	c.setMode(stagePlaying)
+}
+
+func (c *StageController) changeScene(newScene ge.SceneController) {
+	if c.player != nil {
+		c.player.Pause()
+	}
+	c.scene.Context().ChangeScene(newScene)
 }
 
 func (c *StageController) setMode(m stageMode) {
