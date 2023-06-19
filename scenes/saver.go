@@ -173,7 +173,11 @@ func (c *SaverController) Init(scene *ge.Scene) {
 
 	c.saveButton = eui.NewButton(c.state.UIResources, "save", func() {
 		c.track.Slot = c.selectedSlot
-		c.track.Name = c.trackNameInput.InputText
+		if c.trackNameInput.InputText == "" {
+			c.track.Name = c.existingTracks[c.selectedSlot-1].Name
+		} else {
+			c.track.Name = c.trackNameInput.InputText
+		}
 		c.track.Date = time.Now()
 		scene.Context().SaveGameData(c.track.FileName(), c.track)
 		scene.Context().ChangeScene(c.back)
@@ -199,17 +203,26 @@ func (c *SaverController) updateStatusLabel() {
 		c.canSave = false
 		return
 	}
-	if c.trackNameInput.InputText == "" {
+
+	selectedTrack := &c.existingTracks[c.selectedSlot-1]
+
+	if c.trackNameInput.InputText == "" && selectedTrack.IsEmpty() {
 		c.selectedSlotLabel.Label = "the track name is empty!"
 		c.canSave = false
 		return
 	}
 
-	if c.existingTracks[c.selectedSlot-1].IsEmpty() {
-		c.selectedSlotLabel.Label = fmt.Sprintf("save to slot %d as %q", c.selectedSlot, c.trackNameInput.InputText)
+	var text string
+	if selectedTrack.IsEmpty() {
+		text = fmt.Sprintf("save to slot %d as %q", c.selectedSlot, c.trackNameInput.InputText)
 	} else {
-		c.selectedSlotLabel.Label = fmt.Sprintf("overwrite %q with %q", c.existingTracks[c.selectedSlot-1].Name, c.trackNameInput.InputText)
+		if c.trackNameInput.InputText == "" {
+			text = fmt.Sprintf("overwrite %q", selectedTrack.Name)
+		} else {
+			text = fmt.Sprintf("overwrite %q as %q", selectedTrack.Name, c.trackNameInput.InputText)
+		}
 	}
+	c.selectedSlotLabel.Label = text
 	c.canSave = true
 }
 
