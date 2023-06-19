@@ -35,6 +35,8 @@ var builtinFuncMap = map[string]builtinFunction{
 	"ceil":        {numArgs: 1, op: opCeilFunc},
 	"fract":       {numArgs: 1, op: opFractFunc},
 	"mod":         {numArgs: 2, op: opModFunc},
+	"until":       {numArgs: 2, op: opUntilFunc},
+	"after":       {numArgs: 2, op: opAfterFunc},
 }
 
 func step(edge, x float64) float64 {
@@ -69,6 +71,20 @@ func fract(x float64) float64 {
 
 func mod(x, y float64) float64 {
 	return x - y*math.Floor(x/y)
+}
+
+func until(x, v, threshold float64) float64 {
+	if x+gmath.Epsilon <= threshold {
+		return v
+	}
+	return -10
+}
+
+func after(x, v, threshold float64) float64 {
+	if x+gmath.Epsilon >= threshold {
+		return v
+	}
+	return -10
 }
 
 func sign(x float64) float64 {

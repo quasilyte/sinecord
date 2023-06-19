@@ -44,6 +44,8 @@ const (
 	opCeilFunc
 	opFractFunc
 	opModFunc
+	opUntilFunc
+	opAfterFunc
 
 	opAdd
 	opMul

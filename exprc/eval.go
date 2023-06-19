@@ -83,6 +83,12 @@ func (r *funcRunner) Run(x float64) float64 {
 			r.push(fract(r.pop()))
 		case opModFunc:
 			r.push(mod(r.pop2()))
+		case opUntilFunc:
+			v, threshold := r.pop2()
+			r.push(until(x, v, threshold))
+		case opAfterFunc:
+			v, threshold := r.pop2()
+			r.push(after(x, v, threshold))
 
 		default:
 			panic("unexpected op")
