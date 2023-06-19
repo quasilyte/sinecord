@@ -117,7 +117,7 @@ func (c *Canvas) RenderWave(data []float64) {
 	}
 	var cs ge.ColorScale
 	cs.SetColor(styles.SoundWaveColor)
-	cs.A = 0.6
+	cs.A = 0.8
 	c.DrawPath(c.waves, p, 2, cs)
 }
 
@@ -259,13 +259,15 @@ func (c *Canvas) Draw() {
 	var drawOptions ebiten.DrawImageOptions
 	c.canvasImage.DrawImage(bg, &drawOptions)
 
-	if !c.Running {
-		for _, p := range c.plots {
-			if p == nil {
-				continue
-			}
-			c.canvasImage.DrawImage(p, &drawOptions)
+	var drawPlotOptions ebiten.DrawImageOptions
+	if c.Running {
+		drawPlotOptions.ColorM.Scale(1, 1, 1, 0.2)
+	}
+	for _, p := range c.plots {
+		if p == nil {
+			continue
 		}
+		c.canvasImage.DrawImage(p, &drawPlotOptions)
 	}
 
 	// if !c.Running {
