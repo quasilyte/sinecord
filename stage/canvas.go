@@ -117,6 +117,7 @@ func (c *Canvas) RenderWave(data []float64) {
 	}
 	var cs ge.ColorScale
 	cs.SetColor(styles.SoundWaveColor)
+	cs.A = 0.6
 	c.DrawPath(c.waves, p, 2, cs)
 }
 

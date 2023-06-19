@@ -3,6 +3,8 @@ package eui
 import (
 	"image/color"
 	"time"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
@@ -448,6 +450,47 @@ func NewTooltip(res *Resources, text string) *widget.Container {
 		widget.TextOpts.Text(text, res.tooltip.FontFace, res.tooltip.TextColor),
 	))
 	return tt
+}
+
+type FunctionInputConfig struct {
+	MinWidth      int
+	TooltipLabel  string
+	MaxTextLength int
+	OnChange      func(s string)
+}
+
+func NewFunctionInput(res *Resources, config FunctionInputConfig) *widget.TextInput {
+	return NewTextInput(res,
+		widget.TextInputOpts.WidgetOpts(
+			widget.WidgetOpts.MinSize(config.MinWidth, 0),
+			widget.WidgetOpts.ToolTip(
+				widget.NewToolTip(
+					widget.ToolTipOpts.Content(NewTooltip(res, config.TooltipLabel)),
+					widget.ToolTipOpts.Delay(time.Second),
+				),
+			),
+		),
+		widget.TextInputOpts.ChangedHandler(func(args *widget.TextInputChangedEventArgs) {
+			if config.OnChange != nil {
+				config.OnChange(args.InputText)
+			}
+		}),
+		widget.TextInputOpts.Validation(func(newInputText string) (bool, *string) {
+			good := true
+			if len(newInputText) > config.MaxTextLength {
+				good = false
+			}
+			if good {
+				for _, ch := range newInputText {
+					if !unicode.IsPrint(ch) || ch >= utf8.RuneSelf {
+						good = false
+						break
+					}
+				}
+			}
+			return good, nil
+		}),
+	)
 }
 
 func NewTextInput(res *Resources, opts ...widget.TextInputOpt) *widget.TextInput {

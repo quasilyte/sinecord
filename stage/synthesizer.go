@@ -53,7 +53,7 @@ func (s *Synthesizer) IsDisposed() bool { return false }
 func (s *Synthesizer) Update(delta float64) {
 	s.recompileDelay = gmath.ClampMin(s.recompileDelay-delta, 0)
 	if s.recompileDelay == 0 {
-		s.recompileDelay = s.scene.Rand().FloatRange(0.5, 0.8)
+		s.recompileDelay = s.scene.Rand().FloatRange(0.15, 0.3)
 		if i := s.needsPlotRedraw(); i != -1 {
 			inst := s.instruments[i]
 			if inst.fx == "" {
@@ -82,7 +82,7 @@ func (s *Synthesizer) ExportTrack() gamedata.Track {
 	for _, inst := range s.instruments {
 		t.Instruments = append(t.Instruments, gamedata.InstrumentSettings{
 			Function:       inst.fx,
-			Period:         inst.period,
+			PeriodFunction: inst.periodFunc,
 			Volume:         inst.volume,
 			InstrumentName: synthdb.TimGM6mb.Instruments[inst.instrumentIndex].Name,
 			Enabled:        inst.enabled,
@@ -103,7 +103,7 @@ func (s *Synthesizer) CreatePCM(progress *float64) (*SampleSet, SynthProgram) {
 func (s *Synthesizer) CreateProgram() SynthProgram {
 	prog := SynthProgram{
 		Length:      20,
-		Instruments: make([]SynthProgramInstrument, 0, 4),
+		Instruments: make([]SynthProgramInstrument, 0, s.ctx.config.MaxInstruments),
 	}
 	for id, inst := range s.instruments {
 		if !inst.enabled || inst.compiledFx == nil {
@@ -141,9 +141,16 @@ func (s *Synthesizer) SetInstrumentPatch(id int, index int) {
 	inst.kind = s.sf.Instruments[index].Kind
 }
 
-func (s *Synthesizer) SetInstrumentPeriod(id int, period float64) {
+func (s *Synthesizer) SetInstrumentPeriod(id int, periodFunc string) error {
+	compiled, err := exprc.Compile(periodFunc)
+	if err != nil {
+		return err
+	}
 	s.changed = true
-	s.instruments[id].period = period
+	inst := s.instruments[id]
+	inst.periodFunc = periodFunc
+	inst.period = gmath.Clamp(compiled(1), 0.1, 2*math.Pi)
+	return nil
 }
 
 func (s *Synthesizer) SetInstrumentFunction(id int, fx string) {

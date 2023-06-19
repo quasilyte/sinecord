@@ -27,7 +27,7 @@ func (t *Track) IsEmpty() bool {
 
 type InstrumentSettings struct {
 	Function       string  `json:"function"`
-	Period         float64 `json:"period"`
+	PeriodFunction string  `json:"period_function"`
 	Volume         float64 `json:"volume"`
 	InstrumentName string  `json:"instrument_name"`
 

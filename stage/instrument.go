@@ -6,6 +6,8 @@ type instrument struct {
 	fx    string
 	oldFx string
 
+	periodFunc string
+
 	compiledFx func(x float64) float64
 
 	instrumentIndex int

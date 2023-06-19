@@ -24,3 +24,8 @@ compose the math music without limitations!
 ##menu.play.act : act
 
 ##menu.stage.run : play
+
+##stage.period.tooltip
+Instrument's play period (in seconds).
+X variable is not available.
+The value is clamped in [0.1, 2*pi] range.

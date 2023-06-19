@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"math"
 	"strings"
-	"time"
-	"unicode"
-	"unicode/utf8"
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -95,8 +92,9 @@ func (c *StageController) Init(scene *ge.Scene) {
 	scene.AddObject(c.synth)
 
 	c.board = stage.NewBoard(stage.BoardConfig{
-		Canvas:  c.canvas,
-		Targets: c.config.Targets,
+		Canvas:         c.canvas,
+		Targets:        c.config.Targets,
+		MaxInstruments: c.config.MaxInstruments,
 	})
 	c.board.Init(scene)
 	c.board.EventNote.Connect(c, func(instrumentID int) {
@@ -185,6 +183,13 @@ func (c *StageController) Init(scene *ge.Scene) {
 	for i := range periods {
 		periodLabels[i] = fmt.Sprintf("%.2f", periods[i])
 	}
+	defaultPeriods := []string{
+		"pi/8",
+		"pi/6",
+		"0.3",
+		"0.3",
+		"0.3",
+	}
 
 	for i := 0; i < c.config.MaxInstruments; i++ {
 		instrumentID := i
@@ -210,55 +215,33 @@ func (c *StageController) Init(scene *ge.Scene) {
 		colorPanel.AddChild(colorRect)
 		instrumentsGrid.AddChild(colorPanel)
 
-		textTnput := eui.NewTextInput(c.state.UIResources,
-			widget.TextInputOpts.WidgetOpts(
-				widget.WidgetOpts.MinSize(880, 0),
-				widget.WidgetOpts.ToolTip(
-					widget.NewToolTip(
-						widget.ToolTipOpts.Content(eui.NewTooltip(c.state.UIResources, "f(x)")),
-						widget.ToolTipOpts.Delay(time.Second),
-					),
-				),
-			),
-			widget.TextInputOpts.ChangedHandler(func(args *widget.TextInputChangedEventArgs) {
-				c.synth.SetInstrumentFunction(instrumentID, strings.ToLower(args.InputText))
-			}),
-			widget.TextInputOpts.Validation(func(newInputText string) (bool, *string) {
-				good := true
-				if len(newInputText) > 60 {
-					good = false
-				}
-				if good {
-					for _, ch := range newInputText {
-						if !unicode.IsPrint(ch) || ch >= utf8.RuneSelf {
-							good = false
-							break
-						}
-					}
-				}
-				return good, nil
-			}),
-		)
-		instrumentsGrid.AddChild(textTnput)
+		formulaInput := eui.NewFunctionInput(c.state.UIResources, eui.FunctionInputConfig{
+			MinWidth:      880,
+			TooltipLabel:  "f(x)",
+			MaxTextLength: 60,
+			OnChange: func(s string) {
+				c.synth.SetInstrumentFunction(instrumentID, strings.ToLower(s))
+			},
+		})
+		instrumentsGrid.AddChild(formulaInput)
 		if loadedInstrument != nil {
-			textTnput.InputText = loadedInstrument.Function
+			formulaInput.InputText = loadedInstrument.Function
 		}
 
-		stepPeriodLevel := 4
-		if loadedInstrument != nil {
-			stepPeriodLevel = xslices.Index(periods, loadedInstrument.Period)
-		}
-		c.synth.SetInstrumentPeriod(instrumentID, periods[stepPeriodLevel])
-		instrumentsGrid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
-			Resources:  c.state.UIResources,
-			Input:      c.state.Input,
-			ValueNames: periodLabels,
-			Value:      &stepPeriodLevel,
-			Tooltip:    eui.NewTooltip(c.state.UIResources, "step period in seconds"),
-			OnPressed: func() {
-				c.synth.SetInstrumentPeriod(instrumentID, periods[stepPeriodLevel])
+		periodInput := eui.NewFunctionInput(c.state.UIResources, eui.FunctionInputConfig{
+			MinWidth:      210,
+			TooltipLabel:  d.Get("stage.period.tooltip"),
+			MaxTextLength: 12,
+			OnChange: func(s string) {
+				c.synth.SetInstrumentPeriod(instrumentID, strings.ToLower(s))
 			},
-		}))
+		})
+		if loadedInstrument != nil {
+			periodInput.InputText = loadedInstrument.PeriodFunction
+		} else {
+			periodInput.InputText = defaultPeriods[instrumentID]
+		}
+		instrumentsGrid.AddChild(periodInput)
 
 		patchIndex := 0
 		if loadedInstrument != nil {

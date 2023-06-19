@@ -32,6 +32,8 @@ type Board struct {
 type BoardConfig struct {
 	Canvas *Canvas
 
+	MaxInstruments int
+
 	Targets []Target
 }
 
@@ -40,7 +42,7 @@ func NewBoard(config BoardConfig) *Board {
 		config:  config,
 		canvas:  config.Canvas,
 		length:  20,
-		signals: make([]*signalNode, 0, 4),
+		signals: make([]*signalNode, 0, config.MaxInstruments),
 	}
 }
 
