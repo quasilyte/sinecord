@@ -75,7 +75,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 
 	c.instrumentIcons = make([]*ebiten.Image, c.config.MaxInstruments)
 	for i := range c.instrumentIcons {
-		c.instrumentIcons[i] = ebiten.NewImage(28, 28)
+		c.instrumentIcons[i] = ebiten.NewImage(26, 26)
 	}
 
 	ctx := stage.NewContext(c.config)
