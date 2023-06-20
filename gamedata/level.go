@@ -52,14 +52,32 @@ func ParseLevel(tileset *tiled.Tileset, scaler *PlotScaler, jsonData []byte) (*L
 	for _, o := range targetsLayer.Objects {
 		id := o.GID - int64(ref.FirstGID)
 		t := tileset.TileByID(int(id))
-		x := float64(o.X)
-		y := float64(o.Y)
 		if _, ok := instrumentMap[t.Class]; !ok {
 			return nil, fmt.Errorf("unexpected kind target: %q", t.Class)
 		}
+
+		x := float64(o.X)
+		y := float64(o.Y)
+		var size TargetSize
+		switch o.Width {
+		case 23:
+			size = SmallTarget
+			x -= 13
+			y += 13
+		case 46:
+			size = NormalTarget
+		case 69:
+			size = BigTarget
+			x += 13
+			y -= 13
+		default:
+			return nil, fmt.Errorf("unexpected target size: %dx%d", o.Width, o.Height)
+		}
+
 		result.Targets = append(result.Targets, Target{
 			Pos:        scaler.TranslateTiledPos(tileset, gmath.Vec{X: x, Y: y}),
 			Instrument: instrumentMap[t.Class],
+			Size:       size,
 		})
 	}
 

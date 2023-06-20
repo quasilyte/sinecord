@@ -6,7 +6,7 @@ require (
 	github.com/ebitenui/ebitenui v0.5.4
 	github.com/hajimehoshi/ebiten/v2 v2.5.4
 	github.com/quasilyte/ebitengine-resource v0.5.1-0.20230301215552-afd21c3065ff
-	github.com/quasilyte/ge v0.0.0-20230616113715-4ec04ec505f9
+	github.com/quasilyte/ge v0.0.0-20230620100402-a2cec7d8b3c0
 	github.com/quasilyte/gmath v0.0.0-20230428180022-2163470ca0a9
 	github.com/quasilyte/gsignal v0.0.0-20230130114532-ff67b4bb9e15
 	github.com/sinshu/go-meltysynth v0.0.0-20230205031334-05d311382fc4

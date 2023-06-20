@@ -303,12 +303,6 @@ func (c *Canvas) Draw() {
 		}
 		c.canvasImage.DrawImage(p, &drawPlotOptions)
 	}
-	for i, p := range c.periods {
-		if c.plotsHidden[i] {
-			continue
-		}
-		c.canvasImage.DrawImage(p, &drawPlotOptions)
-	}
 
 	// if !c.Running {
 	// 	width := bg.Bounds().Dx()
@@ -331,6 +325,13 @@ func (c *Canvas) Draw() {
 	}
 
 	c.drawObjects()
+
+	for i, p := range c.periods {
+		if c.plotsHidden[i] {
+			continue
+		}
+		c.canvasImage.DrawImage(p, &drawPlotOptions)
+	}
 }
 
 func (c *Canvas) drawObjects() {

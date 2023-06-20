@@ -21,11 +21,11 @@ func newTargetNode(b *Board, t gamedata.Target) *targetNode {
 	var size float64
 	switch t.Size {
 	case gamedata.SmallTarget:
-		size = 20
+		size = 15
 	case gamedata.NormalTarget:
-		size = 32
+		size = 30
 	case gamedata.BigTarget:
-		size = 54
+		size = 60
 	default:
 		panic("unexpected target size")
 	}

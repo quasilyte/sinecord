@@ -17,65 +17,35 @@
          "id":5,
          "image":"..\/..\/..\/_tiled\/tiles\/circle_target.png",
          "imageheight":46,
-         "imagewidth":46,
-         "properties":[
-                {
-                 "name":"size",
-                 "type":"int",
-                 "value":0
-                }]
+         "imagewidth":46
         }, 
         {
          "class":"hexagon_target",
          "id":6,
          "image":"..\/..\/..\/_tiled\/tiles\/hexagon_target.png",
          "imageheight":46,
-         "imagewidth":46,
-         "properties":[
-                {
-                 "name":"size",
-                 "type":"int",
-                 "value":0
-                }]
+         "imagewidth":46
         }, 
         {
          "class":"square_target",
          "id":7,
          "image":"..\/..\/..\/_tiled\/tiles\/square_target.png",
          "imageheight":46,
-         "imagewidth":46,
-         "properties":[
-                {
-                 "name":"size",
-                 "type":"int",
-                 "value":0
-                }]
+         "imagewidth":46
         }, 
         {
          "class":"star_target",
          "id":8,
          "image":"..\/..\/..\/_tiled\/tiles\/star_target.png",
          "imageheight":46,
-         "imagewidth":46,
-         "properties":[
-                {
-                 "name":"size",
-                 "type":"int",
-                 "value":0
-                }]
+         "imagewidth":46
         }, 
         {
          "class":"triangle_target",
          "id":9,
          "image":"..\/..\/..\/_tiled\/tiles\/triangle_target.png",
          "imageheight":46,
-         "imagewidth":46,
-         "properties":[
-                {
-                 "name":"size",
-                 "type":"int",
-                 "value":0
-                }]
+         "imagewidth":46
         }],
  "tilewidth":46,
  "type":"tileset",

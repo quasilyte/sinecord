@@ -118,7 +118,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 				if t.instrument != inst.Kind {
 					continue
 				}
-				if t.pos.DistanceTo(pos) < 0.5*(float64(t.r)+r) {
+				if t.pos.DistanceTo(pos) < 0.6*(float64(t.r)+r) {
 					t.Dispose()
 					d := 2 * (float64(t.r) / b.ctx.Scaler.Factor)
 					shape := gamedata.InstrumentShape(t.instrument)
