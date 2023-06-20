@@ -7,12 +7,18 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/ge/langs"
+	"github.com/quasilyte/ge/tiled"
 	"github.com/quasilyte/sinecord/assets"
 	"github.com/quasilyte/sinecord/eui"
+	"github.com/quasilyte/sinecord/gamedata"
 )
 
 type State struct {
 	UIResources *eui.Resources
+
+	LevelTileset *tiled.Tileset
+
+	PlotScaler *gamedata.PlotScaler
 
 	Input *input.Handler
 }

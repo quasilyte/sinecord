@@ -10,8 +10,8 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/styles"
-	"github.com/quasilyte/sinecord/synthdb"
 )
 
 type Canvas struct {
@@ -73,12 +73,12 @@ func (c *Canvas) RedrawPlot(id int, f func(x float64) float64, points []gmath.Ve
 	x := 0.0
 	for x < 20 {
 		y := f(x)
-		scaled := c.scaleXY(x, y)
+		scaled := c.ctx.Scaler.ScaleXY(x, y)
 		if scaled.Y >= 0 && scaled.Y <= height {
 			var p vector.Path
 			for x < 20 {
 				y := f(x)
-				scaled := c.scaleXY(x, y)
+				scaled := c.ctx.Scaler.ScaleXY(x, y)
 				if scaled.Y < 0 || scaled.Y > height {
 					break
 				}
@@ -99,7 +99,7 @@ func (c *Canvas) RedrawPlot(id int, f func(x float64) float64, points []gmath.Ve
 	periodColor := styles.PlotColorByID[id]
 	periodColor.A /= 2
 	for _, p := range points {
-		scaled := c.scalePos(p)
+		scaled := c.ctx.Scaler.ScalePos(p)
 		{
 			x1 := float32(scaled.X)
 			y1 := float32(scaled.Y) - 6
@@ -154,8 +154,8 @@ func (c *Canvas) SetPlotHidden(id int, hidden bool) {
 	c.plotsHidden[id] = hidden
 }
 
-func (c *Canvas) DrawInstrumentIcon(dst *ebiten.Image, kind synthdb.InstrumentKind, clr color.RGBA) {
-	shape := instrumentWaveShape(kind)
+func (c *Canvas) DrawInstrumentIcon(dst *ebiten.Image, kind gamedata.InstrumentKind, clr color.RGBA) {
+	shape := gamedata.InstrumentShape(kind)
 	width := dst.Bounds().Dx()
 	var colorScale ge.ColorScale
 	colorScale.SetColor(clr)
@@ -166,23 +166,23 @@ func (c *Canvas) translate(p pos32, x, y float32) (float32, float32) {
 	return x + p.x, y + p.y
 }
 
-func (c *Canvas) createShapePath(shape waveShape, x, y, r float32, angle gmath.Rad) vector.Path {
+func (c *Canvas) createShapePath(shape gamedata.Shape, x, y, r float32, angle gmath.Rad) vector.Path {
 	var p vector.Path
 	switch shape {
-	case waveCircle:
+	case gamedata.ShapeCircle:
 		p.Arc(x, y, r, 0, 2*math.Pi, vector.Clockwise)
-	case waveSquare:
+	case gamedata.ShapeSquare:
 		p.MoveTo(c.translate(rotate(-r, -r, angle), x, y))
 		p.LineTo(c.translate(rotate(-r, +r, angle), x, y))
 		p.LineTo(c.translate(rotate(+r, +r, angle), x, y))
 		p.LineTo(c.translate(rotate(+r, -r, angle), x, y))
 		p.Close()
-	case waveTriangle:
+	case gamedata.ShapeTriangle:
 		p.MoveTo(c.translate(rotate(-r, -r, angle), x, y))
 		p.LineTo(c.translate(rotate(0, r, angle), x, y))
 		p.LineTo(c.translate(rotate(r, -r, angle), x, y))
 		p.Close()
-	case waveHexagon:
+	case gamedata.ShapeHexagon:
 		r2 := r / 2
 		p.MoveTo(c.translate(rotate(-r2, -r, angle), x, y))
 		p.LineTo(c.translate(rotate(-r, 0, angle), x, y))
@@ -191,7 +191,7 @@ func (c *Canvas) createShapePath(shape waveShape, x, y, r float32, angle gmath.R
 		p.LineTo(c.translate(rotate(r, 0, angle), x, y))
 		p.LineTo(c.translate(rotate(r2, -r, angle), x, y))
 		p.Close()
-	case waveStar:
+	case gamedata.ShapeStar:
 		r3 := r / 3
 		p.MoveTo(c.translate(rotate(-r3, -r3, angle), x, y))
 		p.LineTo(c.translate(rotate(-r, 0, angle), x, y))
@@ -202,7 +202,7 @@ func (c *Canvas) createShapePath(shape waveShape, x, y, r float32, angle gmath.R
 		p.LineTo(c.translate(rotate(r3, -r3, angle), x, y))
 		p.LineTo(c.translate(rotate(0, -r, angle), x, y))
 		p.Close()
-	case waveCross:
+	case gamedata.ShapeCross:
 		r2 := r / 2
 		p.MoveTo(c.translate(rotate(-r2, -r2, angle), x, y))
 		p.LineTo(c.translate(rotate(-r, -r2, angle), x, y))
@@ -221,12 +221,12 @@ func (c *Canvas) createShapePath(shape waveShape, x, y, r float32, angle gmath.R
 	return p
 }
 
-func (c *Canvas) drawFilledShape(dst *ebiten.Image, shape waveShape, x, y, r float32, angle gmath.Rad, clr ge.ColorScale) {
+func (c *Canvas) drawFilledShape(dst *ebiten.Image, shape gamedata.Shape, x, y, r float32, angle gmath.Rad, clr ge.ColorScale) {
 	p := c.createShapePath(shape, x, y, r, angle)
 	c.DrawPathFilled(dst, p, 1, clr)
 }
 
-func (c *Canvas) drawShape(dst *ebiten.Image, shape waveShape, x, y, r float32, angle gmath.Rad, clr ge.ColorScale) {
+func (c *Canvas) drawShape(dst *ebiten.Image, shape gamedata.Shape, x, y, r float32, angle gmath.Rad, clr ge.ColorScale) {
 	p := c.createShapePath(shape, x, y, r, angle)
 	c.DrawPath(dst, p, 1, clr)
 }
@@ -342,18 +342,6 @@ func (c *Canvas) drawObjects() {
 		liveObjects = append(liveObjects, o)
 	}
 	c.objects = liveObjects
-}
-
-func (c *Canvas) scaleXY(x, y float64) gmath.Vec {
-	return c.scalePos(gmath.Vec{X: x, Y: y})
-}
-
-func (c *Canvas) scalePos(pos gmath.Vec) gmath.Vec {
-	pos = gmath.Vec{
-		X: pos.X * c.ctx.PlotScale,
-		Y: -(pos.Y * c.ctx.PlotScale),
-	}
-	return pos.Add(c.ctx.PlotOffset)
 }
 
 var (

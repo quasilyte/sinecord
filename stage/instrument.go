@@ -1,6 +1,8 @@
 package stage
 
-import "github.com/quasilyte/sinecord/synthdb"
+import (
+	"github.com/quasilyte/sinecord/gamedata"
+)
 
 type instrument struct {
 	fx    string
@@ -18,7 +20,7 @@ type instrument struct {
 	enabled      bool
 	mappedVolume int32
 	volume       float64
-	kind         synthdb.InstrumentKind
+	kind         gamedata.InstrumentKind
 }
 
 func (inst *instrument) SetPeriod(src string, period float64) {

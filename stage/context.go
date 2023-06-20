@@ -1,14 +1,13 @@
 package stage
 
 import (
-	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/sinecord/gamedata"
 )
 
 type Config struct {
 	MaxInstruments int
 
-	Targets []Target
+	Targets []gamedata.Target
 
 	Track gamedata.Track
 }
@@ -18,8 +17,7 @@ type Context struct {
 
 	config Config
 
-	PlotScale  float64
-	PlotOffset gmath.Vec
+	Scaler *gamedata.PlotScaler
 }
 
 func NewContext(config Config) *Context {

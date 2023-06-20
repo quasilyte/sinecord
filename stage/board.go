@@ -4,12 +4,15 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
+	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/styles"
 )
 
 type Board struct {
 	scene  *ge.Scene
 	canvas *Canvas
+
+	ctx *Context
 
 	finished bool
 	length   float64
@@ -34,11 +37,12 @@ type BoardConfig struct {
 
 	MaxInstruments int
 
-	Targets []Target
+	Targets []gamedata.Target
 }
 
-func NewBoard(config BoardConfig) *Board {
+func NewBoard(ctx *Context, config BoardConfig) *Board {
 	return &Board{
+		ctx:     ctx,
 		config:  config,
 		canvas:  config.Canvas,
 		length:  20,
@@ -102,9 +106,9 @@ func (b *Board) ProgramTick(delta float64) bool {
 		}
 		b.events = b.events[1:]
 		y := b.prog.Instruments[e.index].Func(e.t)
-		pos := b.canvas.scaleXY(e.t, y)
+		pos := b.ctx.Scaler.ScaleXY(e.t, y)
 		inst := b.prog.Instruments[e.index]
-		shape := instrumentWaveShape(inst.Kind)
+		shape := gamedata.InstrumentShape(inst.Kind)
 		effect := newWaveNode(b.canvas, shape, pos, styles.PlotColorByID[e.id], inst.Period*0.95)
 		b.addWaveEffect(effect)
 		b.EventNote.Emit(e.id)
@@ -116,8 +120,8 @@ func (b *Board) ProgramTick(delta float64) bool {
 				}
 				if t.pos.DistanceTo(pos) < 0.5*(float64(t.r)+r) {
 					t.Dispose()
-					d := 2 * (float64(t.r) / b.canvas.ctx.PlotScale)
-					shape := instrumentWaveShape(t.instrument)
+					d := 2 * (float64(t.r) / b.ctx.Scaler.Factor)
+					shape := gamedata.InstrumentShape(t.instrument)
 					offset := gmath.Vec{X: 2, Y: 2}
 					b.addWaveEffect(newWaveNode(b.canvas, shape, t.pos.Sub(offset), styles.TargetColor, d))
 					b.addWaveEffect(newWaveNode(b.canvas, shape, t.pos, styles.TargetColor, d))
@@ -132,7 +136,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 		y := b.prog.Instruments[i].Func(x)
 		sig.sprite.Visible = y >= -3 && y <= 3
 		if sig.sprite.Visible {
-			sig.pos = b.canvas.scaleXY(x, y)
+			sig.pos = b.ctx.Scaler.ScaleXY(x, y)
 		}
 	}
 	b.t += delta

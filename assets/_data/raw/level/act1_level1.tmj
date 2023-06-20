@@ -11,109 +11,73 @@
                  "class":"",
                  "gid":9,
                  "height":46,
-                 "id":23,
+                 "id":32,
                  "name":"",
                  "rotation":0,
                  "visible":true,
                  "width":46,
-                 "x":161,
-                 "y":115
+                 "x":0,
+                 "y":230
                 }, 
                 {
                  "class":"",
                  "gid":9,
                  "height":46,
-                 "id":24,
+                 "id":33,
                  "name":"",
                  "rotation":0,
                  "visible":true,
                  "width":46,
-                 "x":207,
-                 "y":207
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":46,
-                 "id":25,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":46,
-                 "x":253,
-                 "y":115
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":46,
-                 "id":26,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":46,
-                 "x":391,
-                 "y":207
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":46,
-                 "id":27,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":46,
-                 "x":437,
-                 "y":207
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":46,
-                 "id":28,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":46,
-                 "x":483,
-                 "y":207
+                 "x":46,
+                 "y":138
                 }, 
                 {
                  "class":"",
                  "gid":6,
                  "height":46,
-                 "id":29,
+                 "id":34,
                  "name":"",
                  "rotation":0,
                  "visible":true,
                  "width":46,
                  "x":92,
-                 "y":184
+                 "y":161
                 }, 
                 {
                  "class":"",
                  "gid":6,
                  "height":46,
-                 "id":30,
+                 "id":35,
                  "name":"",
                  "rotation":0,
                  "visible":true,
                  "width":46,
-                 "x":138,
-                 "y":184
+                 "x":0,
+                 "y":46
                 }, 
                 {
                  "class":"",
-                 "gid":6,
+                 "gid":8,
                  "height":46,
-                 "id":31,
+                 "id":36,
                  "name":"",
                  "rotation":0,
                  "visible":true,
                  "width":46,
-                 "x":184,
-                 "y":184
+                 "x":230,
+                 "y":230
+                }, 
+                {
+                 "class":"",
+                 "gid":8,
+                 "height":46,
+                 "id":37,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":92,
+                 "y":92
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -483,7 +447,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":32,
+ "nextobjectid":38,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",
@@ -491,7 +455,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/..\/..\/..\/_tiled\/leveledit.tsj"
+         "source":"..\/leveledit.tsj"
         }],
  "tilewidth":23,
  "type":"map",

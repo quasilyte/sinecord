@@ -4,27 +4,27 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/styles"
-	"github.com/quasilyte/sinecord/synthdb"
 )
 
 type targetNode struct {
 	board      *Board
 	pos        gmath.Vec
-	instrument synthdb.InstrumentKind
+	instrument gamedata.InstrumentKind
 	disposed   bool
 	r          float32
 	color      ge.ColorScale
 }
 
-func newTargetNode(b *Board, t Target) *targetNode {
+func newTargetNode(b *Board, t gamedata.Target) *targetNode {
 	var size float64
 	switch t.Size {
-	case SmallTarget:
+	case gamedata.SmallTarget:
 		size = 20
-	case NormalTarget:
+	case gamedata.NormalTarget:
 		size = 32
-	case BigTarget:
+	case gamedata.BigTarget:
 		size = 54
 	default:
 		panic("unexpected target size")
@@ -34,7 +34,7 @@ func newTargetNode(b *Board, t Target) *targetNode {
 	colorScale.SetColor(styles.TargetColor)
 	return &targetNode{
 		board:      b,
-		pos:        b.canvas.scalePos(t.Pos),
+		pos:        t.Pos,
 		instrument: t.Instrument,
 		r:          float32(size / 2),
 		color:      colorScale,
@@ -49,7 +49,7 @@ func (n *targetNode) Update(delta float64) {
 }
 
 func (n *targetNode) Draw(screen *ebiten.Image) {
-	shape := instrumentWaveShape(n.instrument)
+	shape := gamedata.InstrumentShape(n.instrument)
 	r := float32(n.r)
 	n.board.canvas.drawFilledShape(screen, shape, float32(n.pos.X), float32(n.pos.Y), r, 0, n.color)
 }

@@ -3,6 +3,7 @@ package synthdb
 import (
 	"fmt"
 
+	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/sinshu/go-meltysynth/meltysynth"
 )
 
@@ -15,7 +16,7 @@ type SoundFont struct {
 }
 
 type Instrument struct {
-	Kind InstrumentKind
+	Kind gamedata.InstrumentKind
 
 	Name string
 
@@ -23,69 +24,58 @@ type Instrument struct {
 	PatchNumber int
 }
 
-type InstrumentKind int
-
-const (
-	BassInstrument InstrumentKind = iota
-	DrumInstrument
-	KeyboardInstrument
-	BrassInstrument
-	StringInstrument
-	OtherInstrument
-)
-
 var TimGM6mb = &SoundFont{
 	Name: "TimGM6mb",
 
 	Instruments: []*Instrument{
-		{Kind: BassInstrument, Name: "Synth Bass 1", Index: 88},
-		{Kind: BassInstrument, Name: "Synth Bass 2", Index: 87},
-		{Kind: BassInstrument, Name: "Slap Bass 1", Index: 90},
-		{Kind: BassInstrument, Name: "Slap Bass 2", Index: 89},
-		{Kind: BassInstrument, Name: "Bass & Lead", Index: 49},
-		{Kind: BassInstrument, Name: "Distortion Guitar", Index: 96},
-		{Kind: BassInstrument, Name: "5th Saw Wave", Index: 50},
-		{Kind: BassInstrument, Name: "Saw Wave", Index: 55},
-		{Kind: BassInstrument, Name: "Square Wave", Index: 56},
+		{Kind: gamedata.BassInstrument, Name: "Synth Bass 1", Index: 88},
+		{Kind: gamedata.BassInstrument, Name: "Synth Bass 2", Index: 87},
+		{Kind: gamedata.BassInstrument, Name: "Slap Bass 1", Index: 90},
+		{Kind: gamedata.BassInstrument, Name: "Slap Bass 2", Index: 89},
+		{Kind: gamedata.BassInstrument, Name: "Bass & Lead", Index: 49},
+		{Kind: gamedata.BassInstrument, Name: "Distortion Guitar", Index: 96},
+		{Kind: gamedata.BassInstrument, Name: "5th Saw Wave", Index: 50},
+		{Kind: gamedata.BassInstrument, Name: "Saw Wave", Index: 55},
+		{Kind: gamedata.BassInstrument, Name: "Square Wave", Index: 56},
 
-		{Kind: KeyboardInstrument, Name: "Piano 1", Index: 126},
-		{Kind: KeyboardInstrument, Name: "Piano 2", Index: 125},
-		{Kind: KeyboardInstrument, Name: "Piano 3", Index: 124},
-		{Kind: KeyboardInstrument, Name: "Piano 4", Index: 8},
-		{Kind: KeyboardInstrument, Name: "Honky Tonk", Index: 123},
-		{Kind: KeyboardInstrument, Name: "Clavinet", Index: 119},
-		{Kind: KeyboardInstrument, Name: "Harpsichord", Index: 120},
-		{Kind: KeyboardInstrument, Name: "Polysynth", Index: 46},
+		{Kind: gamedata.KeyboardInstrument, Name: "Piano 1", Index: 126},
+		{Kind: gamedata.KeyboardInstrument, Name: "Piano 2", Index: 125},
+		{Kind: gamedata.KeyboardInstrument, Name: "Piano 3", Index: 124},
+		{Kind: gamedata.KeyboardInstrument, Name: "Piano 4", Index: 8},
+		{Kind: gamedata.KeyboardInstrument, Name: "Honky Tonk", Index: 123},
+		{Kind: gamedata.KeyboardInstrument, Name: "Clavinet", Index: 119},
+		{Kind: gamedata.KeyboardInstrument, Name: "Harpsichord", Index: 120},
+		{Kind: gamedata.KeyboardInstrument, Name: "Polysynth", Index: 46},
 
-		{Kind: BrassInstrument, Name: "Synth Brass 1", Index: 70},
-		{Kind: BrassInstrument, Name: "Synth Brass 2", Index: 69},
-		{Kind: BrassInstrument, Name: "Brass", Index: 71},
-		{Kind: BrassInstrument, Name: "Bassoon", Index: 65},
-		{Kind: BrassInstrument, Name: "French Horns", Index: 68},
-		{Kind: BrassInstrument, Name: "Tuba", Index: 73},
-		{Kind: BrassInstrument, Name: "Bagpipe", Index: 27},
-		{Kind: BrassInstrument, Name: "Mute Trumpet", Index: 72},
+		{Kind: gamedata.BrassInstrument, Name: "Synth Brass 1", Index: 70},
+		{Kind: gamedata.BrassInstrument, Name: "Synth Brass 2", Index: 69},
+		{Kind: gamedata.BrassInstrument, Name: "Brass", Index: 71},
+		{Kind: gamedata.BrassInstrument, Name: "Bassoon", Index: 65},
+		{Kind: gamedata.BrassInstrument, Name: "French Horns", Index: 68},
+		{Kind: gamedata.BrassInstrument, Name: "Tuba", Index: 73},
+		{Kind: gamedata.BrassInstrument, Name: "Bagpipe", Index: 27},
+		{Kind: gamedata.BrassInstrument, Name: "Mute Trumpet", Index: 72},
 
-		{Kind: StringInstrument, Name: "Charang", Index: 52},
-		{Kind: StringInstrument, Name: "Banjo", Index: 31},
-		{Kind: StringInstrument, Name: "Koto", Index: 29},
-		{Kind: StringInstrument, Name: "Synth Strings", Index: 79},
-		{Kind: StringInstrument, Name: "Dulcimer", Index: 111},
-		{Kind: StringInstrument, Name: "Guitar Harmonics", Index: 95},
-		{Kind: StringInstrument, Name: "Electronic", Index: 5},
-		{Kind: StringInstrument, Name: "Clean Guitar", Index: 99},
-		{Kind: StringInstrument, Name: "Nylon Guitar", Index: 102},
+		{Kind: gamedata.StringInstrument, Name: "Charang", Index: 52},
+		{Kind: gamedata.StringInstrument, Name: "Banjo", Index: 31},
+		{Kind: gamedata.StringInstrument, Name: "Koto", Index: 29},
+		{Kind: gamedata.StringInstrument, Name: "Synth Strings", Index: 79},
+		{Kind: gamedata.StringInstrument, Name: "Dulcimer", Index: 111},
+		{Kind: gamedata.StringInstrument, Name: "Guitar Harmonics", Index: 95},
+		{Kind: gamedata.StringInstrument, Name: "Electronic", Index: 5},
+		{Kind: gamedata.StringInstrument, Name: "Clean Guitar", Index: 99},
+		{Kind: gamedata.StringInstrument, Name: "Nylon Guitar", Index: 102},
 
-		{Kind: DrumInstrument, Name: "Timpani", Index: 80},
-		{Kind: DrumInstrument, Name: "Synth Drum", Index: 18},
-		{Kind: DrumInstrument, Name: "Taiko Drum", Index: 20},
-		{Kind: DrumInstrument, Name: "Steel Drum", Index: 22},
-		{Kind: DrumInstrument, Name: "Tom Drum", Index: 19},
+		{Kind: gamedata.DrumInstrument, Name: "Timpani", Index: 80},
+		{Kind: gamedata.DrumInstrument, Name: "Synth Drum", Index: 18},
+		{Kind: gamedata.DrumInstrument, Name: "Taiko Drum", Index: 20},
+		{Kind: gamedata.DrumInstrument, Name: "Steel Drum", Index: 22},
+		{Kind: gamedata.DrumInstrument, Name: "Tom Drum", Index: 19},
 
-		{Kind: OtherInstrument, Name: "Tinker Bell", Index: 24},
-		{Kind: OtherInstrument, Name: "Voice Oohs", Index: 78},
-		{Kind: OtherInstrument, Name: "Choir Aahs", Index: 131},
-		{Kind: OtherInstrument, Name: "Soundtrack", Index: 39},
+		{Kind: gamedata.OtherInstrument, Name: "Tinker Bell", Index: 24},
+		{Kind: gamedata.OtherInstrument, Name: "Voice Oohs", Index: 78},
+		{Kind: gamedata.OtherInstrument, Name: "Choir Aahs", Index: 131},
+		{Kind: gamedata.OtherInstrument, Name: "Soundtrack", Index: 39},
 	},
 }
 

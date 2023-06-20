@@ -7,6 +7,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/sinecord/assets"
 	"github.com/quasilyte/sinecord/eui"
+	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/session"
 	"github.com/quasilyte/sinecord/stage"
 	"github.com/quasilyte/sinecord/styles"
@@ -43,6 +44,11 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 
 	panel := eui.NewPanel(c.state.UIResources, 0, 0)
 
+	missionLevel, err := gamedata.ParseLevel(c.state.LevelTileset, c.state.PlotScaler, scene.LoadRaw(assets.RawAct1Mission1JSON).Data)
+	if err != nil {
+		panic(err)
+	}
+
 	buttonsGrid := widget.NewContainer(
 		widget.ContainerOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.RowLayoutData{
 			Stretch: true,
@@ -58,23 +64,7 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 		b := eui.NewButton(c.state.UIResources, labels[i], func() {
 			scene.Context().ChangeScene(NewStageController(c.state, stage.Config{
 				MaxInstruments: 5,
-				Targets:        []stage.Target{
-					// {
-					// 	Instrument: synthdb.BassInstrument,
-					// 	Pos:        gmath.Vec{X: 1, Y: 1},
-					// 	Size:       stage.SmallTarget,
-					// },
-					// {
-					// 	Instrument: synthdb.BrassInstrument,
-					// 	Pos:        gmath.Vec{X: 2, Y: 0.5},
-					// 	Size:       stage.NormalTarget,
-					// },
-					// {
-					// 	Instrument: synthdb.DrumInstrument,
-					// 	Pos:        gmath.Vec{X: 4, Y: 1},
-					// 	Size:       stage.SmallTarget,
-					// },
-				},
+				Targets:        missionLevel.Targets,
 			}))
 		})
 		buttonsGrid.AddChild(b)

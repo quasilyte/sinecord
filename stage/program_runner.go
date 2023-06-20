@@ -1,6 +1,6 @@
 package stage
 
-import "github.com/quasilyte/sinecord/synthdb"
+import "github.com/quasilyte/sinecord/gamedata"
 
 type SynthProgram struct {
 	Length      float64
@@ -12,7 +12,7 @@ type SynthProgramInstrument struct {
 	Index  int
 	Func   func(x float64) float64
 	Period float64
-	Kind   synthdb.InstrumentKind
+	Kind   gamedata.InstrumentKind
 }
 
 type programRunner struct {

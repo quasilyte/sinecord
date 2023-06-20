@@ -76,11 +76,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 	}
 
 	ctx := stage.NewContext(c.config)
-	ctx.PlotScale = 46
-	ctx.PlotOffset = gmath.Vec{
-		X: 4,
-		Y: 46 * 3,
-	}
+	ctx.Scaler = c.state.PlotScaler
 
 	c.canvasImageBg = scene.LoadImage(assets.ImagePlotBackground).Data
 	c.canvasImage = ebiten.NewImage(c.canvasImageBg.Bounds().Dx(), c.canvasImageBg.Bounds().Dy())
@@ -91,7 +87,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 	c.synth = stage.NewSynthesizer(ctx, synthdb.TimGM6mb)
 	scene.AddObject(c.synth)
 
-	c.board = stage.NewBoard(stage.BoardConfig{
+	c.board = stage.NewBoard(ctx, stage.BoardConfig{
 		Canvas:         c.canvas,
 		Targets:        c.config.Targets,
 		MaxInstruments: c.config.MaxInstruments,
@@ -202,7 +198,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			}
 		}
 
-		c.canvas.DrawInstrumentIcon(c.instrumentIcons[instrumentID], synthdb.BassInstrument, styles.PlotColorByID[instrumentID])
+		c.canvas.DrawInstrumentIcon(c.instrumentIcons[instrumentID], gamedata.BassInstrument, styles.PlotColorByID[instrumentID])
 		var plotToggle eui.ImageButton
 		plotToggle = eui.NewImageButton(c.state.UIResources, c.instrumentIcons[instrumentID], eui.ButtonConfig{
 			OnClick: func() {

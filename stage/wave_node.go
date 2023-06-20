@@ -8,42 +8,14 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
-	"github.com/quasilyte/sinecord/synthdb"
+	"github.com/quasilyte/sinecord/gamedata"
 )
-
-type waveShape int
-
-const (
-	waveCircle waveShape = iota
-	waveSquare
-	waveTriangle
-	waveHexagon
-	waveStar
-	waveCross
-)
-
-func instrumentWaveShape(kind synthdb.InstrumentKind) waveShape {
-	switch kind {
-	case synthdb.BassInstrument:
-		return waveStar
-	case synthdb.KeyboardInstrument:
-		return waveSquare
-	case synthdb.BrassInstrument:
-		return waveTriangle
-	case synthdb.StringInstrument:
-		return waveHexagon
-	case synthdb.DrumInstrument:
-		return waveCircle
-	default:
-		return waveCross
-	}
-}
 
 type waveNode struct {
 	canvas *Canvas
 	color  ge.ColorScale
 
-	shape    waveShape
+	shape    gamedata.Shape
 	x        float32
 	y        float32
 	t        float64
@@ -55,7 +27,7 @@ type waveNode struct {
 	disposed bool
 }
 
-func newWaveNode(canvas *Canvas, shape waveShape, pos gmath.Vec, clr color.RGBA, duration float64) *waveNode {
+func newWaveNode(canvas *Canvas, shape gamedata.Shape, pos gmath.Vec, clr color.RGBA, duration float64) *waveNode {
 	var colorScale ge.ColorScale
 	colorScale.SetColor(clr)
 
@@ -77,7 +49,7 @@ func (n *waveNode) Dispose() {
 
 func (n *waveNode) Update(delta float64) {
 	n.t = gmath.ClampMax(n.t+delta, n.duration)
-	n.r = math.Sqrt(n.t*0.9) * n.canvas.ctx.PlotScale
+	n.r = math.Sqrt(n.t*0.9) * n.canvas.ctx.Scaler.Factor
 	if n.t == n.duration {
 		n.Dispose()
 		n.EventFinished.Emit(n.r)
@@ -87,7 +59,7 @@ func (n *waveNode) Update(delta float64) {
 
 func (n *waveNode) Draw(screen *ebiten.Image) {
 	var angle gmath.Rad
-	if n.shape != waveCircle {
+	if n.shape != gamedata.ShapeCircle {
 		angle = gmath.Rad(1.5 * (n.t / n.duration))
 	}
 	r := float32(n.r)

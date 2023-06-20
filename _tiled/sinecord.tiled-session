@@ -1,0 +1,53 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1_level1.tmj": {
+            "scale": 1.0202173913043477,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 460.1960366503303,
+                "y": 137.7157468570211
+            }
+        },
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/leveledit.tsj": {
+            "dynamicWrapping": false
+        },
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/levels/act1_level1.tmj": {
+            "scale": 1.4084782608695652,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 326.94860317950304,
+                "y": 138.09229819416578
+            }
+        },
+        "leveledit.tsj": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "/home/quasilyte/CODE/gj2023/_tiled/tiles",
+    "map.height": 6,
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 46,
+    "map.tileWidth": 46,
+    "map.width": 20,
+    "openFiles": [
+    ],
+    "project": "sinecord.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "leveledit.tsj",
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1_level1.tmj",
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/levels/act1_level1.tmj"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.type": 1
+}
