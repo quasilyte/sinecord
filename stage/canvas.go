@@ -119,6 +119,7 @@ func (c *Canvas) RedrawPlot(id int, f func(x float64) float64, points []gmath.Ve
 
 func (c *Canvas) ClearPlot(id int) {
 	c.plots[id].Clear()
+	c.periods[id].Clear()
 }
 
 func (c *Canvas) Reset() {
