@@ -1,6 +1,9 @@
 package stage
 
-import "github.com/quasilyte/sinecord/gamedata"
+import (
+	"github.com/quasilyte/sinecord/exprc"
+	"github.com/quasilyte/sinecord/gamedata"
+)
 
 type SynthProgram struct {
 	Length      float64
@@ -10,7 +13,7 @@ type SynthProgram struct {
 type SynthProgramInstrument struct {
 	ID     int // The channel is identical
 	Index  int
-	Func   func(x float64) float64
+	Func   *exprc.FuncRunner
 	Period float64
 	Kind   gamedata.InstrumentKind
 }

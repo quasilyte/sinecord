@@ -12,7 +12,6 @@ func registerRawResources(ctx *ge.Context) {
 		RawSoundFontTimGM6mb: {Path: "raw/TimGM6mb.sf2"},
 		RawEnDictBase:        {Path: "raw/lang/en.txt"},
 		RawLevelTilesetJSON:  {Path: "raw/leveledit.tsj"},
-		RawAct1Mission1JSON:  {Path: "raw/level/act1_level1.tmj"},
 	}
 
 	for id, res := range rawResources {
@@ -29,5 +28,4 @@ const (
 	RawSoundFontTimGM6mb
 
 	RawLevelTilesetJSON
-	RawAct1Mission1JSON
 )

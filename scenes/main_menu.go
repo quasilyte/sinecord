@@ -64,6 +64,8 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	initUI(scene, root)
 
 	synthdb.TimGM6mb.Load(assets.SoundFontTimGM6mb)
+
+	assets.ReadLevelsData()
 }
 
 func (c *MainMenuController) Update(delta float64) {}

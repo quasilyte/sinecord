@@ -9,8 +9,28 @@ import (
 	"github.com/quasilyte/gmath"
 )
 
+type LevelBonusObjectives struct {
+	MaxInstruments int
+
+	ForbiddenFuncs []string
+
+	AvoidPenalty bool
+}
+
 type LevelData struct {
+	Name string
+
 	Targets []Target
+
+	ActNumber     int
+	MissionNumber int
+
+	MaxInstruments int
+	Description    string
+
+	Solution Track
+
+	Bonus LevelBonusObjectives
 }
 
 func ParseTileset(jsonData []byte) (*tiled.Tileset, error) {
@@ -30,17 +50,23 @@ func ParseLevel(tileset *tiled.Tileset, scaler *PlotScaler, jsonData []byte) (*L
 
 	ref := m.Tilesets[0]
 
+	var systemLayer *tiled.MapLayer
 	var targetsLayer *tiled.MapLayer
 	for i := range m.Layers {
 		l := &m.Layers[i]
-		if l.Name == "targets" {
+		switch l.Name {
+		case "targets":
 			targetsLayer = l
-			break
+		case "system":
+			systemLayer = l
 		}
 	}
 
 	if targetsLayer == nil {
 		return nil, errors.New("can't find targets layer")
+	}
+	if systemLayer == nil {
+		return nil, errors.New("can't find system layer")
 	}
 
 	instrumentMap := map[string]InstrumentKind{}
@@ -49,10 +75,46 @@ func ParseLevel(tileset *tiled.Tileset, scaler *PlotScaler, jsonData []byte) (*L
 		instrumentMap[key] = kind
 	}
 
+	for _, o := range systemLayer.Objects {
+		id := o.GID - int64(ref.FirstGID)
+		t := tileset.TileByID(int(id))
+		switch t.Class {
+		case "level_settings":
+			result.Name = o.GetStringProp("name", "")
+			result.MaxInstruments = o.GetIntProp("max_instruments", 2)
+			result.Description = o.GetStringProp("description", "")
+
+			result.Bonus.AvoidPenalty = o.GetBoolProp("bonus_avoid_penalty", false)
+			result.Bonus.MaxInstruments = o.GetIntProp("bonus_max_instruments", 1)
+			for _, fn := range strings.Split(o.GetStringProp("bonus_forbidden_funcs", ""), ",") {
+				fn = strings.TrimSpace(fn)
+				if fn != "" {
+					result.Bonus.ForbiddenFuncs = append(result.Bonus.ForbiddenFuncs, fn)
+				}
+			}
+		}
+	}
+
+	if result.Name == "" {
+		return nil, errors.New("a level *name* can't be empty")
+	}
+	if result.Description == "" {
+		return nil, errors.New("a level *description* can't be empty")
+	}
+	if result.MaxInstruments == 0 {
+		return nil, errors.New("a *max_instruments* can't be zero")
+	}
+
 	for _, o := range targetsLayer.Objects {
 		id := o.GID - int64(ref.FirstGID)
 		t := tileset.TileByID(int(id))
-		if _, ok := instrumentMap[t.Class]; !ok {
+		outline := false
+		class := t.Class
+		if strings.HasPrefix(class, "outline_") {
+			outline = true
+			class = class[len("outline_"):]
+		}
+		if _, ok := instrumentMap[class]; !ok {
 			return nil, fmt.Errorf("unexpected kind target: %q", t.Class)
 		}
 
@@ -76,8 +138,9 @@ func ParseLevel(tileset *tiled.Tileset, scaler *PlotScaler, jsonData []byte) (*L
 
 		result.Targets = append(result.Targets, Target{
 			Pos:        scaler.TranslateTiledPos(tileset, gmath.Vec{X: x, Y: y}),
-			Instrument: instrumentMap[t.Class],
+			Instrument: instrumentMap[class],
 			Size:       size,
+			Outline:    outline,
 		})
 	}
 

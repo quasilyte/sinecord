@@ -48,6 +48,11 @@ type StageController struct {
 
 	currentMode stageMode
 	statusLabel *widget.Text
+
+	exitButton *widget.Button
+
+	completed    bool
+	bonusReached bool
 }
 
 type stageMode int
@@ -59,10 +64,14 @@ const (
 )
 
 func NewStageController(state *session.State, config stage.Config) *StageController {
-	return &StageController{
+	c := &StageController{
 		state:  state,
 		config: config,
 	}
+	if !config.Track.IsEmpty() {
+		c.track = config.Track
+	}
+	return c
 }
 
 func (c *StageController) Init(scene *ge.Scene) {
@@ -91,6 +100,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 		Canvas:         c.canvas,
 		Targets:        c.config.Targets,
 		MaxInstruments: c.config.MaxInstruments,
+		Level:          c.config.Data,
 	})
 	c.board.Init(scene)
 	c.board.EventNote.Connect(c, func(instrumentID int) {
@@ -101,6 +111,11 @@ func (c *StageController) Init(scene *ge.Scene) {
 		// c.canvas.WaveColor.R *= (float32(clr.R) / 255.0) + 1
 		// c.canvas.WaveColor.G *= (float32(clr.G) / 255.0) + 1
 		// c.canvas.WaveColor.B *= (float32(clr.B) / 255.0) + 1
+	})
+	c.board.EventVictory.Connect(c, func(bonus bool) {
+		c.completed = true
+		c.bonusReached = bonus
+		c.updateExitText()
 	})
 
 	c.synth.EventRedrawPlotRequest.Connect(nil, func(id int) {
@@ -210,7 +225,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 					plotToggle.GraphicWidget.Image = c.instrumentIcons[instrumentID]
 				}
 			},
-			Tooltip: eui.NewTooltip(c.state.UIResources, "show/hide the instrument f(x) plot"),
+			TooltipLabel: "show/hide the instrument f(x) plot",
 		})
 		instrumentsGrid.AddChild(plotToggle.Widget)
 
@@ -361,25 +376,30 @@ func (c *StageController) Init(scene *ge.Scene) {
 		})
 		buttonsGrid.AddChild(stopButton)
 
-		saveButton := eui.NewButton(c.state.UIResources, "save", func() {
-			back := NewStageController(c.state, c.config)
-			back.track = c.synth.ExportTrack()
-			c.changeScene(NewSaverController(c.state, back.track, back))
-		})
-		buttonsGrid.AddChild(saveButton)
-
-		loadButton := eui.NewButton(c.state.UIResources, "load", func() {
-			back := NewStageController(c.state, c.config)
-			loader := NewLoaderController(c.state, back)
-			back.track = c.synth.ExportTrack()
-			loader.EventLoaded.Connect(nil, func(track gamedata.Track) {
-				back.track = track
+		if c.config.Mode == gamedata.SandboxMode {
+			saveButton := eui.NewButton(c.state.UIResources, "save", func() {
+				back := NewStageController(c.state, c.config)
+				back.track = c.synth.ExportTrack()
+				c.changeScene(NewSaverController(c.state, back.track, back))
 			})
-			c.changeScene(loader)
-		})
-		buttonsGrid.AddChild(loadButton)
+			buttonsGrid.AddChild(saveButton)
 
-		exitButton := eui.NewButton(c.state.UIResources, "exit", func() {})
+			loadButton := eui.NewButton(c.state.UIResources, "load", func() {
+				back := NewStageController(c.state, c.config)
+				loader := NewLoaderController(c.state, back)
+				back.track = c.synth.ExportTrack()
+				loader.EventLoaded.Connect(nil, func(track gamedata.Track) {
+					back.track = track
+				})
+				c.changeScene(loader)
+			})
+			buttonsGrid.AddChild(loadButton)
+		}
+
+		exitButton := eui.NewButton(c.state.UIResources, "exit", func() {
+			c.onDoneOrExit()
+		})
+		c.exitButton = exitButton
 		buttonsGrid.AddChild(exitButton)
 
 		c.canvasWidget = widget.NewGraphic(
@@ -406,6 +426,19 @@ func (c *StageController) Init(scene *ge.Scene) {
 	scene.AddGraphics(c)
 }
 
+func (c *StageController) onDoneOrExit() {
+	if c.completed {
+		c.state.Persistent.UpdateLevelCompletion(c.config.Data, c.bonusReached)
+	}
+
+	switch c.config.Mode {
+	case gamedata.MissionMode:
+		c.changeScene(NewMissionViewController(c.state, c.config.Data))
+	case gamedata.SandboxMode:
+		c.changeScene(NewPlayController(c.state))
+	}
+}
+
 func (c *StageController) selectInstrument(instrumentID int, patchIndex int) {
 	c.synth.SetInstrumentPatch(instrumentID, patchIndex)
 	kind := synthdb.TimGM6mb.Instruments[patchIndex].Kind
@@ -426,7 +459,13 @@ func (c *StageController) Update(delta float64) {
 		c.waveUpdateDelay = gmath.ClampMin(c.waveUpdateDelay-delta, 0)
 		if c.waveUpdateDelay == 0 {
 			c.waveUpdateDelay = 0.1
-			c.canvas.RenderWave(c.waveSamples())
+			waveColor := styles.SoundWaveColor
+			waveWidth := 2.0
+			if c.completed {
+				waveColor = styles.VictorySoundWaveColor
+				waveWidth = 4.0
+			}
+			c.canvas.RenderWave(waveColor, waveWidth, c.waveSamples())
 		}
 
 		if c.board.ProgramTick(delta) {
@@ -464,6 +503,9 @@ func (c *StageController) waveSamples() []float64 {
 }
 
 func (c *StageController) onPlayPressed() {
+	c.completed = false
+	c.bonusReached = false
+
 	switch c.currentMode {
 	case stageReady, stagePlaying:
 		// OK
@@ -517,15 +559,28 @@ func (c *StageController) changeScene(newScene ge.SceneController) {
 	c.scene.Context().ChangeScene(newScene)
 }
 
-func (c *StageController) setMode(m stageMode) {
-	if c.currentMode == m {
-		return
+func (c *StageController) updateExitText() {
+	if c.completed {
+		c.exitButton.Text().Label = "done"
+	} else {
+		c.exitButton.Text().Label = "exit"
 	}
-	c.currentMode = m
+}
+
+func (c *StageController) updateStatusText() {
+	m := c.currentMode
 	var modeText string
 	switch m {
 	case stageReady:
-		modeText = "ready"
+		if c.completed {
+			if c.bonusReached {
+				modeText = "completed (with bonus)"
+			} else {
+				modeText = "completed (no bonus)"
+			}
+		} else {
+			modeText = "ready"
+		}
 	case stagePlaying:
 		modeText = "playing"
 	case stageEncoding:
@@ -534,4 +589,12 @@ func (c *StageController) setMode(m stageMode) {
 		modeText = "unknown"
 	}
 	c.statusLabel.Label = "status: " + modeText
+}
+
+func (c *StageController) setMode(m stageMode) {
+	if c.currentMode == m {
+		return
+	}
+	c.currentMode = m
+	c.updateStatusText()
 }

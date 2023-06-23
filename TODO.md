@@ -17,3 +17,25 @@ missions:
 puzzle elements:
 - higher period - bigger explosion, but lower attack rate
 - some targets have func-based immunities
+
+bugs:
+- do not emit effects for out-of-screen notes
+- when loading/starting, all instruments should be prepared immediately
+
+levels:
+1. explains that targets need to be marked/triggered
+2. introduces multi-instrument tracks
+3. ???
+4. different target sizes
+5. ???
+6. outline elements & misplays (penalty targets)
+7. ???
+
+bonus conditions:
++ max number of instruments
++ don't use some function
+- unique instruments (any kind)
+- unique kinds
+- minimal/maximal periods
+- optional targets
++ penalty targets

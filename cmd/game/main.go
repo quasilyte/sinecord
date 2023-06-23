@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"sort"
 	"time"
 
 	"github.com/quasilyte/ge"
@@ -38,6 +41,12 @@ func main() {
 		UIResources: eui.PrepareResources(ctx.Loader),
 	}
 
+	if err := ctx.LoadGameData("save", &state.Persistent); err != nil {
+		fmt.Printf("can't load game data: %v", err)
+		state.Persistent = getDefaultData()
+		ctx.SaveGameData("save", state.Persistent)
+	}
+
 	session.ReloadLanguage(ctx, "en")
 
 	tileset, err := gamedata.ParseTileset(ctx.Loader.LoadRaw(assets.RawLevelTilesetJSON).Data)
@@ -46,7 +55,46 @@ func main() {
 	}
 	state.LevelTileset = tileset
 
+	{
+		allLevels := assets.ReadLevelsData()
+		maxAct := 1
+		for _, raw := range allLevels {
+			if raw.Act > maxAct {
+				maxAct = raw.Act
+			}
+		}
+		levelNames := map[string]struct{}{}
+		levelsByAct := make([][]*gamedata.LevelData, maxAct+1)
+		for _, raw := range allLevels {
+			parsed, err := gamedata.ParseLevel(state.LevelTileset, state.PlotScaler, raw.TileMap)
+			if err != nil {
+				panic(err)
+			}
+			if _, ok := levelNames[parsed.Name]; ok {
+				panic(fmt.Sprintf("duplicated level name: act %d, %q", raw.Act, parsed.Name))
+			}
+			levelNames[parsed.Name] = struct{}{}
+			parsed.ActNumber = raw.Act
+			parsed.MissionNumber = raw.Mission
+			if err := json.Unmarshal(raw.Solution, &parsed.Solution); err != nil {
+				panic(err)
+			}
+			levelsByAct[raw.Act] = append(levelsByAct[raw.Act], parsed)
+		}
+		for _, levels := range levelsByAct {
+			sort.SliceStable(levels, func(i, j int) bool {
+				return levels[i].MissionNumber < levels[j].MissionNumber
+			})
+		}
+		state.LevelsByAct = levelsByAct
+	}
+
 	if err := ge.RunGame(ctx, scenes.NewMainMenuController(state)); err != nil {
 		panic(err)
 	}
+}
+
+func getDefaultData() session.PersistentData {
+	data := session.PersistentData{}
+	return data
 }

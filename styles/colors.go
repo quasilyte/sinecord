@@ -9,15 +9,21 @@ import (
 var (
 	TransparentColor = color.RGBA{}
 
-	TargetColor = ge.RGB(0x9dd793)
+	TargetColor          = ge.RGB(0x9dd793)
+	TargetMissColorRed   = ge.RGB(0xff2948)
+	TargetMissColorGreen = ge.RGB(0x03ff20)
+	TargetMissColorBlue  = ge.RGB(0x0326ff)
 
 	NormalTextColor   = ge.RGB(0x9dd793)
 	DisabledTextColor = ge.RGB(0x5a7a91)
-	CaretColor        = SeparatorColor
+	CaretColor        = ge.RGB(0xfed846)
+
+	CompletedLevelTextColor = CaretColor
 
 	SeparatorColor = ge.RGB(0x79badc)
 
-	SoundWaveColor = SeparatorColor
+	SoundWaveColor        = SeparatorColor
+	VictorySoundWaveColor = NormalTextColor
 
 	Plot1Color = ge.RGB(0x5987f2)
 	Plot2Color = ge.RGB(0xad92d6)

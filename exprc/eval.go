@@ -3,16 +3,22 @@ package exprc
 import (
 	"math"
 
+	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
 )
 
-type funcRunner struct {
+type FuncRunner struct {
 	stack     []float64
 	constants []float64
 	insts     []instructon
+	funcsUsed []string
 }
 
-func (r *funcRunner) Run(x float64) float64 {
+func (r *FuncRunner) UsesFunc(name string) bool {
+	return xslices.Contains(r.funcsUsed, name)
+}
+
+func (r *FuncRunner) Run(x float64) float64 {
 	r.stack = r.stack[:0]
 
 	for _, inst := range r.insts {
@@ -98,11 +104,11 @@ func (r *funcRunner) Run(x float64) float64 {
 	return r.stack[0]
 }
 
-func (r *funcRunner) push(v float64) {
+func (r *FuncRunner) push(v float64) {
 	r.stack = append(r.stack, v)
 }
 
-func (r *funcRunner) pop3() (float64, float64, float64) {
+func (r *FuncRunner) pop3() (float64, float64, float64) {
 	c := r.stack[len(r.stack)-1]
 	b := r.stack[len(r.stack)-2]
 	a := r.stack[len(r.stack)-3]
@@ -110,14 +116,14 @@ func (r *funcRunner) pop3() (float64, float64, float64) {
 	return a, b, c
 }
 
-func (r *funcRunner) pop2() (float64, float64) {
+func (r *FuncRunner) pop2() (float64, float64) {
 	b := r.stack[len(r.stack)-1]
 	a := r.stack[len(r.stack)-2]
 	r.stack = r.stack[:len(r.stack)-2]
 	return a, b
 }
 
-func (r *funcRunner) pop() float64 {
+func (r *FuncRunner) pop() float64 {
 	v := r.stack[len(r.stack)-1]
 	r.stack = r.stack[:len(r.stack)-1]
 	return v

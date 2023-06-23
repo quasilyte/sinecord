@@ -10,6 +10,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/exprc"
 	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/styles"
 )
@@ -59,7 +60,7 @@ func NewCanvas(ctx *Context, scene *ge.Scene, img *ebiten.Image) *Canvas {
 	return canvas
 }
 
-func (c *Canvas) RedrawPlot(id int, f func(x float64) float64, points []gmath.Vec) {
+func (c *Canvas) RedrawPlot(id int, f *exprc.FuncRunner, points []gmath.Vec) {
 	img := c.plots[id]
 	img.Clear()
 
@@ -72,18 +73,18 @@ func (c *Canvas) RedrawPlot(id int, f func(x float64) float64, points []gmath.Ve
 	tinyDx := 1.0 / 180.0
 	x := 0.0
 	for x < 20 {
-		y := f(x)
+		y := f.Run(x)
 		scaled := c.ctx.Scaler.ScaleXY(x, y)
 		if scaled.Y >= 0 && scaled.Y <= height {
 			var p vector.Path
 			for x < 20 {
-				y := f(x)
+				y := f.Run(x)
 				scaled := c.ctx.Scaler.ScaleXY(x, y)
 				if scaled.Y < 0 || scaled.Y > height {
 					break
 				}
 				p.LineTo(float32(scaled.X), float32(scaled.Y))
-				if math.Abs(f(x+dx)-y) > 0.2 {
+				if math.Abs(f.Run(x+dx)-y) > 0.2 {
 					x += tinyDx
 				} else {
 					x += dx
@@ -126,7 +127,7 @@ func (c *Canvas) Reset() {
 	c.waves.Clear()
 }
 
-func (c *Canvas) RenderWave(data []float64) {
+func (c *Canvas) RenderWave(clr color.RGBA, lineWidth float64, data []float64) {
 	c.waves.Clear()
 	if data == nil {
 		return
@@ -146,9 +147,9 @@ func (c *Canvas) RenderWave(data []float64) {
 		p.LineTo(float32(x), float32(y))
 	}
 	var cs ge.ColorScale
-	cs.SetColor(styles.SoundWaveColor)
+	cs.SetColor(clr)
 	cs.A = 0.8
-	c.DrawPath(c.waves, p, 2, cs)
+	c.DrawPath(c.waves, p, float32(lineWidth), cs)
 }
 
 func (c *Canvas) SetPlotHidden(id int, hidden bool) {

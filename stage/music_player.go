@@ -92,7 +92,7 @@ func (p *musicPlayer) createPCM(prog SynthProgram, progress *float64) *SampleSet
 			inst := p.instruments[e.id]
 			channel := int32(e.id)
 			synthesizer.NoteOffAllChannel(channel, false)
-			y := math.Abs(inst.compiledFx(e.t))
+			y := math.Abs(inst.compiledFx.Run(e.t))
 			if y > 3 || y < -3 {
 				continue
 			}

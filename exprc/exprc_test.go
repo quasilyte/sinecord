@@ -135,7 +135,7 @@ func TestSimple(t *testing.T) {
 			t.Fatalf("%q: %v", test.src, err)
 		}
 		for _, r := range test.runs {
-			result := f(r.arg)
+			result := f.Run(r.arg)
 			if result != r.result {
 				t.Fatalf("%q:\nf(%v)\nwant: %v\nhave: %v", test.src, r.arg, r.result, result)
 			}

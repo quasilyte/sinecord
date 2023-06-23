@@ -7,9 +7,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/sinecord/assets"
 	"github.com/quasilyte/sinecord/eui"
-	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/session"
-	"github.com/quasilyte/sinecord/stage"
 	"github.com/quasilyte/sinecord/styles"
 )
 
@@ -44,11 +42,6 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 
 	panel := eui.NewPanel(c.state.UIResources, 0, 0)
 
-	missionLevel, err := gamedata.ParseLevel(c.state.LevelTileset, c.state.PlotScaler, scene.LoadRaw(assets.RawAct1Mission1JSON).Data)
-	if err != nil {
-		panic(err)
-	}
-
 	buttonsGrid := widget.NewContainer(
 		widget.ContainerOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.RowLayoutData{
 			Stretch: true,
@@ -58,32 +51,28 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 			widget.GridLayoutOpts.Stretch([]bool{false, true, true, true, true}, nil),
 			widget.GridLayoutOpts.Spacing(8, 8))))
 
-	labels := []string{"I", "II", "III", "IV"}
-	buttonsGrid.AddChild(eui.NewCenteredLabel(fmt.Sprintf("%s 1 ", d.Get("menu.play.act")), normalFont))
-	for i := 0; i < 4; i++ {
-		b := eui.NewButton(c.state.UIResources, labels[i], func() {
-			scene.Context().ChangeScene(NewStageController(c.state, stage.Config{
-				MaxInstruments: 5,
-				Targets:        missionLevel.Targets,
-			}))
-		})
-		buttonsGrid.AddChild(b)
-		if i != 0 {
+	missionLabels := []string{"", "I", "II", "III", "IV"}
+	for actNumber, levels := range c.state.LevelsByAct {
+		if actNumber == 0 {
+			continue
+		}
+		buttonsGrid.AddChild(eui.NewCenteredLabel(fmt.Sprintf("%s %d ", d.Get("menu.play.act"), actNumber), normalFont))
+		for i := range levels {
+			l := levels[i]
+			b := eui.NewButtonWithConfig(c.state.UIResources, eui.ButtonConfig{
+				TextAltColor: c.state.Persistent.GetLevelCompletionStatus(l) >= session.LevelCompleted,
+				Text:         missionLabels[l.MissionNumber],
+				OnClick: func() {
+					scene.Context().ChangeScene(NewMissionViewController(c.state, l))
+				},
+			})
+			buttonsGrid.AddChild(b)
+		}
+		for i := len(levels) + 1; i < len(missionLabels); i++ {
+			b := eui.NewButton(c.state.UIResources, "    ", func() {})
+			buttonsGrid.AddChild(b)
 			b.GetWidget().Disabled = true
 		}
-	}
-
-	buttonsGrid.AddChild(eui.NewCenteredLabel(fmt.Sprintf("%s 2 ", d.Get("menu.play.act")), normalFont))
-	for i := 0; i < 4; i++ {
-		b := eui.NewButton(c.state.UIResources, labels[i], func() {})
-		buttonsGrid.AddChild(b)
-		b.GetWidget().Disabled = true
-	}
-	buttonsGrid.AddChild(eui.NewCenteredLabel(fmt.Sprintf("%s 3 ", d.Get("menu.play.act")), normalFont))
-	for i := 0; i < 4; i++ {
-		b := eui.NewButton(c.state.UIResources, labels[i], func() {})
-		buttonsGrid.AddChild(b)
-		b.GetWidget().Disabled = true
 	}
 
 	panel.AddChild(buttonsGrid)

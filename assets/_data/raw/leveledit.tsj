@@ -8,7 +8,7 @@
  "margin":0,
  "name":"leveledit",
  "spacing":0,
- "tilecount":5,
+ "tilecount":11,
  "tiledversion":"1.9.2",
  "tileheight":46,
  "tiles":[
@@ -46,6 +46,79 @@
          "image":"..\/..\/..\/_tiled\/tiles\/triangle_target.png",
          "imageheight":46,
          "imagewidth":46
+        }, 
+        {
+         "class":"outline_circle_target",
+         "id":11,
+         "image":"..\/..\/..\/_tiled\/tiles\/outline_circle_target.png",
+         "imageheight":46,
+         "imagewidth":46
+        }, 
+        {
+         "class":"outline_hexagon_target",
+         "id":12,
+         "image":"..\/..\/..\/_tiled\/tiles\/outline_hexagon_target.png",
+         "imageheight":46,
+         "imagewidth":46
+        }, 
+        {
+         "class":"outline_square_target",
+         "id":13,
+         "image":"..\/..\/..\/_tiled\/tiles\/outline_square_target.png",
+         "imageheight":46,
+         "imagewidth":46
+        }, 
+        {
+         "class":"outline_star_target",
+         "id":14,
+         "image":"..\/..\/..\/_tiled\/tiles\/outline_star_target.png",
+         "imageheight":46,
+         "imagewidth":46
+        }, 
+        {
+         "class":"outline_triangle_target",
+         "id":15,
+         "image":"..\/..\/..\/_tiled\/tiles\/outline_triangle_target.png",
+         "imageheight":46,
+         "imagewidth":46
+        }, 
+        {
+         "class":"level_settings",
+         "id":10,
+         "image":"..\/..\/..\/_tiled\/tiles\/control_object.png",
+         "imageheight":46,
+         "imagewidth":46,
+         "properties":[
+                {
+                 "name":"bonus_avoid_penalty",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"bonus_forbidden_funcs",
+                 "type":"string",
+                 "value":""
+                }, 
+                {
+                 "name":"bonus_max_instruments",
+                 "type":"int",
+                 "value":1
+                }, 
+                {
+                 "name":"description",
+                 "type":"string",
+                 "value":""
+                }, 
+                {
+                 "name":"max_instruments",
+                 "type":"int",
+                 "value":2
+                }, 
+                {
+                 "name":"name",
+                 "type":"string",
+                 "value":""
+                }]
         }],
  "tilewidth":46,
  "type":"tileset",

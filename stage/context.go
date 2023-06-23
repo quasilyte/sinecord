@@ -5,11 +5,15 @@ import (
 )
 
 type Config struct {
+	Data *gamedata.LevelData
+
 	MaxInstruments int
 
 	Targets []gamedata.Target
 
 	Track gamedata.Track
+
+	Mode gamedata.Mode
 }
 
 type Context struct {

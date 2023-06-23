@@ -9,17 +9,15 @@ import (
 	"strconv"
 )
 
-func Compile(src string) (func(float64) float64, error) {
+func Compile(src string) (*FuncRunner, error) {
 	var c compiler
 	c.src = src
+	c.funcSet = make(map[string]struct{})
 	runner, err := c.CompileRoot()
 	if err != nil {
 		return nil, err
 	}
-	f := func(x float64) float64 {
-		return runner.Run(x)
-	}
-	return f, nil
+	return runner, nil
 }
 
 type compiler struct {
@@ -28,9 +26,10 @@ type compiler struct {
 	insts         []instructon
 	constants     []float64
 	constantsPool map[float64]uint8
+	funcSet       map[string]struct{}
 }
 
-func (c *compiler) CompileRoot() (runner *funcRunner, err error) {
+func (c *compiler) CompileRoot() (runner *FuncRunner, err error) {
 	defer func() {
 		rv := recover()
 		if rv != nil {
@@ -48,10 +47,16 @@ func (c *compiler) CompileRoot() (runner *funcRunner, err error) {
 	}
 	c.compileExpr(astExpr)
 
-	runner = &funcRunner{
+	funcList := make([]string, len(c.funcSet))
+	for f := range c.funcSet {
+		funcList = append(funcList, f)
+	}
+
+	runner = &FuncRunner{
 		stack:     make([]float64, 0, 4),
 		constants: c.constants,
 		insts:     c.insts,
+		funcsUsed: funcList,
 	}
 	return runner, nil
 }
@@ -118,6 +123,8 @@ func (c *compiler) compileCallExpr(e *ast.CallExpr) {
 	if len(e.Args) != funcInfo.numArgs {
 		c.throwf("%q expects %d arguments, found %d", fn.Name, funcInfo.numArgs, len(e.Args))
 	}
+
+	c.funcSet[fn.Name] = struct{}{}
 
 	for _, arg := range e.Args {
 		c.compileExpr(arg)

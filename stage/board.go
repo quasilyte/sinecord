@@ -15,6 +15,8 @@ type Board struct {
 	ctx *Context
 
 	finished bool
+	victory  bool
+	penalty  bool
 	length   float64
 	t        float64
 	prog     SynthProgram
@@ -29,11 +31,14 @@ type Board struct {
 
 	config BoardConfig
 
-	EventNote gsignal.Event[int]
+	EventNote    gsignal.Event[int]
+	EventVictory gsignal.Event[bool]
 }
 
 type BoardConfig struct {
 	Canvas *Canvas
+
+	Level *gamedata.LevelData
 
 	MaxInstruments int
 
@@ -65,6 +70,30 @@ func (b *Board) ClearProgram() {
 	b.deployTargets()
 }
 
+func (b *Board) onVictory() {
+	b.victory = true
+	b.EventVictory.Emit(b.isBonusAchieved())
+}
+
+func (b *Board) isBonusAchieved() bool {
+	objectives := b.config.Level.Bonus
+
+	numInstrumentsUsed := len(b.prog.Instruments)
+	if numInstrumentsUsed > objectives.MaxInstruments {
+		return false
+	}
+
+	for _, fn := range objectives.ForbiddenFuncs {
+		for _, inst := range b.prog.Instruments {
+			if inst.Func.UsesFunc(fn) {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 func (b *Board) ProgramTick(delta float64) bool {
 	if b.finished {
 		panic("running a finished program")
@@ -86,6 +115,9 @@ func (b *Board) ProgramTick(delta float64) bool {
 		}
 		b.targets = liveTargets
 	}
+	if !b.victory && len(b.targets) == 0 && b.config.Level != nil {
+		b.onVictory()
+	}
 
 	{
 		liveEffects := b.effects[:0]
@@ -105,7 +137,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 			break
 		}
 		b.events = b.events[1:]
-		y := b.prog.Instruments[e.index].Func(e.t)
+		y := b.prog.Instruments[e.index].Func.Run(e.t)
 		pos := b.ctx.Scaler.ScaleXY(e.t, y)
 		inst := b.prog.Instruments[e.index]
 		shape := gamedata.InstrumentShape(inst.Kind)
@@ -115,25 +147,38 @@ func (b *Board) ProgramTick(delta float64) bool {
 
 		effect.EventFinished.Connect(nil, func(r float64) {
 			for _, t := range b.targets {
-				if t.instrument != inst.Kind {
+				canHit := t.outline || t.instrument == inst.Kind
+				if !canHit {
 					continue
 				}
-				if t.pos.DistanceTo(pos) < 0.6*(float64(t.r)+r) {
-					t.Dispose()
-					d := 2 * (float64(t.r) / b.ctx.Scaler.Factor)
-					shape := gamedata.InstrumentShape(t.instrument)
-					offset := gmath.Vec{X: 2, Y: 2}
-					b.addWaveEffect(newWaveNode(b.canvas, shape, t.pos.Sub(offset), styles.TargetColor, d))
-					b.addWaveEffect(newWaveNode(b.canvas, shape, t.pos, styles.TargetColor, d))
-					b.addWaveEffect(newWaveNode(b.canvas, shape, t.pos.Add(offset), styles.TargetColor, d))
+				if t.pos.DistanceTo(pos) > 0.6*(float64(t.r)+r) {
+					continue
 				}
+				if !t.OnDamage() {
+					continue
+				}
+				clr1 := styles.TargetColor
+				clr2 := styles.TargetColor
+				clr3 := styles.TargetColor
+				if t.instrument != inst.Kind {
+					b.penalty = true
+					clr1 = styles.TargetMissColorRed
+					clr2 = styles.TargetMissColorGreen
+					clr3 = styles.TargetMissColorBlue
+				}
+				d := 2 * (float64(t.r) / b.ctx.Scaler.Factor)
+				shape := gamedata.InstrumentShape(t.instrument)
+				offset := gmath.Vec{X: 2, Y: 2}
+				b.addWaveEffect(newWaveNode(b.canvas, shape, t.pos.Sub(offset), clr1, d))
+				b.addWaveEffect(newWaveNode(b.canvas, shape, t.pos, clr2, d))
+				b.addWaveEffect(newWaveNode(b.canvas, shape, t.pos.Add(offset), clr3, d))
 			}
 		})
 	}
 
 	x := b.t
 	for i, sig := range b.signals {
-		y := b.prog.Instruments[i].Func(x)
+		y := b.prog.Instruments[i].Func.Run(x)
 		sig.sprite.Visible = y >= -3 && y <= 3
 		if sig.sprite.Visible {
 			sig.pos = b.ctx.Scaler.ScaleXY(x, y)
@@ -192,5 +237,7 @@ func (b *Board) reset() {
 	b.targets = b.targets[:0]
 
 	b.finished = false
+	b.victory = false
+	b.penalty = false
 	b.t = 0
 }

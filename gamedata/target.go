@@ -17,5 +17,7 @@ type Target struct {
 
 	Instrument InstrumentKind
 
+	Outline bool
+
 	Size TargetSize
 }

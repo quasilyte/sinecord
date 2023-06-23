@@ -160,7 +160,7 @@ func (s *Synthesizer) SetInstrumentPeriod(id int, periodFunc string) error {
 	}
 	s.changed = true
 	inst := s.instruments[id]
-	inst.SetPeriod(periodFunc, gmath.Clamp(compiled(1), 0.1, 2*math.Pi))
+	inst.SetPeriod(periodFunc, gmath.Clamp(compiled.Run(1), 0.1, 2*math.Pi))
 	return nil
 }
 
@@ -170,7 +170,7 @@ func (s *Synthesizer) SetInstrumentFunction(id int, fx string) {
 	s.instruments[id].SetFx(fx)
 }
 
-func (s *Synthesizer) GetInstrumentFunction(id int) func(float64) float64 {
+func (s *Synthesizer) GetInstrumentFunction(id int) *exprc.FuncRunner {
 	return s.instruments[id].compiledFx
 }
 
@@ -185,7 +185,7 @@ func (s *Synthesizer) GetInstrumentPeriodPoints(id int) []gmath.Vec {
 			continue
 		}
 		x := e.t
-		y := inst.compiledFx(x)
+		y := inst.compiledFx.Run(x)
 		points = append(points, gmath.Vec{X: x, Y: y})
 	}
 	return points

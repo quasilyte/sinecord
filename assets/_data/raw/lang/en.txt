@@ -29,3 +29,7 @@ compose the math music without limitations!
 Instrument's play period (in seconds).
 X variable is not available.
 The value is clamped in [0.1, 2*pi] range.
+
+##menu.mission.title : mission
+##menu.mission.start : start
+##menu.mission.show_solution : solution

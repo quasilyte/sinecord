@@ -34,10 +34,11 @@ type tooltipResources struct {
 }
 
 type buttonResource struct {
-	Image      *widget.ButtonImage
-	Padding    widget.Insets
-	TextColors *widget.ButtonTextColor
-	FontFace   font.Face
+	Image         *widget.ButtonImage
+	Padding       widget.Insets
+	TextColors    *widget.ButtonTextColor
+	AltTextColors *widget.ButtonTextColor
+	FontFace      font.Face
 }
 
 type textInputResource struct {
@@ -84,7 +85,11 @@ func PrepareResources(loader *resource.Loader) *Resources {
 			},
 			Padding:    buttonPadding,
 			TextColors: buttonColors,
-			FontFace:   mediumFont,
+			AltTextColors: &widget.ButtonTextColor{
+				Idle:     styles.CompletedLevelTextColor,
+				Disabled: styles.DisabledTextColor,
+			},
+			FontFace: mediumFont,
 		}
 		result.selectButton = &buttonResource{
 			Image: &widget.ButtonImage{
@@ -200,8 +205,9 @@ func NewImageButton(res *Resources, img *ebiten.Image, config ButtonConfig) Imag
 type ButtonConfig struct {
 	Text          string
 	TextAlignLeft bool
+	TextAltColor  bool
 	OnClick       func()
-	Tooltip       *widget.Container
+	TooltipLabel  string
 	LayoutData    any
 	MinWidth      int
 	Font          font.Face
@@ -220,12 +226,16 @@ func NewButtonWithConfig(res *Resources, config ButtonConfig) *widget.Button {
 			}
 		}),
 	}
+	colors := res.button.TextColors
+	if config.TextAltColor {
+		colors = res.button.AltTextColors
+	}
 	if config.TextAlignLeft {
 		options = append(options,
-			widget.ButtonOpts.TextSimpleLeft(config.Text, ff, res.button.TextColors, res.button.Padding))
+			widget.ButtonOpts.TextSimpleLeft(config.Text, ff, colors, res.button.Padding))
 	} else {
 		options = append(options,
-			widget.ButtonOpts.Text(config.Text, ff, res.button.TextColors),
+			widget.ButtonOpts.Text(config.Text, ff, colors),
 			widget.ButtonOpts.TextPadding(res.button.Padding))
 	}
 	if config.LayoutData != nil {
@@ -234,9 +244,10 @@ func NewButtonWithConfig(res *Resources, config ButtonConfig) *widget.Button {
 	if config.MinWidth != 0 {
 		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.MinSize(config.MinWidth, 0)))
 	}
-	if config.Tooltip != nil {
+	if config.TooltipLabel != "" {
+		tooltipContent := NewTooltip(res, config.TooltipLabel)
 		tt := widget.NewToolTip(
-			widget.ToolTipOpts.Content(config.Tooltip),
+			widget.ToolTipOpts.Content(tooltipContent),
 			widget.ToolTipOpts.Delay(time.Second),
 		)
 		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.ToolTip(tt)))
@@ -426,8 +437,8 @@ func NewLabel(text string, ff font.Face, options ...widget.TextOpt) *widget.Text
 	return NewColoredLabel(text, ff, styles.NormalTextColor, options...)
 }
 
-func NewCenteredLabel(text string, ff font.Face) *widget.Text {
-	return widget.NewText(
+func NewCenteredLabelWithMaxWidth(text string, ff font.Face, width float64) *widget.Text {
+	options := []widget.TextOpt{
 		widget.TextOpts.WidgetOpts(
 			widget.WidgetOpts.LayoutData(widget.RowLayoutData{
 				Stretch: true,
@@ -435,7 +446,15 @@ func NewCenteredLabel(text string, ff font.Face) *widget.Text {
 		),
 		widget.TextOpts.Position(widget.TextPositionCenter, widget.TextPositionCenter),
 		widget.TextOpts.Text(text, ff, styles.NormalTextColor),
-	)
+	}
+	if width != -1 {
+		options = append(options, widget.TextOpts.MaxWidth(width))
+	}
+	return widget.NewText(options...)
+}
+
+func NewCenteredLabel(text string, ff font.Face) *widget.Text {
+	return NewCenteredLabelWithMaxWidth(text, ff, -1)
 }
 
 func NewSeparator(ld interface{}, clr color.RGBA) widget.PreferredSizeLocateableWidget {
@@ -468,6 +487,7 @@ func NewTooltip(res *Resources, text string) *widget.Container {
 			widget.RowLayoutOpts.Spacing(2),
 		)))
 	tt.AddChild(widget.NewText(
+		widget.TextOpts.MaxWidth(800),
 		widget.TextOpts.Text(text, res.tooltip.FontFace, res.tooltip.TextColor),
 	))
 	return tt

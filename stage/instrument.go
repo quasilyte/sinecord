@@ -1,6 +1,7 @@
 package stage
 
 import (
+	"github.com/quasilyte/sinecord/exprc"
 	"github.com/quasilyte/sinecord/gamedata"
 )
 
@@ -10,7 +11,7 @@ type instrument struct {
 
 	periodFunc string
 
-	compiledFx func(x float64) float64
+	compiledFx *exprc.FuncRunner
 
 	instrumentIndex int
 	patchNumber     int32
