@@ -292,9 +292,15 @@ func (c *StageController) Init(scene *ge.Scene) {
 
 		patchIndex := 0
 		if loadedInstrument != nil {
-			patchIndex = xslices.IndexWhere(synthdb.TimGM6mb.Instruments, func(inst *synthdb.Instrument) bool {
+			instrumentIndex := xslices.IndexWhere(synthdb.TimGM6mb.Instruments, func(inst *synthdb.Instrument) bool {
 				return inst.Name == loadedInstrument.InstrumentName
 			})
+			for k, i := range patchIndexToInstument {
+				if instrumentIndex == i {
+					patchIndex = k
+					break
+				}
+			}
 		}
 		c.selectInstrument(instrumentID, patchIndexToInstument[patchIndex])
 		instrumentsGrid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
