@@ -91,6 +91,8 @@ func (r *FuncRunner) Run(x float64) float64 {
 			r.push(fract(r.pop()))
 		case opModFunc:
 			r.push(mod(r.pop2()))
+		case opGammaFunc:
+			r.push(math.Gamma(r.pop()))
 		case opUntilFunc:
 			v, threshold := r.pop2()
 			r.push(until(x, v, threshold))

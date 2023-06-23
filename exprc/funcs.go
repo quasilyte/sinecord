@@ -36,6 +36,7 @@ var builtinFuncMap = map[string]builtinFunction{
 	"ceil":        {numArgs: 1, op: opCeilFunc},
 	"fract":       {numArgs: 1, op: opFractFunc},
 	"mod":         {numArgs: 2, op: opModFunc},
+	"gamma":       {numArgs: 1, op: opGammaFunc},
 	"until":       {numArgs: 2, op: opUntilFunc},
 	"after":       {numArgs: 2, op: opAfterFunc},
 }
