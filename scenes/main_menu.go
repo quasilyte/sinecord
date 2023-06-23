@@ -50,7 +50,9 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.settings"), func() {}))
 
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.credits"), func() {}))
+	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.credits"), func() {
+		scene.Context().ChangeScene(NewCreditsController(c.state))
+	}))
 
 	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
 
