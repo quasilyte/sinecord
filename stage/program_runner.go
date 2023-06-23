@@ -37,7 +37,7 @@ func (r *programRunner) RunProgram(prog SynthProgram) []noteActivation {
 		r.delays = append(r.delays, inst.Period)
 	}
 
-	const stepsPerSecond = 360
+	const stepsPerSecond = 180
 	dt := 1.0 / stepsPerSecond
 	t := 0.0
 
