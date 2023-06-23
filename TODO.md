@@ -14,3 +14,7 @@ levels:
 6. outline elements & misplays (penalty targets)
 7. period echo range trick
 8. after/until func combo
+
+tanh(2*sin(x)) / tanh(2)
+pow(cos(x), 8) - pow(1-sin(x), 8)
+sign(sin(x)) * pow(abs(sin(x)), 1/3)
