@@ -1,8 +1,6 @@
 package synthdb
 
 import (
-	"fmt"
-
 	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/sinshu/go-meltysynth/meltysynth"
 )
@@ -107,7 +105,5 @@ func (sf *SoundFont) Load(data *meltysynth.SoundFont) {
 				panic("unexpected key range end")
 			}
 		}
-
-		fmt.Printf("loaded %q instrument (patch name = %s)\n", inst.Name, instInfo.Name)
 	}
 }

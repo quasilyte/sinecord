@@ -4,6 +4,7 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/controls"
 	"github.com/quasilyte/sinecord/eui"
 	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/session"
@@ -13,6 +14,8 @@ import (
 
 type PlayController struct {
 	state *session.State
+
+	scene *ge.Scene
 }
 
 func NewPlayController(state *session.State) *PlayController {
@@ -22,6 +25,8 @@ func NewPlayController(state *session.State) *PlayController {
 }
 
 func (c *PlayController) Init(scene *ge.Scene) {
+	c.scene = scene
+
 	bigFont := scene.Context().Loader.LoadFont(assets.FontArcadeBig).Face
 
 	d := scene.Dict()
@@ -61,10 +66,18 @@ func (c *PlayController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.back"), func() {
-		scene.Context().ChangeScene(NewMainMenuController(c.state))
+		c.back()
 	}))
 
 	initUI(scene, root)
 }
 
-func (c *PlayController) Update(delta float64) {}
+func (c *PlayController) Update(delta float64) {
+	if c.state.Input.ActionIsJustPressed(controls.ActionBack) {
+		c.back()
+	}
+}
+
+func (c *PlayController) back() {
+	c.scene.Context().ChangeScene(NewMainMenuController(c.state))
+}

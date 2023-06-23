@@ -1,6 +1,5 @@
 ux:
 - show formula compile errors
-- esc should go back
 
 bugs:
 - do not emit effects for out-of-screen notes

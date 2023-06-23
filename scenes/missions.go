@@ -6,6 +6,7 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/controls"
 	"github.com/quasilyte/sinecord/eui"
 	"github.com/quasilyte/sinecord/session"
 	"github.com/quasilyte/sinecord/styles"
@@ -13,6 +14,8 @@ import (
 
 type MissionsController struct {
 	state *session.State
+
+	scene *ge.Scene
 }
 
 func NewMissionsController(state *session.State) *MissionsController {
@@ -22,6 +25,8 @@ func NewMissionsController(state *session.State) *MissionsController {
 }
 
 func (c *MissionsController) Init(scene *ge.Scene) {
+	c.scene = scene
+
 	bigFont := scene.Context().Loader.LoadFont(assets.FontArcadeBig).Face
 	normalFont := scene.Context().Loader.LoadFont(assets.FontArcadeNormal).Face
 
@@ -81,10 +86,18 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.back"), func() {
-		scene.Context().ChangeScene(NewPlayController(c.state))
+		c.back()
 	}))
 
 	initUI(scene, root)
 }
 
-func (c *MissionsController) Update(delta float64) {}
+func (c *MissionsController) Update(delta float64) {
+	if c.state.Input.ActionIsJustPressed(controls.ActionBack) {
+		c.back()
+	}
+}
+
+func (c *MissionsController) back() {
+	c.scene.Context().ChangeScene(NewPlayController(c.state))
+}

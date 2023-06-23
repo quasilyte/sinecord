@@ -7,6 +7,7 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/controls"
 	"github.com/quasilyte/sinecord/eui"
 	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/session"
@@ -16,6 +17,8 @@ import (
 
 type MissionViewController struct {
 	state *session.State
+
+	scene *ge.Scene
 
 	levelData *gamedata.LevelData
 }
@@ -28,6 +31,8 @@ func NewMissionViewController(state *session.State, levelData *gamedata.LevelDat
 }
 
 func (c *MissionViewController) Init(scene *ge.Scene) {
+	c.scene = scene
+
 	bigFont := scene.Context().Loader.LoadFont(assets.FontArcadeBig).Face
 	smallFont := scene.Context().Loader.LoadFont(assets.FontArcadeSmall).Face
 
@@ -100,11 +105,11 @@ func (c *MissionViewController) Init(scene *ge.Scene) {
 			scene.Context().ChangeScene(NewStageController(c.state, stageConfig))
 		},
 	})
-	// showSolution.GetWidget().Disabled = c.state.Persistent.GetLevelCompletionStatus(c.levelData) < session.LevelCompletedWithBonus
+	showSolution.GetWidget().Disabled = c.state.Persistent.GetLevelCompletionStatus(c.levelData) < session.LevelCompletedWithBonus
 	buttonsGrid.AddChild(showSolution)
 
 	buttonsGrid.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.back"), func() {
-		scene.Context().ChangeScene(NewMissionsController(c.state))
+		c.back()
 	}))
 
 	initUI(scene, root)
@@ -150,4 +155,12 @@ func (c *MissionViewController) panelRowsContainer() *widget.Container {
 	)
 }
 
-func (c *MissionViewController) Update(delta float64) {}
+func (c *MissionViewController) Update(delta float64) {
+	if c.state.Input.ActionIsJustPressed(controls.ActionBack) {
+		c.back()
+	}
+}
+
+func (c *MissionViewController) back() {
+	c.scene.Context().ChangeScene(NewMissionsController(c.state))
+}

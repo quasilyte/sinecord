@@ -13,6 +13,7 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/controls"
 	"github.com/quasilyte/sinecord/eui"
 	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/gtask"
@@ -441,6 +442,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 func (c *StageController) onDoneOrExit() {
 	if c.completed {
 		c.state.Persistent.UpdateLevelCompletion(c.config.Data, c.bonusReached)
+		c.scene.Context().SaveGameData("save", c.state.Persistent)
 	}
 
 	switch c.config.Mode {
@@ -465,6 +467,11 @@ func (c *StageController) Draw(*ebiten.Image) {
 }
 
 func (c *StageController) Update(delta float64) {
+	if c.state.Input.ActionIsJustPressed(controls.ActionBack) {
+		c.onDoneOrExit()
+		return
+	}
+
 	c.canvas.Running = c.currentMode == stagePlaying
 
 	if c.currentMode == stagePlaying {

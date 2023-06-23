@@ -10,6 +10,7 @@ import (
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/sinecord/assets"
+	"github.com/quasilyte/sinecord/controls"
 	"github.com/quasilyte/sinecord/eui"
 	"github.com/quasilyte/sinecord/gamedata"
 	"github.com/quasilyte/sinecord/scenes"
@@ -28,7 +29,9 @@ func main() {
 	ctx.Loader.OpenAssetFunc = assets.MakeOpenAssetFunc(ctx)
 	assets.RegisterResources(ctx)
 
-	keymap := input.Keymap{}
+	keymap := input.Keymap{
+		controls.ActionBack: {input.KeyEscape},
+	}
 	state := &session.State{
 		Input: ctx.Input.NewHandler(0, keymap),
 		PlotScaler: &gamedata.PlotScaler{
