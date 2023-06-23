@@ -21,7 +21,6 @@ puzzle elements:
 
 bugs:
 - do not emit effects for out-of-screen notes
-- when loading/starting, all instruments should be prepared immediately
 
 levels:
 1. explains that targets need to be marked/triggered

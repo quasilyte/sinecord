@@ -50,25 +50,35 @@ func (s *Synthesizer) Init(scene *ge.Scene) {
 
 func (s *Synthesizer) IsDisposed() bool { return false }
 
+func (s *Synthesizer) ForceReload() {
+	for i := range s.instruments {
+		s.reloadInstrument(i)
+	}
+}
+
+func (s *Synthesizer) reloadInstrument(i int) {
+	inst := s.instruments[i]
+	if inst.fx == "" {
+		inst.compiledFx = nil
+		s.EventRedrawPlotRequest.Emit(i)
+		return
+	}
+	fn, err := exprc.Compile(inst.fx)
+	if err != nil {
+		fmt.Printf("exprc: %v\n", err)
+		return
+	}
+	s.changed = true
+	inst.compiledFx = fn
+	s.EventRedrawPlotRequest.Emit(i)
+}
+
 func (s *Synthesizer) Update(delta float64) {
 	s.recompileDelay = gmath.ClampMin(s.recompileDelay-delta, 0)
 	if s.recompileDelay == 0 {
 		s.recompileDelay = s.scene.Rand().FloatRange(0.15, 0.3)
 		if i := s.needsPlotRedraw(); i != -1 {
-			inst := s.instruments[i]
-			if inst.fx == "" {
-				inst.compiledFx = nil
-				s.EventRedrawPlotRequest.Emit(i)
-				return
-			}
-			fn, err := exprc.Compile(inst.fx)
-			if err != nil {
-				fmt.Printf("exprc: %v\n", err)
-				return
-			}
-			s.changed = true
-			inst.compiledFx = fn
-			s.EventRedrawPlotRequest.Emit(i)
+			s.reloadInstrument(i)
 		}
 	}
 }

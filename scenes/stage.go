@@ -74,6 +74,17 @@ func NewStageController(state *session.State, config stage.Config) *StageControl
 	return c
 }
 
+func (c *StageController) setInstrumentFunction(id int, s string) {
+	c.synth.SetInstrumentFunction(id, strings.ToLower(s))
+}
+
+func (c *StageController) setInstrumentPeriod(id int, s string) {
+	err := c.synth.SetInstrumentPeriod(id, strings.ToLower(s))
+	if err != nil {
+		fmt.Printf("compile period: %v\n", err)
+	}
+}
+
 func (c *StageController) Init(scene *ge.Scene) {
 	c.scene = scene
 
@@ -234,12 +245,13 @@ func (c *StageController) Init(scene *ge.Scene) {
 			TooltipLabel:  "f(x)",
 			MaxTextLength: 60,
 			OnChange: func(s string) {
-				c.synth.SetInstrumentFunction(instrumentID, strings.ToLower(s))
+				c.setInstrumentFunction(instrumentID, s)
 			},
 		})
 		instrumentsGrid.AddChild(formulaInput)
 		if loadedInstrument != nil {
 			formulaInput.InputText = loadedInstrument.Function
+			c.setInstrumentFunction(instrumentID, loadedInstrument.Function)
 		}
 
 		periodInput := eui.NewFunctionInput(c.state.UIResources, eui.FunctionInputConfig{
@@ -247,14 +259,12 @@ func (c *StageController) Init(scene *ge.Scene) {
 			TooltipLabel:  d.Get("stage.period.tooltip"),
 			MaxTextLength: 12,
 			OnChange: func(s string) {
-				err := c.synth.SetInstrumentPeriod(instrumentID, strings.ToLower(s))
-				if err != nil {
-					fmt.Printf("compile period: %v\n", err)
-				}
+				c.setInstrumentPeriod(instrumentID, s)
 			},
 		})
 		if loadedInstrument != nil {
 			periodInput.InputText = loadedInstrument.PeriodFunction
+			c.setInstrumentPeriod(instrumentID, loadedInstrument.PeriodFunction)
 		} else {
 			periodInput.InputText = defaultPeriods[instrumentID]
 		}
@@ -420,6 +430,8 @@ func (c *StageController) Init(scene *ge.Scene) {
 
 		outerGrid.AddChild(playerGridContainer)
 	}
+
+	c.synth.ForceReload()
 
 	initUI(scene, root)
 
