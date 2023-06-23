@@ -173,6 +173,10 @@ func (c *Canvas) createShapePath(shape gamedata.Shape, x, y, r float32, angle gm
 	switch shape {
 	case gamedata.ShapeCircle:
 		p.Arc(x, y, r, 0, 2*math.Pi, vector.Clockwise)
+	case gamedata.ShapeBonus:
+		p.Arc(x, y, r, 0, math.Pi, vector.Clockwise)
+		p.LineTo(c.translate(rotate(0, -r, angle), x, y))
+		p.LineTo(c.translate(rotate(r, 0, angle), x, y))
 	case gamedata.ShapeSquare:
 		p.MoveTo(c.translate(rotate(-r, -r, angle), x, y))
 		p.LineTo(c.translate(rotate(-r, +r, angle), x, y))

@@ -416,7 +416,7 @@
                         {
                          "name":"description",
                          "type":"string",
-                         "value":"Clear a level by triggering all of the key points on the stage.\n\nYou can do that by finding a function that approximates these points.\n\nHint: a higher period rate means a larger echo.\nAs long as a key point intersects with an echo, it counts as triggered."
+                         "value":"Clear a level by triggering all of the targets on the stag e.\n\nYou can do that by finding a function that approximates these points."
                         }, 
                         {
                          "name":"name",

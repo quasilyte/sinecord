@@ -13,6 +13,7 @@ var (
 	TargetMissColorRed   = ge.RGB(0xff2948)
 	TargetMissColorGreen = ge.RGB(0x03ff20)
 	TargetMissColorBlue  = ge.RGB(0x0326ff)
+	TargetColorBonus     = ge.RGB(0xd7d7d7)
 
 	NormalTextColor   = ge.RGB(0x9dd793)
 	DisabledTextColor = ge.RGB(0x5a7a91)

@@ -129,6 +129,10 @@ func (c *MissionViewController) formatBonusRequirements() string {
 		rules = append(rules, "* Avoid misplays")
 	}
 
+	if objectives.AllTargets {
+		rules = append(rules, "* Mark all optional targets too")
+	}
+
 	return strings.Join(rules, "\n")
 }
 

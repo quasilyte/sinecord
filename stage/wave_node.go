@@ -59,7 +59,10 @@ func (n *waveNode) Update(delta float64) {
 
 func (n *waveNode) Draw(screen *ebiten.Image) {
 	var angle gmath.Rad
-	if n.shape != gamedata.ShapeCircle {
+	switch n.shape {
+	case gamedata.ShapeCircle, gamedata.ShapeBonus:
+		// Does no rotation.
+	default:
 		angle = gmath.Rad(1.5 * (n.t / n.duration))
 	}
 	r := float32(n.r)

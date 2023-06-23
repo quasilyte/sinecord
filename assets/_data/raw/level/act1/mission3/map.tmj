@@ -642,7 +642,7 @@
                         {
                          "name":"description",
                          "type":"string",
-                         "value":"Different target shapes require different instrument kinds.\n\nYou can now use keyboard class instruments in addition to your bass instruments."
+                         "value":"When computed y-axis value is out of bounds, the instrument sound will be stopeed.\n\nThis can be used to your advantage."
                         }, 
                         {
                          "name":"max_instruments",

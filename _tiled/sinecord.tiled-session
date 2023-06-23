@@ -69,38 +69,50 @@
         },
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission1/map.tmj": {
             "expandedObjectLayers": [
-                3,
-                5
+                5,
+                3
+            ],
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 152.75,
+                "y": 132.75
+            }
+        },
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission2/map.tmj": {
+            "expandedObjectLayers": [
+                5,
+                3
             ],
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 276.33333333333326,
-                "y": 154.33333333333334
-            }
-        },
-        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission2/map.tmj": {
-            "scale": 1,
-            "selectedLayer": 2,
-            "viewCenter": {
-                "x": 365.5,
-                "y": 108.5
+                "x": 467,
+                "y": 131
             }
         },
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission3/map.tmj": {
-            "scale": 0.75,
-            "selectedLayer": 2,
+            "expandedObjectLayers": [
+                5,
+                3
+            ],
+            "scale": 2,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 320.6666666666667,
-                "y": -159.33333333333326
+                "x": 269.75,
+                "y": 98.25
             }
         },
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission4/map.tmj": {
-            "scale": 1.1461,
+            "expandedObjectLayers": [
+                5,
+                3
+            ],
+            "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 262.19352587034297,
-                "y": 134.80499083849583
+                "x": 240.75,
+                "y": 88.75
             }
         },
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/leveledit.tsj": {
@@ -138,14 +150,15 @@
     "project": "sinecord.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission4/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission2/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission1/map.tmj",
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission4/map.tmj",
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission3/map.tmj",
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/leveledit.tsj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1/mission4/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1/mission3/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1/mission2/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1/mission1/map.tmj",
-        "/home/quasilyte/CODE/gj2023/assets/_data/raw/leveledit.tsj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1_level1.tmj",
         "leveledit.tsj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/levels/act1_level1.tmj"

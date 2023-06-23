@@ -9,6 +9,7 @@ const (
 	BrassInstrument
 	StringInstrument
 	OtherInstrument
+	AnyInstrument
 )
 
 //go:generate stringer -type=Shape -trimprefix=Shape
@@ -21,6 +22,7 @@ const (
 	ShapeHexagon
 	ShapeStar
 	ShapeCross
+	ShapeBonus
 )
 
 func InstrumentShape(kind InstrumentKind) Shape {
@@ -35,6 +37,8 @@ func InstrumentShape(kind InstrumentKind) Shape {
 		return ShapeHexagon
 	case DrumInstrument:
 		return ShapeCircle
+	case AnyInstrument:
+		return ShapeBonus
 	default:
 		return ShapeCross
 	}

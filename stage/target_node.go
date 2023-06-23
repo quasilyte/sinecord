@@ -56,11 +56,17 @@ func (n *targetNode) Update(delta float64) {
 
 func (n *targetNode) Draw(screen *ebiten.Image) {
 	shape := gamedata.InstrumentShape(n.instrument)
+	isOutline := n.outline
+	clr := n.color
+	if n.instrument == gamedata.AnyInstrument {
+		isOutline = true
+		clr.SetColor(styles.TargetColorBonus)
+	}
 	r := float32(n.r)
-	if n.outline {
-		n.board.canvas.drawShape(screen, shape, float32(n.pos.X), float32(n.pos.Y), r, 0, n.color)
+	if isOutline {
+		n.board.canvas.drawShape(screen, shape, float32(n.pos.X), float32(n.pos.Y), r, 0, clr)
 	} else {
-		n.board.canvas.drawFilledShape(screen, shape, float32(n.pos.X), float32(n.pos.Y), r, 0, n.color)
+		n.board.canvas.drawFilledShape(screen, shape, float32(n.pos.X), float32(n.pos.Y), r, 0, clr)
 	}
 }
 

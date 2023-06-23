@@ -23,6 +23,7 @@ type Board struct {
 	events   []noteActivation
 	runner   programRunner
 
+	targetsLeft    int
 	targets        []*targetNode
 	effects        []*waveNode
 	pendingEffects []*waveNode
@@ -78,6 +79,10 @@ func (b *Board) onVictory() {
 func (b *Board) isBonusAchieved() bool {
 	objectives := b.config.Level.Bonus
 
+	if objectives.AllTargets && len(b.targets) != 0 {
+		return false
+	}
+
 	numInstrumentsUsed := len(b.prog.Instruments)
 	if numInstrumentsUsed > objectives.MaxInstruments {
 		return false
@@ -115,7 +120,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 		}
 		b.targets = liveTargets
 	}
-	if !b.victory && len(b.targets) == 0 && b.config.Level != nil {
+	if !b.victory && b.targetsLeft == 0 && b.config.Level != nil {
 		b.onVictory()
 	}
 
@@ -147,7 +152,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 
 		effect.EventFinished.Connect(nil, func(r float64) {
 			for _, t := range b.targets {
-				canHit := t.outline || t.instrument == inst.Kind
+				canHit := t.outline || t.instrument == inst.Kind || t.instrument == gamedata.AnyInstrument
 				if !canHit {
 					continue
 				}
@@ -160,11 +165,19 @@ func (b *Board) ProgramTick(delta float64) bool {
 				clr1 := styles.TargetColor
 				clr2 := styles.TargetColor
 				clr3 := styles.TargetColor
-				if t.instrument != inst.Kind {
+				isBonus := t.instrument == gamedata.AnyInstrument
+				if t.outline && t.instrument != inst.Kind {
 					b.penalty = true
 					clr1 = styles.TargetMissColorRed
 					clr2 = styles.TargetMissColorGreen
 					clr3 = styles.TargetMissColorBlue
+				}
+				if isBonus {
+					clr1 = styles.TargetColorBonus
+					clr2 = styles.TargetColorBonus
+					clr3 = styles.TargetColorBonus
+				} else {
+					b.targetsLeft--
 				}
 				d := 2 * (float64(t.r) / b.ctx.Scaler.Factor)
 				shape := gamedata.InstrumentShape(t.instrument)
@@ -217,6 +230,9 @@ func (b *Board) deployTargets() {
 		n := newTargetNode(b, t)
 		b.canvas.AddGraphics(n)
 		b.targets = append(b.targets, n)
+		if t.Instrument != gamedata.AnyInstrument {
+			b.targetsLeft++
+		}
 	}
 }
 
@@ -240,4 +256,5 @@ func (b *Board) reset() {
 	b.victory = false
 	b.penalty = false
 	b.t = 0
+	b.targetsLeft = 0
 }

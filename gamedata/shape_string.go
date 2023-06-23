@@ -14,11 +14,12 @@ func _() {
 	_ = x[ShapeHexagon-3]
 	_ = x[ShapeStar-4]
 	_ = x[ShapeCross-5]
+	_ = x[ShapeBonus-6]
 }
 
-const _Shape_name = "CircleSquareTriangleHexagonStarCross"
+const _Shape_name = "CircleSquareTriangleHexagonStarCrossBonus"
 
-var _Shape_index = [...]uint8{0, 6, 12, 20, 27, 31, 36}
+var _Shape_index = [...]uint8{0, 6, 12, 20, 27, 31, 36, 41}
 
 func (i Shape) String() string {
 	if i < 0 || i >= Shape(len(_Shape_index)-1) {

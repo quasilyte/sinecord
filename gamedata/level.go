@@ -14,6 +14,7 @@ type LevelBonusObjectives struct {
 
 	ForbiddenFuncs []string
 
+	AllTargets   bool
 	AvoidPenalty bool
 }
 
@@ -70,7 +71,7 @@ func ParseLevel(tileset *tiled.Tileset, scaler *PlotScaler, jsonData []byte) (*L
 	}
 
 	instrumentMap := map[string]InstrumentKind{}
-	for kind := BassInstrument; kind <= OtherInstrument; kind++ {
+	for kind := BassInstrument; kind <= AnyInstrument; kind++ {
 		key := strings.ToLower(InstrumentShape(kind).String()) + "_target"
 		instrumentMap[key] = kind
 	}
@@ -84,6 +85,7 @@ func ParseLevel(tileset *tiled.Tileset, scaler *PlotScaler, jsonData []byte) (*L
 			result.MaxInstruments = o.GetIntProp("max_instruments", 2)
 			result.Description = o.GetStringProp("description", "")
 
+			result.Bonus.AllTargets = o.GetBoolProp("bonus_all_targets", false)
 			result.Bonus.AvoidPenalty = o.GetBoolProp("bonus_avoid_penalty", false)
 			result.Bonus.MaxInstruments = o.GetIntProp("bonus_max_instruments", 1)
 			for _, fn := range strings.Split(o.GetStringProp("bonus_forbidden_funcs", ""), ",") {

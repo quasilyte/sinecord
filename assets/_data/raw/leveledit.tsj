@@ -8,7 +8,7 @@
  "margin":0,
  "name":"leveledit",
  "spacing":0,
- "tilecount":11,
+ "tilecount":12,
  "tiledversion":"1.9.2",
  "tileheight":46,
  "tiles":[
@@ -90,6 +90,11 @@
          "imagewidth":46,
          "properties":[
                 {
+                 "name":"bonus_all_targets",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
                  "name":"bonus_avoid_penalty",
                  "type":"bool",
                  "value":false
@@ -119,6 +124,13 @@
                  "type":"string",
                  "value":""
                 }]
+        }, 
+        {
+         "class":"bonus_target",
+         "id":16,
+         "image":"..\/..\/..\/_tiled\/tiles\/bonus_target.png",
+         "imageheight":46,
+         "imagewidth":46
         }],
  "tilewidth":46,
  "type":"tileset",

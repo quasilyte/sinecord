@@ -130,30 +130,6 @@
                 {
                  "class":"",
                  "gid":9,
-                 "height":69,
-                 "id":55,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":69,
-                 "x":230,
-                 "y":138
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":69,
-                 "id":57,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":69,
-                 "x":391,
-                 "y":138
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
                  "height":23,
                  "id":58,
                  "name":"",
@@ -258,102 +234,6 @@
                  "width":23,
                  "x":667,
                  "y":115
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":23,
-                 "id":67,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":23,
-                 "x":690,
-                 "y":207
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":23,
-                 "id":68,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":23,
-                 "x":713,
-                 "y":184
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":23,
-                 "id":69,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":23,
-                 "x":736,
-                 "y":207
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":23,
-                 "id":70,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":23,
-                 "x":759,
-                 "y":184
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":23,
-                 "id":71,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":23,
-                 "x":782,
-                 "y":207
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":23,
-                 "id":72,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":23,
-                 "x":805,
-                 "y":184
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":23,
-                 "id":73,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":23,
-                 "x":828,
-                 "y":207
-                }, 
-                {
-                 "class":"",
-                 "gid":9,
-                 "height":23,
-                 "id":74,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":23,
-                 "x":851,
-                 "y":184
                 }, 
                 {
                  "class":"",
@@ -486,8 +366,7 @@
                  "width":46,
                  "x":713,
                  "y":138
-                },
-            
+                }, 
                 {
                  "class":"",
                  "gid":6,
@@ -535,6 +414,66 @@
                  "width":46,
                  "x":0,
                  "y":207
+                }, 
+                {
+                 "class":"",
+                 "gid":17,
+                 "height":46,
+                 "id":93,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":690,
+                 "y":207
+                }, 
+                {
+                 "class":"",
+                 "gid":17,
+                 "height":46,
+                 "id":94,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":736,
+                 "y":207
+                }, 
+                {
+                 "class":"",
+                 "gid":17,
+                 "height":46,
+                 "id":95,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":782,
+                 "y":207
+                }, 
+                {
+                 "class":"",
+                 "gid":17,
+                 "height":46,
+                 "id":101,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":230,
+                 "y":115
+                }, 
+                {
+                 "class":"",
+                 "gid":17,
+                 "height":46,
+                 "id":102,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":437,
+                 "y":115
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -907,9 +846,14 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"bonus_all_targets",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
                          "name":"bonus_forbidden_funcs",
                          "type":"string",
-                         "value":"tan,ceil,step"
+                         "value":""
                         }, 
                         {
                          "name":"bonus_max_instruments",
@@ -919,7 +863,7 @@
                         {
                          "name":"description",
                          "type":"string",
-                         "value":"Clear a level by triggering all of the key points on the stage.\n\nYou can do that by finding a function that approximates these points.\n\nHint: a higher period rate means a larger echo.\nAs long as a key point intersects with an echo, it counts as triggered."
+                         "value":"The gray targets are optional. You don't need to hit them to complete the level.\n\nThey can be marked by any kind of instrument."
                         }, 
                         {
                          "name":"max_instruments",
@@ -929,7 +873,7 @@
                         {
                          "name":"name",
                          "type":"string",
-                         "value":"level5"
+                         "value":"optional_targets"
                         }],
                  "rotation":0,
                  "visible":true,
@@ -954,7 +898,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":93,
+ "nextobjectid":103,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",

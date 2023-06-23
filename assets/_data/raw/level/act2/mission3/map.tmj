@@ -306,6 +306,78 @@
                  "width":46,
                  "x":552,
                  "y":46
+                }, 
+                {
+                 "class":"",
+                 "gid":15,
+                 "height":46,
+                 "id":170,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":598,
+                 "y":253
+                }, 
+                {
+                 "class":"",
+                 "gid":15,
+                 "height":46,
+                 "id":171,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":621,
+                 "y":276
+                }, 
+                {
+                 "class":"",
+                 "gid":15,
+                 "height":46,
+                 "id":172,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":644,
+                 "y":253
+                }, 
+                {
+                 "class":"",
+                 "gid":10,
+                 "height":46,
+                 "id":173,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":276,
+                 "y":46
+                }, 
+                {
+                 "class":"",
+                 "gid":10,
+                 "height":46,
+                 "id":174,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":299,
+                 "y":69
+                }, 
+                {
+                 "class":"",
+                 "gid":10,
+                 "height":46,
+                 "id":175,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":253,
+                 "y":69
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -695,7 +767,7 @@
                         {
                          "name":"description",
                          "type":"string",
-                         "value":"Some targets are very sensitive to the mismatching instruments. These targets are shown as an outline.\n\nWhen such target is triggered by anything expect it's preferred instrument kind, it will be considered to be a misplay."
+                         "value":"A higher instrument period rate means a larger echo.\n\nAs long as a target intersects with an echo, it counts as triggered.\n\nSometimes it's beneficial to mark the targets from afar."
                         }, 
                         {
                          "name":"max_instruments",
@@ -730,7 +802,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":167,
+ "nextobjectid":176,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",

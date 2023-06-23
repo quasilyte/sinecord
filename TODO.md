@@ -28,16 +28,13 @@ levels:
 2. introduces multi-instrument tracks, forbids functions
 3. ???
 4. different target sizes
-5. ???
+5. optional targets
 6. outline elements & misplays (penalty targets)
-7. ???
-8. ???
+7. period echo range trick
+8. after/until func combo
 
 bonus conditions:
 + max number of instruments
 + don't use some function
-- unique instruments (any kind)
-- unique kinds
-- minimal/maximal periods
 - optional targets
 + penalty targets

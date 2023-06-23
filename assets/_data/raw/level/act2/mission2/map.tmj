@@ -100,7 +100,7 @@
                  "rotation":0,
                  "visible":true,
                  "width":46,
-                 "x":437,
+                 "x":506,
                  "y":92
                 }, 
                 {
@@ -112,7 +112,7 @@
                  "rotation":0,
                  "visible":true,
                  "width":46,
-                 "x":437,
+                 "x":506,
                  "y":230
                 }, 
                 {
@@ -138,6 +138,54 @@
                  "width":46,
                  "x":138,
                  "y":184
+                }, 
+                {
+                 "class":"",
+                 "gid":17,
+                 "height":46,
+                 "id":116,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":414,
+                 "y":161
+                }, 
+                {
+                 "class":"",
+                 "gid":17,
+                 "height":46,
+                 "id":117,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":460,
+                 "y":161
+                }, 
+                {
+                 "class":"",
+                 "gid":7,
+                 "height":46,
+                 "id":118,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":552,
+                 "y":92
+                }, 
+                {
+                 "class":"",
+                 "gid":8,
+                 "height":46,
+                 "id":119,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":46,
+                 "x":552,
+                 "y":230
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -510,6 +558,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"bonus_all_targets",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
                          "name":"bonus_avoid_penalty",
                          "type":"bool",
                          "value":true
@@ -517,7 +570,7 @@
                         {
                          "name":"bonus_forbidden_funcs",
                          "type":"string",
-                         "value":"tan,ceil,step"
+                         "value":"tan,ceil,floor"
                         }, 
                         {
                          "name":"bonus_max_instruments",
@@ -562,7 +615,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":116,
+ "nextobjectid":120,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",
