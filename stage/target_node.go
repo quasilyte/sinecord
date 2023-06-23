@@ -17,6 +17,7 @@ type targetNode struct {
 	r          float32
 	color      ge.ColorScale
 	hp         int
+	prevHit    int
 }
 
 func newTargetNode(b *Board, t gamedata.Target) *targetNode {
@@ -29,7 +30,7 @@ func newTargetNode(b *Board, t gamedata.Target) *targetNode {
 		size = 30
 	case gamedata.BigTarget:
 		size = 60
-		hp = 3
+		hp = 2
 	default:
 		panic("unexpected target size")
 	}
@@ -44,6 +45,7 @@ func newTargetNode(b *Board, t gamedata.Target) *targetNode {
 		color:      colorScale,
 		hp:         hp,
 		outline:    t.Outline,
+		prevHit:    -1,
 	}
 }
 
@@ -70,8 +72,12 @@ func (n *targetNode) Draw(screen *ebiten.Image) {
 	}
 }
 
-func (n *targetNode) OnDamage() bool {
+func (n *targetNode) OnDamage(instrumentID int) bool {
+	if n.prevHit == instrumentID {
+		return false
+	}
 	n.hp--
+	n.prevHit = instrumentID
 	destroyed := n.hp <= 0
 	if destroyed {
 		n.Dispose()

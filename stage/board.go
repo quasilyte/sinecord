@@ -159,7 +159,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 				if t.pos.DistanceTo(pos) > 0.6*(float64(t.r)+r) {
 					continue
 				}
-				if !t.OnDamage() {
+				if !t.OnDamage(inst.ID) {
 					continue
 				}
 				clr1 := styles.TargetColor

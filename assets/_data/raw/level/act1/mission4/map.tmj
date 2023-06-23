@@ -630,7 +630,7 @@
                         {
                          "name":"description",
                          "type":"string",
-                         "value":"The targets can vary in their size.\n\nThe bigger targets are easier to trigger but require three hits to be marked.\n\nThe smaller targets will require more precision to get them."
+                         "value":"The targets can vary in their size.\n\nThe bigger targets are easier to trigger but require a hit from two instruments.\n\nThe smaller targets will require more precision to get them."
                         }, 
                         {
                          "name":"max_instruments",
