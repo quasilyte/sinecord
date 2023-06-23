@@ -95,6 +95,14 @@
                 "y": -159.33333333333326
             }
         },
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission4/map.tmj": {
+            "scale": 1.1461,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 262.19352587034297,
+                "y": 134.80499083849583
+            }
+        },
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/leveledit.tsj": {
             "scaleInDock": 1
         },
@@ -130,6 +138,7 @@
     "project": "sinecord.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission4/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission2/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission1/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1/mission4/map.tmj",

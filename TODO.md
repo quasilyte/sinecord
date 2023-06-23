@@ -25,12 +25,13 @@ bugs:
 
 levels:
 1. explains that targets need to be marked/triggered
-2. introduces multi-instrument tracks
+2. introduces multi-instrument tracks, forbids functions
 3. ???
 4. different target sizes
 5. ???
 6. outline elements & misplays (penalty targets)
 7. ???
+8. ???
 
 bonus conditions:
 + max number of instruments
