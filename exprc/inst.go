@@ -31,6 +31,7 @@ const (
 	opClampFunc
 	opPowFunc
 	opTanFunc
+	opTanhFunc
 	opAtanFunc
 	opAtan2Func
 	opAsinFunc

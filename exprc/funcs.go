@@ -22,6 +22,7 @@ var builtinFuncMap = map[string]builtinFunction{
 	"clamp":       {numArgs: 3, op: opClampFunc},
 	"pow":         {numArgs: 2, op: opPowFunc},
 	"tan":         {numArgs: 1, op: opTanFunc},
+	"tanh":        {numArgs: 1, op: opTanhFunc},
 	"atan":        {numArgs: 1, op: opAtanFunc},
 	"atan2":       {numArgs: 2, op: opAtan2Func},
 	"asin":        {numArgs: 1, op: opAsinFunc},
