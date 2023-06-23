@@ -8,6 +8,7 @@ instruments:
 
 ux:
 - show formula compile errors
+- esc should go back
 
 missions:
 - pre-mission screen
