@@ -23,6 +23,7 @@ type Board struct {
 	events   []noteActivation
 	runner   programRunner
 
+	optionalHits   int
 	targetsLeft    int
 	targets        []*targetNode
 	effects        []*waveNode
@@ -78,6 +79,10 @@ func (b *Board) onVictory() {
 
 func (b *Board) isBonusAchieved() bool {
 	objectives := b.config.Level.Bonus
+
+	if objectives.AvoidOptional && b.optionalHits > 0 {
+		return false
+	}
 
 	if objectives.AllTargets && len(b.targets) != 0 {
 		return false
@@ -176,6 +181,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 					clr1 = styles.TargetColorBonus
 					clr2 = styles.TargetColorBonus
 					clr3 = styles.TargetColorBonus
+					b.optionalHits++
 				} else {
 					b.targetsLeft--
 				}
@@ -256,5 +262,6 @@ func (b *Board) reset() {
 	b.victory = false
 	b.penalty = false
 	b.t = 0
+	b.optionalHits = 0
 	b.targetsLeft = 0
 }

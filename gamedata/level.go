@@ -14,8 +14,9 @@ type LevelBonusObjectives struct {
 
 	ForbiddenFuncs []string
 
-	AllTargets   bool
-	AvoidPenalty bool
+	AllTargets    bool
+	AvoidOptional bool
+	AvoidPenalty  bool
 }
 
 type LevelData struct {
@@ -86,6 +87,7 @@ func ParseLevel(tileset *tiled.Tileset, scaler *PlotScaler, jsonData []byte) (*L
 			result.Description = o.GetStringProp("description", "")
 
 			result.Bonus.AllTargets = o.GetBoolProp("bonus_all_targets", false)
+			result.Bonus.AvoidOptional = o.GetBoolProp("bonus_avoid_optional", false)
 			result.Bonus.AvoidPenalty = o.GetBoolProp("bonus_avoid_penalty", false)
 			result.Bonus.MaxInstruments = o.GetIntProp("bonus_max_instruments", 1)
 			for _, fn := range strings.Split(o.GetStringProp("bonus_forbidden_funcs", ""), ",") {
