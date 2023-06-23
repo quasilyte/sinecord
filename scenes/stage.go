@@ -170,9 +170,28 @@ func (c *StageController) Init(scene *ge.Scene) {
 		)))
 	outerGrid.AddChild(instrumentsGrid)
 
-	patchNames := make([]string, len(synthdb.TimGM6mb.Instruments))
-	for i, inst := range synthdb.TimGM6mb.Instruments {
-		patchNames[i] = inst.Name
+	var patchNames []string
+	patchIndexToInstument := map[int]int{}
+	if c.config.Mode == gamedata.SandboxMode {
+		// All instruments are available.
+		patchNames = make([]string, len(synthdb.TimGM6mb.Instruments))
+		for i, inst := range synthdb.TimGM6mb.Instruments {
+			patchNames[i] = inst.Name
+			patchIndexToInstument[i] = i
+		}
+	} else {
+		usedInstruments := map[gamedata.InstrumentKind]struct{}{}
+		for _, t := range c.config.Targets {
+			usedInstruments[t.Instrument] = struct{}{}
+		}
+		for i, inst := range synthdb.TimGM6mb.Instruments {
+			if _, ok := usedInstruments[inst.Kind]; !ok {
+				continue
+			}
+			index := len(patchNames)
+			patchNames = append(patchNames, inst.Name)
+			patchIndexToInstument[index] = i
+		}
 	}
 
 	volumeLevels := []float64{
@@ -277,7 +296,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 				return inst.Name == loadedInstrument.InstrumentName
 			})
 		}
-		c.selectInstrument(instrumentID, patchIndex)
+		c.selectInstrument(instrumentID, patchIndexToInstument[patchIndex])
 		instrumentsGrid.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 			Resources:  c.state.UIResources,
 			Input:      c.state.Input,
@@ -286,7 +305,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			MinWidth:   320,
 			Tooltip:    eui.NewTooltip(c.state.UIResources, "instrument style"),
 			OnPressed: func() {
-				c.selectInstrument(instrumentID, patchIndex)
+				c.selectInstrument(instrumentID, patchIndexToInstument[patchIndex])
 			},
 		}))
 
