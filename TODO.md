@@ -5,7 +5,6 @@ ux:
 bugs:
 - do not emit effects for out-of-screen notes
 - sometimes "encoding" status doesn't go away during play
-- check if misplays are working (act 2 mission 2)
 
 levels:
 1. explains that targets need to be marked/triggered
