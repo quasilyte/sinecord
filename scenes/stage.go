@@ -608,6 +608,7 @@ func (c *StageController) onPlayPressed() {
 			}
 			pcm := generatePCM(samples.Left, samples.Right)
 			c.player = c.scene.Audio().GetContext().NewPlayerFromBytes(pcm)
+			c.player.SetVolume(c.state.EffectiveVolume)
 			c.samples = samples
 			c.prog = prog
 		}

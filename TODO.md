@@ -1,3 +1,6 @@
+todo:
+- mission unlocking, one by one
+
 ux:
 - show formula compile errors
 

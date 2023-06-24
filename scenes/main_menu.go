@@ -26,6 +26,8 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	bigFont := scene.Context().Loader.LoadFont(assets.FontArcadeBig).Face
 	smallFont := scene.Context().Loader.LoadFont(assets.FontArcadeSmall).Face
 
+	c.state.EffectiveVolume = 0.1 * float64(c.state.Persistent.VolumeLevel)
+
 	d := scene.Dict()
 
 	root := widget.NewContainer(
@@ -51,7 +53,9 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 		scene.Context().ChangeScene(NewManualController(c.state, NewMainMenuController(c.state)))
 	}))
 
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.settings"), func() {}))
+	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.settings"), func() {
+		scene.Context().ChangeScene(NewSettingsController(c.state))
+	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.credits"), func() {
 		scene.Context().ChangeScene(NewCreditsController(c.state))

@@ -25,10 +25,14 @@ type State struct {
 	Input *input.Handler
 
 	Persistent PersistentData
+
+	EffectiveVolume float64
 }
 
 type PersistentData struct {
 	LevelsCompleted []LevelCompletionInfo `json:"levels_completed"`
+
+	VolumeLevel int `json:"volume_level"`
 }
 
 type LevelCompletionInfo struct {

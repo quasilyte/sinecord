@@ -35,7 +35,8 @@ func main() {
 		controls.ActionTogglePlay: {input.KeySpace},
 	}
 	state := &session.State{
-		Input: ctx.Input.NewHandler(0, keymap),
+		Persistent: getDefaultData(),
+		Input:      ctx.Input.NewHandler(0, keymap),
 		PlotScaler: &gamedata.PlotScaler{
 			Factor: 46,
 			Offset: gmath.Vec{
@@ -103,6 +104,8 @@ func main() {
 }
 
 func getDefaultData() session.PersistentData {
-	data := session.PersistentData{}
+	data := session.PersistentData{
+		VolumeLevel: 5,
+	}
 	return data
 }
