@@ -7,6 +7,7 @@ bugs:
 - sometimes "encoding" status doesn't go away during play
 - check if misplays are working (act 2 mission 2)
 - act 2 mission 1 should not have the last circle (it's easy to skip it without completion)
+- fix missions after the changed program_runner mechanics
 
 levels:
 1. explains that targets need to be marked/triggered
