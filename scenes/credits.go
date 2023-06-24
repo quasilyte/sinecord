@@ -61,6 +61,7 @@ Assets:
 * TimGM6mb SoundFont by Tim Brechbill
 * Arcade font by Yuji Adachi
 * White Rabbit font by Matthew Welch
+* A transparent background neon grid by Jimmy (glitchmaster7)
 
 Thank you for playing my game.`
 	panel.AddChild(eui.NewLabel(creditsText, monoFont, widget.TextOpts.MaxWidth(1024)))
