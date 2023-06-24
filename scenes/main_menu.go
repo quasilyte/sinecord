@@ -26,10 +26,6 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	bigFont := scene.Context().Loader.LoadFont(assets.FontArcadeBig).Face
 	smallFont := scene.Context().Loader.LoadFont(assets.FontArcadeSmall).Face
 
-	bg := scene.NewSprite(assets.ImageMenuBackground)
-	bg.Centered = false
-	scene.AddGraphics(bg)
-
 	d := scene.Dict()
 
 	root := widget.NewContainer(
@@ -38,7 +34,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 		})),
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()))
 
-	rowContainer := eui.NewRowLayoutContainerWithMinWidth(400, 10, nil)
+	rowContainer := eui.NewRowLayoutContainerWithMinWidth(640, 10, nil)
 	root.AddChild(rowContainer)
 
 	rowContainer.AddChild(eui.NewCenteredLabel("sinecord", bigFont))
@@ -50,7 +46,9 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.profile"), func() {}))
 
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.manual"), func() {}))
+	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.manual"), func() {
+		scene.Context().ChangeScene(NewManualController(c.state))
+	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.settings"), func() {}))
 

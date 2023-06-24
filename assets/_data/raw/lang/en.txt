@@ -5,6 +5,10 @@
 ##menu.credits : credits
 ##menu.exit : exit
 
+##menu.manual.functions : function reference
+##menu.manual.howto : how to play
+##menu.manual.key_bindings : key bindings
+
 ##menu.save_track : save track
 ##menu.load_track : load track
 
@@ -27,9 +31,38 @@ compose the math music without limitations!
 
 ##stage.period.tooltip
 Instrument's play period (in seconds).
-X variable is not available.
 The value is clamped in [0.1, 2*pi] range.
 
 ##menu.mission.title : mission
 ##menu.mission.start : start
 ##menu.mission.show_solution : solution
+
+##menu.manual.howto.text
+In this game, you compose music using math.
+
+Your arsenal consists of several instruments. Every instrument has these settings:
+
+* A shaping function f(x),
+* a note-playing period,
+* an instrument style,
+* and its volume level.
+
+The shaping function defines a note pitch at a given x-value. A low computed y-value produces a low-pitch note.
+
+The note is played at specified periodic intervals, like every half second.
+
+Press "play" button to run the track.
+
+Read the mission descriptions to learn the new game mechanics as they appear in the game.
+
+##menu.manual.key_bindings.text
+During the game:
+
+* ESC - go back
+* SPACE - toggle between play/stop
+
+In the menu:
+
+* ESC - go back
+* TAB - toggle button focus
+* ENTER - activate focused button

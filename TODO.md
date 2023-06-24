@@ -1,5 +1,9 @@
 ux:
 - show formula compile errors
+- add level hints to the missions
+
+todo:
+- access to func reference from the game
 
 bugs:
 - do not emit effects for out-of-screen notes
