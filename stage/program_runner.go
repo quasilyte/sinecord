@@ -1,6 +1,8 @@
 package stage
 
 import (
+	"sort"
+
 	"github.com/quasilyte/sinecord/exprc"
 	"github.com/quasilyte/sinecord/gamedata"
 )
@@ -19,7 +21,6 @@ type SynthProgramInstrument struct {
 }
 
 type programRunner struct {
-	delays []float64
 	events []noteActivation
 }
 
@@ -30,35 +31,28 @@ type noteActivation struct {
 }
 
 func (r *programRunner) RunProgram(prog SynthProgram) []noteActivation {
-	r.delays = r.delays[:0]
 	r.events = r.events[:0]
 
-	for _, inst := range prog.Instruments {
-		r.delays = append(r.delays, inst.Period)
-	}
-
-	const stepsPerSecond = 420
-	dt := 1.0 / stepsPerSecond
-	t := 0.0
-
-	for t < prog.Length {
-		t += dt
-
-		for i, inst := range prog.Instruments {
-			delay := r.delays[i]
-			if delay > dt {
-				r.delays[i] -= dt
-				continue
-			}
-			extraTime := dt - delay
-			realTime := t + extraTime
-			r.delays[i] = inst.Period - extraTime
+	for i, inst := range prog.Instruments {
+		for t := inst.Period; t < prog.Length; t += inst.Period {
 			r.events = append(r.events, noteActivation{
 				index: i,
 				id:    inst.ID,
-				t:     realTime,
+				t:     t,
 			})
 		}
+	}
+
+	// This whole thing can be done without an extra sorting
+	// if we would construct the events slice in already sorted form.
+	// But since the number of events is usually relatively small
+	// and it's a jam game, I don't want to bother optimizing this.
+	// The current solution at least provides the precise timings
+	// using a constant t step for every instrument.
+	if len(prog.Instruments) > 1 {
+		sort.SliceStable(r.events, func(i, j int) bool {
+			return r.events[i].t < r.events[j].t
+		})
 	}
 
 	return r.events
