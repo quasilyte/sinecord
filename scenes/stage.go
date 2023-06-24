@@ -273,7 +273,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			formulaInput.InputText = loadedInstrument.Function
 			c.setInstrumentFunction(instrumentID, loadedInstrument.Function)
 		} else {
-			if c.config.Mode == gamedata.MissionMode {
+			if c.config.Mode == gamedata.MissionMode && c.track.IsEmpty() {
 				switch instrumentID {
 				case 0:
 					formulaInput.InputText = "sin(x) - 0.5"
