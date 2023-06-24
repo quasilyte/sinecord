@@ -7,6 +7,8 @@ import (
 	"go/token"
 	"math"
 	"strconv"
+
+	"github.com/quasilyte/gmath"
 )
 
 func Compile(src string) (*FuncRunner, error) {
@@ -142,6 +144,8 @@ func (c *compiler) compileIdent(e *ast.Ident) {
 		c.emit1(opFloatConst, c.internConst(math.Phi))
 	case "e":
 		c.emit1(opFloatConst, c.internConst(math.E))
+	case "eps":
+		c.emit1(opFloatConst, c.internConst(gmath.Epsilon))
 	default:
 		c.throwf("unknown variable %q", e.Name)
 	}
