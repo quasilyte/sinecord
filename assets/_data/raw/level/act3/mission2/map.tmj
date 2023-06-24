@@ -789,7 +789,7 @@
                         {
                          "name":"description",
                          "type":"string",
-                         "value":"This time you need to avoid triggering any of the optional targets if you want to get a bonus."
+                         "value":"The discontinuity points of the function can be handy to avoid triggering the unwanted targets.\n\nOne of the examples of the discontinuous function is tan(x)."
                         }, 
                         {
                          "name":"max_instruments",

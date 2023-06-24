@@ -72,25 +72,25 @@
         },
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission1/map.tmj": {
             "expandedObjectLayers": [
-                5,
-                3
+                3,
+                5
             ],
-            "scale": 2,
-            "selectedLayer": 2,
+            "scale": 1,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 152.75,
-                "y": 132.75
+                "x": 534.5,
+                "y": 28.5
             }
         },
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission2/map.tmj": {
             "expandedObjectLayers": [
-                5,
-                3
+                3,
+                5
             ],
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 467,
+                "x": 253.66666666666669,
                 "y": 131
             }
         },
@@ -116,6 +116,22 @@
             "viewCenter": {
                 "x": 240.75,
                 "y": 88.75
+            }
+        },
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act3/mission1/map.tmj": {
+            "scale": 1.0202173913043477,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 460.1960366503303,
+                "y": 138.69593010867248
+            }
+        },
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act3/mission2/map.tmj": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 243.5,
+                "y": 119.5
             }
         },
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/leveledit.tsj": {
@@ -153,18 +169,18 @@
     "project": "sinecord.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act3/mission2/map.tmj",
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act3/mission1/map.tmj",
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission2/map.tmj",
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission1/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1/mission3/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1/mission1/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1/mission4/map.tmj",
-        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission2/map.tmj",
-        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission1/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission4/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act2/mission3/map.tmj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/leveledit.tsj",
         "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1/mission2/map.tmj",
-        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1_level1.tmj",
-        "leveledit.tsj",
-        "/home/quasilyte/CODE/gj2023/assets/_data/raw/levels/act1_level1.tmj"
+        "/home/quasilyte/CODE/gj2023/assets/_data/raw/level/act1_level1.tmj"
     ],
     "tileset.lastUsedFormat": "json",
     "tileset.type": 1

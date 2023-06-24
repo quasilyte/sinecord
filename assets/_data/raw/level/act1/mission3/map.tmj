@@ -642,7 +642,7 @@
                         {
                          "name":"description",
                          "type":"string",
-                         "value":"When computed y-axis value is out of bounds, the instrument sound will be stoped.\n\nThis can be used to your advantage."
+                         "value":"By completing a level with bonus conditions, you unlock a solution from the developers.\n\nIt's usually more complicated than a more straightforward approach, but that's intended. These solutions try to sound nice and show off some of the functions you can use further in your quest."
                         }, 
                         {
                          "name":"max_instruments",
