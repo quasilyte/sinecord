@@ -22,6 +22,7 @@ func registerImageResources(ctx *ge.Context) {
 
 		ImagePlotBackground: {Path: "image/plot_background.png"},
 		ImagePlayBackground: {Path: "image/play_background.png"},
+		ImageMenuBackground: {Path: "image/menu_background.png"},
 		ImageSignal:         {Path: "image/signal.png"},
 	}
 
@@ -47,5 +48,6 @@ const (
 
 	ImagePlotBackground
 	ImagePlayBackground
+	ImageMenuBackground
 	ImageSignal
 )

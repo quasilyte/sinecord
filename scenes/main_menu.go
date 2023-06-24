@@ -26,6 +26,10 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	bigFont := scene.Context().Loader.LoadFont(assets.FontArcadeBig).Face
 	smallFont := scene.Context().Loader.LoadFont(assets.FontArcadeSmall).Face
 
+	bg := scene.NewSprite(assets.ImageMenuBackground)
+	bg.Centered = false
+	scene.AddGraphics(bg)
+
 	d := scene.Dict()
 
 	root := widget.NewContainer(
