@@ -5,8 +5,7 @@ ux:
 bugs:
 - do not emit effects for out-of-screen notes
 - sometimes "encoding" status doesn't go away during play
-- act 2 mission 1 should not have the last circle (it's easy to skip it without completion)
-- fix missions after the changed program_runner mechanics
+- check if misplays are working (act 2 mission 2)
 
 levels:
 1. explains that targets need to be marked/triggered
@@ -17,6 +16,7 @@ levels:
 6. outline elements & misplays (penalty targets)
 7. period echo range trick
 8. after/until func combo
+9. avoid optional targets
 
 tanh(2*sin(x)) / tanh(2)
 pow(cos(x), 8) - pow(1-sin(x), 8)
