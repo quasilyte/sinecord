@@ -47,6 +47,7 @@ func DiscoverTracks(ctx *ge.Context) []Track {
 			fmt.Printf("load %q error: %v", key, err)
 			continue
 		}
+		t.Slot = i + 1
 	}
 
 	return tracks
