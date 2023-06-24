@@ -332,8 +332,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			},
 		}))
 
-		instrumentEnabled := (instrumentID == 0 && loadedInstrument == nil) ||
-			(loadedInstrument != nil && loadedInstrument.Enabled)
+		instrumentEnabled := loadedInstrument == nil || loadedInstrument.Enabled
 		c.synth.SetInstrumentEnabled(instrumentID, instrumentEnabled)
 		instrumentsGrid.AddChild(eui.NewBoolSelectButton(eui.BoolSelectButtonConfig{
 			Resources:  c.state.UIResources,

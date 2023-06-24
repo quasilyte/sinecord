@@ -30,8 +30,7 @@ type InstrumentSettings struct {
 	PeriodFunction string  `json:"period_function"`
 	Volume         float64 `json:"volume"`
 	InstrumentName string  `json:"instrument_name"`
-
-	Enabled bool
+	Enabled        bool    `json:"enabled"`
 }
 
 func DiscoverTracks(ctx *ge.Context) []Track {
@@ -47,9 +46,6 @@ func DiscoverTracks(ctx *ge.Context) []Track {
 		if err := ctx.LoadGameData(key, &t); err != nil {
 			fmt.Printf("load %q error: %v", key, err)
 			continue
-		}
-		for i := range t.Instruments {
-			t.Instruments[i].Enabled = true
 		}
 	}
 
