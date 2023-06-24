@@ -49,7 +49,9 @@ func (c *ManualController) Init(scene *ge.Scene) {
 		scene.Context().ChangeScene(NewHowtoController(c.state, c.backController))
 	}))
 
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.manual.functions"), func() {}))
+	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.manual.functions"), func() {
+		scene.Context().ChangeScene(NewFuncListController(c.state, c.backController))
+	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.manual.key_bindings"), func() {
 		scene.Context().ChangeScene(NewKeyBindingsController(c.state, c.backController))

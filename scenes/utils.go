@@ -4,13 +4,36 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/sinecord/assets"
 	"github.com/quasilyte/sinecord/eui"
+	"github.com/quasilyte/sinecord/exprc"
 )
+
+type exprcFunc struct {
+	Name string
+	Args []string
+	Doc  string
+}
+
+func sortedFuncList() []exprcFunc {
+	funcList := make([]exprcFunc, 0, len(exprc.BuiltinFuncMap))
+	for funcName, funcInfo := range exprc.BuiltinFuncMap {
+		funcList = append(funcList, exprcFunc{
+			Name: funcName,
+			Args: funcInfo.Args,
+			Doc:  funcInfo.Doc,
+		})
+	}
+	sort.SliceStable(funcList, func(i, j int) bool {
+		return funcList[i].Name < funcList[j].Name
+	})
+	return funcList
+}
 
 func initUI(scene *ge.Scene, root *widget.Container) {
 	bg := scene.NewSprite(assets.ImageMenuBackground)

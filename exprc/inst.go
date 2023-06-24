@@ -33,7 +33,6 @@ const (
 	opTanFunc
 	opTanhFunc
 	opAtanFunc
-	opAtan2Func
 	opAsinFunc
 	opAcosFunc
 	opLogFunc

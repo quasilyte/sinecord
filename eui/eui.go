@@ -24,6 +24,7 @@ type Resources struct {
 	textInput    *textInputResource
 	panel        *panelResource
 	tooltip      *tooltipResources
+	link         *linkResource
 }
 
 type tooltipResources struct {
@@ -39,6 +40,13 @@ type buttonResource struct {
 	TextColors    *widget.ButtonTextColor
 	AltTextColors *widget.ButtonTextColor
 	FontFace      font.Face
+}
+
+type linkResource struct {
+	Image      *widget.ButtonImage
+	Padding    widget.Insets
+	FontFace   font.Face
+	TextColors *widget.ButtonTextColor
 }
 
 type textInputResource struct {
@@ -59,6 +67,26 @@ func PrepareResources(loader *resource.Loader) *Resources {
 	smallFont := loader.LoadFont(assets.FontArcadeSmall).Face
 	mediumFont := loader.LoadFont(assets.FontArcadeNormal).Face
 	monoMediumFont := loader.LoadFont(assets.FontMonospaceNormal).Face
+
+	{
+		result.link = &linkResource{
+			Image: &widget.ButtonImage{
+				Idle:     nineSliceImage(loader.LoadImage(assets.ImageLinkDummyTexture).Data, 1, 0),
+				Hover:    nineSliceImage(loader.LoadImage(assets.ImageLinkDummyTexture).Data, 1, 0),
+				Pressed:  nineSliceImage(loader.LoadImage(assets.ImageLinkDummyTexture).Data, 1, 0),
+				Disabled: nineSliceImage(loader.LoadImage(assets.ImageLinkDummyTexture).Data, 1, 0),
+			},
+			FontFace: monoMediumFont,
+			Padding: widget.Insets{
+				Left:  0,
+				Right: 0,
+			},
+			TextColors: &widget.ButtonTextColor{
+				Idle:     styles.CaretColor,
+				Disabled: styles.DisabledTextColor,
+			},
+		}
+	}
 
 	{
 		disabled := nineSliceImage(loader.LoadImage(assets.ImageUIButtonDisabled).Data, 12, 0)
@@ -251,6 +279,24 @@ func NewButtonWithConfig(res *Resources, config ButtonConfig) *widget.Button {
 			widget.ToolTipOpts.Delay(time.Second),
 		)
 		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.ToolTip(tt)))
+	}
+	return widget.NewButton(options...)
+}
+
+func NewTextButton(res *Resources, text string, onclick func()) *widget.Button {
+	ff := res.link.FontFace
+	options := []widget.ButtonOpt{
+		widget.ButtonOpts.Image(res.link.Image),
+		widget.ButtonOpts.ClickedHandler(func(args *widget.ButtonClickedEventArgs) {
+			if onclick != nil {
+				onclick()
+			}
+		}),
+		widget.ButtonOpts.Text(text, ff, res.link.TextColors),
+		widget.ButtonOpts.TextPadding(res.link.Padding),
+		widget.ButtonOpts.WidgetOpts(
+			widget.WidgetOpts.CursorHovered("hand"),
+		),
 	}
 	return widget.NewButton(options...)
 }

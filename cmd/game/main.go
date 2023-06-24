@@ -6,6 +6,7 @@ import (
 	"sort"
 	"time"
 
+	ebiteninput "github.com/ebitenui/ebitenui/input"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/gmath"
@@ -92,6 +93,9 @@ func main() {
 		}
 		state.LevelsByAct = levelsByAct
 	}
+
+	ebiteninput.SetCursorImage(ebiteninput.CURSOR_DEFAULT, ctx.Loader.LoadImage(assets.ImagePointerNormal).Data)
+	ebiteninput.SetCursorImage("hand", ctx.Loader.LoadImage(assets.ImagePointerHand).Data)
 
 	if err := ge.RunGame(ctx, scenes.NewMainMenuController(state)); err != nil {
 		panic(err)

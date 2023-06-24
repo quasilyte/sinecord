@@ -67,8 +67,6 @@ func (r *FuncRunner) Run(x float64) float64 {
 			r.push(math.Tanh(r.pop()))
 		case opAtanFunc:
 			r.push(math.Atan(r.pop()))
-		case opAtan2Func:
-			r.push(math.Atan2(r.pop2()))
 		case opAsinFunc:
 			r.push(math.Asin(r.pop()))
 		case opAcosFunc:

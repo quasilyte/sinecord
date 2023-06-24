@@ -38,7 +38,7 @@ func (c *MissionsController) Init(scene *ge.Scene) {
 		})),
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()))
 
-	rowContainer := eui.NewRowLayoutContainerWithMinWidth(400, 10, nil)
+	rowContainer := eui.NewRowLayoutContainerWithMinWidth(640, 10, nil)
 	root.AddChild(rowContainer)
 
 	title := d.Get("menu.play.missions")

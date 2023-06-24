@@ -19,6 +19,9 @@ func registerImageResources(ctx *ge.Context) {
 		ImageUITextInputIdle:       {Path: "image/ebitenui/text-input-idle.png"},
 		ImageUIPanelIdle:           {Path: "image/ebitenui/panel-idle.png"},
 		ImageUITooltip:             {Path: "image/ebitenui/tooltip.png"},
+		ImageLinkDummyTexture:      {Path: "image/ebitenui/link.png"},
+		ImagePointerNormal:         {Path: "image/ebitenui/pointer.png"},
+		ImagePointerHand:           {Path: "image/ebitenui/pointer_hand.png"},
 
 		ImagePlotBackground: {Path: "image/plot_background.png"},
 		ImagePlayBackground: {Path: "image/play_background.png"},
@@ -45,6 +48,9 @@ const (
 	ImageUITextInputIdle
 	ImageUIPanelIdle
 	ImageUITooltip
+	ImageLinkDummyTexture
+	ImagePointerNormal
+	ImagePointerHand
 
 	ImagePlotBackground
 	ImagePlayBackground

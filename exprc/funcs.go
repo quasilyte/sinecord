@@ -6,39 +6,39 @@ import (
 	"github.com/quasilyte/gmath"
 )
 
-type builtinFunction struct {
-	numArgs int
-	op      operation
+type BuiltinFunction struct {
+	Args []string
+	Doc  string
+	op   operation
 }
 
-var builtinFuncMap = map[string]builtinFunction{
-	"abs":         {numArgs: 1, op: opAbsFunc},
-	"sin":         {numArgs: 1, op: opSinFunc},
-	"cos":         {numArgs: 1, op: opCosFunc},
-	"step":        {numArgs: 2, op: opStepFunc},
-	"smoothstep":  {numArgs: 3, op: opSmootstepFunc},
-	"min":         {numArgs: 2, op: opMinFunc},
-	"max":         {numArgs: 2, op: opMaxFunc},
-	"clamp":       {numArgs: 3, op: opClampFunc},
-	"pow":         {numArgs: 2, op: opPowFunc},
-	"tan":         {numArgs: 1, op: opTanFunc},
-	"tanh":        {numArgs: 1, op: opTanhFunc},
-	"atan":        {numArgs: 1, op: opAtanFunc},
-	"atan2":       {numArgs: 2, op: opAtan2Func},
-	"asin":        {numArgs: 1, op: opAsinFunc},
-	"acos":        {numArgs: 1, op: opAcosFunc},
-	"log":         {numArgs: 1, op: opLogFunc},
-	"log2":        {numArgs: 1, op: opLog2Func},
-	"sqrt":        {numArgs: 1, op: opSqrtFunc},
-	"inversesqrt": {numArgs: 1, op: opInversesqrtFunc},
-	"sign":        {numArgs: 1, op: opSignFunc},
-	"floor":       {numArgs: 1, op: opFloorFunc},
-	"ceil":        {numArgs: 1, op: opCeilFunc},
-	"fract":       {numArgs: 1, op: opFractFunc},
-	"mod":         {numArgs: 2, op: opModFunc},
-	"gamma":       {numArgs: 1, op: opGammaFunc},
-	"until":       {numArgs: 2, op: opUntilFunc},
-	"after":       {numArgs: 2, op: opAfterFunc},
+var BuiltinFuncMap = map[string]BuiltinFunction{
+	"abs":         {Args: []string{"x"}, op: opAbsFunc, Doc: "Get the absolute value of the parameter"},
+	"sin":         {Args: []string{"x"}, op: opSinFunc, Doc: "Compute the sine of the parameter"},
+	"cos":         {Args: []string{"x"}, op: opCosFunc, Doc: "Compute the cosine of the parameter"},
+	"step":        {Args: []string{"edge", "x"}, op: opStepFunc, Doc: "Generate a step function by comparing two values"},
+	"smoothstep":  {Args: []string{"edge1", "edge2", "x"}, op: opSmootstepFunc, Doc: "Perform Hermite interpolation between two values"},
+	"min":         {Args: []string{"value1", "value2"}, op: opMinFunc, Doc: "Find the lesser of two values"},
+	"max":         {Args: []string{"value1", "value2"}, op: opMaxFunc, Doc: "Find the greater of two values"},
+	"clamp":       {Args: []string{"x", "min_value", "max_value"}, op: opClampFunc, Doc: "Constrain a value to lie between two further values"},
+	"pow":         {Args: []string{"x", "exponent"}, op: opPowFunc, Doc: "Calculates x^exponent"},
+	"tan":         {Args: []string{"x"}, op: opTanFunc, Doc: "Compute the tangent of the parameter"},
+	"tanh":        {Args: []string{"x"}, op: opTanhFunc, Doc: "Compute the hyperbolic tangent of the parameter"},
+	"atan":        {Args: []string{"x"}, op: opAtanFunc, Doc: "Compute the arc-tangent of y-over-x"},
+	"asin":        {Args: []string{"x"}, op: opAsinFunc, Doc: "Compute the arc-sine of the parameter"},
+	"acos":        {Args: []string{"x"}, op: opAcosFunc, Doc: "Compute the arc-cosine of the parameter"},
+	"log":         {Args: []string{"x"}, op: opLogFunc, Doc: "Get the natural logarithm of the parameter"},
+	"log2":        {Args: []string{"x"}, op: opLog2Func, Doc: "Get the base 2 logarithm of the parameter"},
+	"sqrt":        {Args: []string{"x"}, op: opSqrtFunc, Doc: "Compute the square root of the parameter"},
+	"inversesqrt": {Args: []string{"x"}, op: opInversesqrtFunc, Doc: "Compute the inverse of the square root of the parameter"},
+	"sign":        {Args: []string{"x"}, op: opSignFunc, Doc: "Returns -1 if x<0, 0 if x=0, and +1 if x>0"},
+	"floor":       {Args: []string{"x"}, op: opFloorFunc, Doc: "Get the nearest integer less than or equal to the parameter"},
+	"ceil":        {Args: []string{"x"}, op: opCeilFunc, Doc: "Get the nearest integer that is greater than or equal to the parameter"},
+	"fract":       {Args: []string{"x"}, op: opFractFunc, Doc: "Get the fractional part of x"},
+	"mod":         {Args: []string{"x", "divisor"}, op: opModFunc, Doc: "Compute value of one parameter modulo another, like x%divisor"},
+	"gamma":       {Args: []string{"x"}, op: opGammaFunc, Doc: "Compute the Gamma function of x"},
+	"until":       {Args: []string{"x", "threshold"}, op: opUntilFunc, Doc: "Returns x if x<=threshold"},
+	"after":       {Args: []string{"x", "threshold"}, op: opAfterFunc, Doc: "Returns x if x>=threshold"},
 }
 
 func step(edge, x float64) float64 {

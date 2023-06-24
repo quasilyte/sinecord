@@ -118,12 +118,12 @@ func (c *compiler) compileCallExpr(e *ast.CallExpr) {
 		c.throwf("expected a function name, found something else")
 	}
 
-	funcInfo, ok := builtinFuncMap[fn.Name]
+	funcInfo, ok := BuiltinFuncMap[fn.Name]
 	if !ok {
 		c.throwf("unknown function %q", fn.Name)
 	}
-	if len(e.Args) != funcInfo.numArgs {
-		c.throwf("%q expects %d arguments, found %d", fn.Name, funcInfo.numArgs, len(e.Args))
+	if len(e.Args) != len(funcInfo.Args) {
+		c.throwf("%q expects %d arguments, found %d", fn.Name, len(funcInfo.Args), len(e.Args))
 	}
 
 	c.funcSet[fn.Name] = struct{}{}
