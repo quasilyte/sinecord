@@ -416,7 +416,7 @@
                         {
                          "name":"description",
                          "type":"string",
-                         "value":"Clear a level by triggering all of the targets on the stag e.\n\nYou can do that by finding a function that approximates these points."
+                         "value":"Clear a level by triggering all of the targets on the stage.\n\nYou can do that by finding a function that approximates these points."
                         }, 
                         {
                          "name":"name",

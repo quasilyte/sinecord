@@ -642,7 +642,7 @@
                         {
                          "name":"description",
                          "type":"string",
-                         "value":"When computed y-axis value is out of bounds, the instrument sound will be stopeed.\n\nThis can be used to your advantage."
+                         "value":"When computed y-axis value is out of bounds, the instrument sound will be stoped.\n\nThis can be used to your advantage."
                         }, 
                         {
                          "name":"max_instruments",
