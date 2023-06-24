@@ -14,11 +14,14 @@ type ManualController struct {
 	state *session.State
 
 	scene *ge.Scene
+
+	backController ge.SceneController
 }
 
-func NewManualController(state *session.State) *ManualController {
+func NewManualController(state *session.State, back ge.SceneController) *ManualController {
 	return &ManualController{
-		state: state,
+		state:          state,
+		backController: back,
 	}
 }
 
@@ -43,13 +46,13 @@ func (c *ManualController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.SeparatorColor))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.manual.howto"), func() {
-		scene.Context().ChangeScene(NewHowtoController(c.state))
+		scene.Context().ChangeScene(NewHowtoController(c.state, c.backController))
 	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.manual.functions"), func() {}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.manual.key_bindings"), func() {
-		scene.Context().ChangeScene(NewKeyBindingsController(c.state))
+		scene.Context().ChangeScene(NewKeyBindingsController(c.state, c.backController))
 
 	}))
 
@@ -69,5 +72,5 @@ func (c *ManualController) Update(delta float64) {
 }
 
 func (c *ManualController) back() {
-	c.scene.Context().ChangeScene(NewMainMenuController(c.state))
+	c.scene.Context().ChangeScene(c.backController)
 }

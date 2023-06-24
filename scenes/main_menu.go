@@ -47,7 +47,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.profile"), func() {}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.manual"), func() {
-		scene.Context().ChangeScene(NewManualController(c.state))
+		scene.Context().ChangeScene(NewManualController(c.state, NewMainMenuController(c.state)))
 	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.settings"), func() {}))

@@ -419,6 +419,15 @@ func (c *StageController) Init(scene *ge.Scene) {
 		})
 		buttonsGrid.AddChild(stopButton)
 
+		if c.config.Mode == gamedata.MissionMode {
+			helpButton := eui.NewButton(c.state.UIResources, "help", func() {
+				back := NewStageController(c.state, c.config)
+				back.track = c.synth.ExportTrack()
+				c.changeScene(NewManualController(c.state, back))
+			})
+			buttonsGrid.AddChild(helpButton)
+		}
+
 		if c.config.Mode == gamedata.SandboxMode {
 			saveButton := eui.NewButton(c.state.UIResources, "save", func() {
 				back := NewStageController(c.state, c.config)

@@ -14,11 +14,14 @@ type HowtoController struct {
 	state *session.State
 
 	scene *ge.Scene
+
+	backController ge.SceneController
 }
 
-func NewHowtoController(state *session.State) *HowtoController {
+func NewHowtoController(state *session.State, back ge.SceneController) *HowtoController {
 	return &HowtoController{
-		state: state,
+		state:          state,
+		backController: back,
 	}
 }
 
@@ -64,5 +67,5 @@ func (c *HowtoController) Update(delta float64) {
 }
 
 func (c *HowtoController) back() {
-	c.scene.Context().ChangeScene(NewManualController(c.state))
+	c.scene.Context().ChangeScene(NewManualController(c.state, c.backController))
 }

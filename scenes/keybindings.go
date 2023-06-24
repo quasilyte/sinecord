@@ -14,11 +14,14 @@ type KeyBindingsController struct {
 	state *session.State
 
 	scene *ge.Scene
+
+	backController ge.SceneController
 }
 
-func NewKeyBindingsController(state *session.State) *KeyBindingsController {
+func NewKeyBindingsController(state *session.State, back ge.SceneController) *KeyBindingsController {
 	return &KeyBindingsController{
-		state: state,
+		state:          state,
+		backController: back,
 	}
 }
 
@@ -64,5 +67,5 @@ func (c *KeyBindingsController) Update(delta float64) {
 }
 
 func (c *KeyBindingsController) back() {
-	c.scene.Context().ChangeScene(NewManualController(c.state))
+	c.scene.Context().ChangeScene(NewManualController(c.state, c.backController))
 }
