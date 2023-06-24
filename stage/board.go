@@ -161,7 +161,7 @@ func (b *Board) ProgramTick(delta float64) bool {
 				if !canHit {
 					continue
 				}
-				if t.pos.DistanceTo(pos) > 0.6*(float64(t.r)+r) {
+				if t.pos.DistanceTo(pos) > float64(t.r*0.7)+(r*0.7) {
 					continue
 				}
 				if !t.OnDamage(inst.ID) {
