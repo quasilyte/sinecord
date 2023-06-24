@@ -272,6 +272,18 @@ func (c *StageController) Init(scene *ge.Scene) {
 		if loadedInstrument != nil {
 			formulaInput.InputText = loadedInstrument.Function
 			c.setInstrumentFunction(instrumentID, loadedInstrument.Function)
+		} else {
+			if c.config.Mode == gamedata.MissionMode {
+				switch instrumentID {
+				case 0:
+					formulaInput.InputText = "sin(x) - 0.5"
+				case 1:
+					formulaInput.InputText = "pi/4"
+				}
+				if formulaInput.InputText != "" {
+					c.setInstrumentFunction(instrumentID, formulaInput.InputText)
+				}
+			}
 		}
 
 		periodInput := eui.NewFunctionInput(c.state.UIResources, eui.FunctionInputConfig{
@@ -287,6 +299,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 			c.setInstrumentPeriod(instrumentID, loadedInstrument.PeriodFunction)
 		} else {
 			periodInput.InputText = defaultPeriods[instrumentID]
+			c.setInstrumentPeriod(instrumentID, periodInput.InputText)
 		}
 		instrumentsGrid.AddChild(periodInput)
 
