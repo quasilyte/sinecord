@@ -415,12 +415,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 		buttonsGrid.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.stage.run"), c.onPlayPressed))
 
 		stopButton := eui.NewButton(c.state.UIResources, "stop", func() {
-			if c.currentMode != stagePlaying {
-				return
-			}
-			c.setMode(stageReady)
-			c.board.ClearProgram()
-			c.player.Pause()
+			c.onStopPressed()
 		})
 		buttonsGrid.AddChild(stopButton)
 
@@ -508,6 +503,14 @@ func (c *StageController) Update(delta float64) {
 		c.onDoneOrExit()
 		return
 	}
+	if c.state.Input.ActionIsJustPressed(controls.ActionTogglePlay) {
+		switch c.currentMode {
+		case stagePlaying:
+			c.onStopPressed()
+		case stageReady:
+			c.onPlayPressed()
+		}
+	}
 
 	c.canvas.Running = c.currentMode == stagePlaying
 
@@ -556,6 +559,15 @@ func (c *StageController) waveSamples() []float64 {
 	}
 
 	return c.samplesBuf
+}
+
+func (c *StageController) onStopPressed() {
+	if c.currentMode != stagePlaying {
+		return
+	}
+	c.setMode(stageReady)
+	c.board.ClearProgram()
+	c.player.Pause()
 }
 
 func (c *StageController) onPlayPressed() {

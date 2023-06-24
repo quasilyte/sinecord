@@ -1,6 +1,5 @@
 ux:
 - show formula compile errors
-- SPACE to toggle play/stop
 
 bugs:
 - do not emit effects for out-of-screen notes

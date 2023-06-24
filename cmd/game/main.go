@@ -30,7 +30,8 @@ func main() {
 	assets.RegisterResources(ctx)
 
 	keymap := input.Keymap{
-		controls.ActionBack: {input.KeyEscape},
+		controls.ActionBack:       {input.KeyEscape},
+		controls.ActionTogglePlay: {input.KeySpace},
 	}
 	state := &session.State{
 		Input: ctx.Input.NewHandler(0, keymap),
