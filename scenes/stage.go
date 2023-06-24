@@ -52,6 +52,8 @@ type StageController struct {
 
 	exitButton *widget.Button
 
+	inputWidgets []*widget.TextInput
+
 	completed    bool
 	bonusReached bool
 }
@@ -268,6 +270,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 				c.setInstrumentFunction(instrumentID, s)
 			},
 		})
+		c.inputWidgets = append(c.inputWidgets, formulaInput)
 		instrumentsGrid.AddChild(formulaInput)
 		if loadedInstrument != nil {
 			formulaInput.InputText = loadedInstrument.Function
@@ -294,6 +297,7 @@ func (c *StageController) Init(scene *ge.Scene) {
 				c.setInstrumentPeriod(instrumentID, s)
 			},
 		})
+		c.inputWidgets = append(c.inputWidgets, periodInput)
 		if loadedInstrument != nil {
 			periodInput.InputText = loadedInstrument.PeriodFunction
 			c.setInstrumentPeriod(instrumentID, loadedInstrument.PeriodFunction)
@@ -513,11 +517,20 @@ func (c *StageController) Update(delta float64) {
 		return
 	}
 	if c.state.Input.ActionIsJustPressed(controls.ActionTogglePlay) {
-		switch c.currentMode {
-		case stagePlaying:
-			c.onStopPressed()
-		case stageReady:
-			c.onPlayPressed()
+		canToggle := true
+		for _, w := range c.inputWidgets {
+			if w.IsFocused() {
+				canToggle = false
+				break
+			}
+		}
+		if canToggle {
+			switch c.currentMode {
+			case stagePlaying:
+				c.onStopPressed()
+			case stageReady:
+				c.onPlayPressed()
+			}
 		}
 	}
 
