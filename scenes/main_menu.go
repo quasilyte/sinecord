@@ -2,6 +2,7 @@ package scenes
 
 import (
 	"os"
+	"runtime"
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ge"
@@ -63,9 +64,11 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 
 	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
 
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.exit"), func() {
-		os.Exit(0)
-	}))
+	if runtime.GOARCH != "wasm" {
+		rowContainer.AddChild(eui.NewButton(c.state.UIResources, d.Get("menu.exit"), func() {
+			os.Exit(0)
+		}))
+	}
 
 	rowContainer.AddChild(eui.NewSeparator(widget.RowLayoutData{Stretch: true}, styles.TransparentColor))
 	rowContainer.AddChild(eui.NewCenteredLabel("Ebitengine Game Jam 2023 edition", smallFont))
