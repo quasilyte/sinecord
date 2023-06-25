@@ -91,6 +91,10 @@ func (c *StageController) setInstrumentPeriod(id int, s string) {
 func (c *StageController) Init(scene *ge.Scene) {
 	c.scene = scene
 
+	if c.track.IsEmpty() {
+		c.track = c.state.Track
+	}
+
 	d := scene.Dict()
 
 	c.instrumentIcons = make([]*ebiten.Image, c.config.MaxInstruments)
@@ -275,18 +279,6 @@ func (c *StageController) Init(scene *ge.Scene) {
 		if loadedInstrument != nil {
 			formulaInput.InputText = loadedInstrument.Function
 			c.setInstrumentFunction(instrumentID, loadedInstrument.Function)
-		} else {
-			if c.config.Mode == gamedata.MissionMode && c.track.IsEmpty() {
-				switch instrumentID {
-				case 0:
-					formulaInput.InputText = "sin(x) - 0.5"
-				case 1:
-					formulaInput.InputText = "pi/4"
-				}
-				if formulaInput.InputText != "" {
-					c.setInstrumentFunction(instrumentID, formulaInput.InputText)
-				}
-			}
 		}
 
 		periodInput := eui.NewFunctionInput(c.state.UIResources, eui.FunctionInputConfig{
@@ -489,6 +481,8 @@ func (c *StageController) onDoneOrExit() {
 		c.state.Persistent.UpdateLevelCompletion(c.config.Data, c.bonusReached)
 		c.scene.Context().SaveGameData("save", c.state.Persistent)
 	}
+
+	c.state.Track = c.synth.ExportTrack()
 
 	switch c.config.Mode {
 	case gamedata.MissionMode:

@@ -61,6 +61,14 @@ func main() {
 	}
 	state.LevelTileset = tileset
 
+	state.Track = gamedata.Track{
+		Name: "session",
+		Instruments: []gamedata.InstrumentSettings{
+			{Function: "sin(x/2) - 0.2", PeriodFunction: "pi/9", Volume: 1.0, InstrumentName: "Synth Bass 1", Enabled: true},
+			{Function: "pi/4", PeriodFunction: "pi/3", Volume: 1.0, InstrumentName: "Synth Bass 1", Enabled: true},
+		},
+	}
+
 	{
 		allLevels := assets.ReadLevelsData()
 		maxAct := 1

@@ -20,6 +20,8 @@ type State struct {
 
 	LevelsByAct [][]*gamedata.LevelData
 
+	Track gamedata.Track
+
 	PlotScaler *gamedata.PlotScaler
 
 	Input *input.Handler
