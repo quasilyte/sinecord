@@ -12,6 +12,10 @@ Here is an example what kind of music you can expect from this game: [www.youtub
 
 ## Running the game
 
+The easiest way to play it is to use a [browser version](https://quasilyte.itch.io/sinecord).
+
+If you want to build a native binary, you can build this game from sources.
+
 1. Install Ebitengine system dependencies for your OS
 2. Build & run the game with Go
 
@@ -19,3 +23,5 @@ Here is an example what kind of music you can expect from this game: [www.youtub
 git clone https://github.com/quasilyte/sinecord.git
 go run ./cmd/game
 ```
+
+Use Go cross-compilation to create a binary for a different platform.
